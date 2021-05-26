@@ -2,22 +2,29 @@ from schemdraw import logic
 import schemdraw
 
 d = schemdraw.Drawing()
-and1 = logic.And(inputs=3)
 
-print(and1.__dict__)
+and_start = logic.And(inputs=3, label='START')
+and_final = logic.And(inputs=2, label='END')
 
-and2 = logic.And(inputs=2)
-and2.at(and1.anchors['in1'])
+print(and_final.__dict__)
 
-d += and1
-d += and2 # .anchor('in1')
+# and_start.anchor('out').at(and_final.anchors['in1'])
+
+and_final.anchor('out').at(and_start.anchors['in1'])
+# and_final.anchor('in1').at(and_start.anchors['in2'])
+# and_final.anchor('in2').at(and_start.anchors['in3'])
+
+# and_start.at(and_final.anchors['in1'])
+
+d += and_final
+d += and_start # .anchor('in1')
 
 
-d.draw(backend='matplotlib')
+# d.draw(backend='matplotlib')
 
 # while True:
 #     inps = int(input("Enter num of inps: "))
 #     d += logic.And(inputs=inps)
 #     d.draw(backend='matplotlib')
 
-# d.save('schematic.svg')
+d.save('schematic.svg')
