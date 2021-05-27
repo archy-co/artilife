@@ -17,26 +17,26 @@ class TestElements(unittest.TestCase):
         self.nor_gate = NorGate(2)
 
     def test_constant(self):
-        self.assertEquals(self.true_constant.value, True)
-        self.assertEquals(self.false_constant.value, False)
+        self.assertEquals(self.true_constant.value['out'], True)
+        self.assertEquals(self.false_constant.value['out'], False)
 
     def test_and(self):
-        self.assertEquals(self.and_gate.value, False)
+        self.assertEquals(self.and_gate.value['out'], False)
 
         connection = Connection(self.true_constant, 'out', self.and_gate, 'in1')
         self.true_constant.set_output_connection('out', connection)
         self.and_gate.set_input_connection('in1', connection)
-        self.assertEquals(self.and_gate.value, False)
+        self.assertEquals(self.and_gate.value['out'], False)
 
         connection = Connection(self.false_constant, 'out', self.and_gate, 'in2')
         self.true_constant.set_output_connection('out', connection)
         self.and_gate.set_input_connection('in2', connection)
-        self.assertEquals(self.and_gate.value, False)
+        self.assertEquals(self.and_gate.value['out'], False)
 
     def test_multi_and(self):
         num_inputs = 1000
         multi_and = AndGate(num_inputs=num_inputs)
-        self.assertFalse(multi_and.value)
+        self.assertFalse(multi_and.value['out'])
         for i in range(1, num_inputs+1):
             constant = Constant(True)
             input_label = 'in' + str(i)
@@ -45,9 +45,9 @@ class TestElements(unittest.TestCase):
             multi_and.set_input_connection(input_label, connection)
             multi_and.reset_value()
             if i == num_inputs:
-                self.assertTrue(multi_and.value)
+                self.assertTrue(multi_and.value['out'])
             else:
-                self.assertFalse(multi_and.value)
+                self.assertFalse(multi_and.value['out'])
 
 
 

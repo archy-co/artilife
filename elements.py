@@ -11,6 +11,9 @@ You can use the following classes from this module:
 - XorGate
 - NandGate
 - NorGate
+- Multiplexer
+- Encoder
+- Decoder
 """
 
 
@@ -100,11 +103,17 @@ class BasicElement:
         self._outs[output_label] = []
 
     @property
-    def value(self):
+    def value(self) -> dict:
         raise NotImplementedError
 
     def reset_value(self):
         pass
+
+    def _read_input_value(self, input_label: str):
+        connection = self._ins[input_label]
+        if connection is None:
+            return False
+        return connection.source.value[connection.output_label]
 
 
 class BasicLogicGate(BasicElement):
@@ -131,16 +140,13 @@ class BasicLogicGate(BasicElement):
 
     def _iterate_over_input_values(self):
         for input_label in self._ins:
-            if self._ins[input_label] is None:
-                yield False
-            else:
-                yield self._ins[input_label].source.value
+            yield self._read_input_value(input_label)
 
     @property
     def value(self):
         if self._value is None:
             self._value = self._logic_of_element(*self._iterate_over_input_values())
-        return self._value
+        return {'out': self._value}
 
     def reset_value(self):
         self._value = None
@@ -175,12 +181,8 @@ class NotGate(BasicElement):
     @property
     def value(self):
         if self._value is None:
-            if self._ins['in'] is None:
-                in_ = False
-            else:
-                in_ = self._ins['in'].source.value
-            self._value = not in_
-        return self._value
+            self._value = self._read_input_value('in')
+        return {'out': self._value}
 
     def reset_value(self):
         self._value = None
@@ -194,7 +196,41 @@ class Constant(BasicElement):
 
     @property
     def value(self):
-        return self._constant_value
+        return {'out': self._constant_value}
+
+    def reset_value(self):
+        self._value = None
+
+class Multiplexer(BasicElement):
+    """A class for multiplexor element.
+    A multiplexer has n select lines and 2**n input lines. The select lines decide signal from
+    which input line to send to the output.
+    """
+    def __init__(self, num_select_lines: int):
+        if num_select_lines < 1:
+            raise ValueError("Number of select lines must be >= 1")
+        super().__init__()
+        self.num_select_lines = num_select_lines
+        for i in range(1, num_select_lines+1):
+            self._ins[f'select line {i}'] = None
+        for i in range(1, 2**num_select_lines + 1):
+            self._ins[f'input line {i}'] = None
+        self._outs['out'] = None
+
+    def _get_number_of_selected_line(self):
+        base = "select line "
+        selected_line = 0
+        for i in range(self.num_select_lines):
+            if self._read_input_value(base + str(i+1)):
+                selected_line += 2**i
+        return selected_line + 1
+
+    @property
+    def value(self):
+        if self._value is None:
+            needed_input = 'input line ' + str(self._get_number_of_selected_line())
+            self._value = self._read_input_value(needed_input)
+        return {'out': self._value}
 
     def reset_value(self):
         self._value = None
