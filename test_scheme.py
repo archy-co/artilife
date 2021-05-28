@@ -21,6 +21,14 @@ class TestScheme(unittest.TestCase):
         self.assertTrue(len(self.scheme._elements) == 1)
         self.scheme.add_element('constant', 1)
 
+        self.scheme.add_element('xor', 3, 4)
+        elem3 = self.scheme._get_by_id(3)
+        self.assertTrue(len(elem3.ins) == 4)
+
+        self.scheme.add_element('constant', 4, False)
+        elem4 = self.scheme._get_by_id(4)
+        self.assertFalse(elem3.value['out'])
+
     def test_connections(self):
         self.scheme.add_element('constant', 1)
         self.scheme.add_element('or', 2)
@@ -51,6 +59,13 @@ class TestScheme(unittest.TestCase):
 
         self.assertIsNone(self.scheme._get_by_id(3))
         self.assertEqual(elem1.outs[list(elem1.outs.keys())[0]], [])
+
+        self.scheme.add_connection(1, 'out', 2, 'in1')
+        self.assertTrue(elem2.ins['in1'] in elem1.outs[list(elem1.outs.keys())[0]])
+        self.scheme.clear()
+        self.assertEqual(elem1.outs[list(elem1.outs.keys())[0]], [])
+        self.assertIsNone(elem2.ins['in1'])
+        self.assertTrue(len(self.scheme._elements) == 0)
 
 
 if __name__ == "__main__":
