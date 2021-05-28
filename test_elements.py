@@ -3,7 +3,7 @@ import unittest
 from elements import Connection
 from elements import Constant
 from elements import AndGate, OrGate, NotGate, XorGate, NandGate, NorGate
-from elements import Multiplexer, Encoder, Decoder
+from elements import Multiplexer, Encoder, Decoder, FullAdder, AdderSubtractor
 
 
 class TestElements(unittest.TestCase):
@@ -146,6 +146,65 @@ class TestElements(unittest.TestCase):
         self.assertEqual(decoder.value, {'output line 1': True, 'output line 2': False})
 
         self.assertEqual(decoder.element_type, "DECODER 1")
+
+    def test_fulladder(self):
+        fullAdder = FullAdder('full adder 1')
+
+        self.assertEqual(fullAdder.value, {'Cout': False, 'S': False})
+
+        constant = Constant("c1", True)
+        connection = Connection(constant, 'out', fullAdder, 'A')
+        constant.set_output_connection(connection)
+        fullAdder.set_input_connection(connection)
+
+        fullAdder.reset_value()
+        self.assertEqual(fullAdder.value, {'Cout': False, 'S': True})
+
+        constant = Constant("c2", True)
+        connection = Connection(constant, 'out', fullAdder, 'Cin')
+        constant.set_output_connection(connection)
+        fullAdder.set_input_connection(connection)
+
+        fullAdder.reset_value()
+        self.assertEqual(fullAdder.value, {'Cout': True, 'S': False})
+
+        constant = Constant("c3", True)
+        connection = Connection(constant, 'out', fullAdder, 'B')
+        constant.set_output_connection(connection)
+        fullAdder.set_input_connection(connection)
+
+        fullAdder.reset_value()
+        self.assertEqual(fullAdder.value, {'Cout': True, 'S': True})
+
+    def test_addersubtractor(self):
+        addersubtractor = AdderSubtractor("Adder-subtractor1", 2)
+
+        self.assertEqual(addersubtractor.value, {"S0": False, "S1": False, "Cout": False})
+
+        constant = Constant('c1', False)
+        connection = Connection(constant, "out", addersubtractor, "A0")
+        constant.set_output_connection(connection)
+        addersubtractor.set_input_connection(connection)
+
+        addersubtractor.reset_value()
+        self.assertEqual(addersubtractor.value, {"S0": False, "S1": False, "Cout": False})
+
+        constant = Constant('c1', True)
+        connection = Connection(constant, "out", addersubtractor, "B1")
+        constant.set_output_connection(connection)
+        addersubtractor.set_input_connection(connection)
+
+        self.assertEqual(addersubtractor.value, {"S0": False, "S1": False, "Cout": False})
+        addersubtractor.reset_value()
+        self.assertEqual(addersubtractor.value, {"S0": False, "S1": True, "Cout": False})
+
+        constant = Constant('c1', True)
+        connection = Connection(constant, "out", addersubtractor, "sub")
+        constant.set_output_connection(connection)
+        addersubtractor.set_input_connection(connection)
+
+        addersubtractor.reset_value()
+        self.assertEqual(addersubtractor.value, {"S0": False, "S1": True, "Cout": False})
 
 
 if __name__ == "__main__":

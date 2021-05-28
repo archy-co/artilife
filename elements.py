@@ -411,8 +411,114 @@ class Decoder(BasicElement):
         return self._value
 
     def reset_value(self):
-        self._value = None        
+        self._value = None
 
+
+class FullAdder(BasicElement):
+    """A class for full adder element.
+    A full adder element calculates the sum of three bits (2 summands and 1 carry) and outputs the
+    sum and the resulting carry.
+
+    The interface of the full adder element is the following:
+    - input:
+        A
+        B
+        Cin
+    - output:
+        S
+        Cout
+    """
+    def __init__(self, id_):
+        """Initialize a full adder element with id.
+        """
+        super().__init__(id_)
+        self._ins['A'] = None
+        self._ins['B'] = None
+        self._ins['Cin'] = None
+        self._outs['S'] = None
+        self._outs['Cout'] = None
+        self._element_type = "FULLADDER"
+
+    @property
+    def value(self):
+        if self._value is None:
+            bitA = self._read_input_value("A")
+            bitB = self._read_input_value("B")
+            carry_in = self._read_input_value('Cin')
+
+            self._value = {'S': (bitA != bitB) != carry_in,
+                    'Cout': (bitA and bitB) or (bitA and carry_in) or (bitB and carry_in)}
+
+        return self._value
+
+    def reset_value(self):
+        self._value = None
+
+
+class AdderSubtractor(BasicElement):
+    """A class for adder-subtractor element.
+    An adder-subtractor element calculates the sum or the difference (based on the state of 'sub')
+    of two n-digit numbers.
+
+    The interface of an adder-subtractor element is the following:
+    - input:
+        A0
+        A1
+        ...
+        A{num_bits}
+        B0
+        B1
+        ...
+        B{num_bits}
+        sub
+    - output:
+        S0
+        S1
+        ...
+        S{num_bits}
+        Cout
+    """
+    def __init__(self, id_, num_bits: int = 4):
+        """Initialize an adder/subtractor element with number of bits and id.
+        """
+        if num_bits < 1:
+            raise ValueError("Number of bits must be >= 1")
+        super().__init__(id_)
+        self._num_bits = num_bits
+        for i in range(num_bits):
+            self._ins[f'A{i}'] = None
+            self._ins[f'B{i}'] = None
+        self._ins['sub'] = None
+        for i in range(2**num_bits):
+            self._outs[f'S{i}'] = None
+        self._outs['Cout'] = None
+        self._element_type = "ADDERSUBTRACTOR " + str(num_bits)
+
+    def _get_number(self, base, invert=False):
+        number = []
+        for i in range(self._num_bits):
+            val = self._read_input_value(base + str(i))
+            number.append(val != invert)
+        return number
+
+    @property
+    def value(self):
+        if self._value is None:
+            sub = self._read_input_value('sub')
+            number_A = self._get_number("A")
+            number_B = self._get_number("B", sub)
+
+            self._value = {}
+            carry = sub
+            for i in range(self._num_bits):
+                self._value["S" + str(i)] = (number_A[i] != number_B[i]) != carry
+                carry = (number_A[i] and number_B[i]) or (number_A[i] and carry) or (number_B[i] and carry)
+            self._value['Cout'] = carry
+
+        return self._value
+
+    def reset_value(self):
+        self._value = None
 
 if __name__ == "__main__":
     constant = Constant("1", False)
