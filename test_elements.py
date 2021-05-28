@@ -21,6 +21,9 @@ class TestElements(unittest.TestCase):
         self.assertEqual(self.true_constant.value['out'], True)
         self.assertEqual(self.false_constant.value['out'], False)
 
+        self.assertEqual(self.true_constant.element_type, 'CONSTANT')
+        self.assertEqual(self.false_constant.element_type, 'CONSTANT')
+
     def test_and(self):
         self.assertEqual(self.and_gate.value['out'], False)
 
@@ -34,10 +37,13 @@ class TestElements(unittest.TestCase):
         self.and_gate.set_input_connection(connection)
         self.assertEqual(self.and_gate.value['out'], False)
 
+        self.assertEqual(self.and_gate.element_type, "AND 2")
+
     def test_multi_and(self):
         num_inputs = 1000
         multi_and = AndGate('and1', num_inputs=num_inputs)
         self.assertFalse(multi_and.value['out'])
+        self.assertEqual(multi_and.element_type, "AND 1000")
         for i in range(1, num_inputs+1):
             constant = Constant(f'const{i}', True)
             connection = Connection(constant, 'out', multi_and, 'in' + str(i))
@@ -85,6 +91,7 @@ class TestElements(unittest.TestCase):
 
         multiplexer.reset_value()
         self.assertEqual(multiplexer.value['out'], True)
+        self.assertEqual(multiplexer.element_type, "MULTIPLEXER 1")
 
     def test_encoder(self):
         encoder = Encoder('encoder', num_output_lines=1)
@@ -115,6 +122,8 @@ class TestElements(unittest.TestCase):
         encoder.reset_value()
         self.assertEqual(encoder.value, {'output line 1': True})
 
+        self.assertEqual(encoder.element_type, "ENCODER 1")
+
     def test_decoder(self):
         decoder = Decoder('decoder', num_input_lines=1)
 
@@ -135,6 +144,8 @@ class TestElements(unittest.TestCase):
 
         decoder.reset_value()
         self.assertEqual(decoder.value, {'output line 1': True, 'output line 2': False})
+
+        self.assertEqual(decoder.element_type, "DECODER 1")
 
 
 if __name__ == "__main__":
