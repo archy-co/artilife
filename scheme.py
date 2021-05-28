@@ -29,13 +29,24 @@ class Scheme:
         self._elements = []
 
     def add_element(self, element_type, element_id):
-        new_element = eval('elements.' + element_type+'(2)')
-
+        element_type_to_class_dct = {
+            'multiplexer': elements.Multiplexer,
+            'and': elements.AndGate,
+            'or': elements.OrGate,
+            'not': elements.NotGate,
+            'nor': elements.NorGate,
+            'xor': elements.XorGate,
+            'nand': elements.NandGate,
+            'constant': elements.Constant,
+            'decoder': elements.Decoder,
+            'encoder': elements.Encoder,
+        }
         if not self._validate_id(element_id):
             raise IdIsAlreadyTakenError(element_id)
-        else:
-            new_element.id = element_id
-            self._elements.append(new_element)
+        new_element = element_type_to_class_dct[element_type](element_id, 2)
+
+        new_element.id = element_id
+        self._elements.append(new_element)
 
     def _validate_id(self, id: str) -> bool:
         '''
@@ -64,12 +75,12 @@ class Scheme:
         # self._validate_connection(connection)
 
         try:
-            source.set_output_connection(output_label, connection)
+            source.set_output_connection(connection)
         except KeyError:
             raise NoSuchOutputLabelError(output_label)
 
         try:
-            destination.set_input_connection(input_label, connection)
+            destination.set_input_connection(connection)
         except KeyError:
             raise NoSuchInputLabelError(input_label)
 
@@ -87,17 +98,17 @@ class Scheme:
         element = self._get_by_id(element_id)
         if element is None:
             raise NoSuchIdError(element_id)
-        for _out in element._outs:
-            for out_connection in element._outs[_out]:
+        for _out in element.outs:
+            for out_connection in element.outs[_out]:
                 out_connection.source.delete_output_connection(out_connection.output_label)
                 out_connection.destination.delete_input_connection(out_connection.input_label)
 
-        for _in in element._ins:
-            if element._ins[_in] is None:
+        for _in in element.ins:
+            in_connection = element.ins[_in]
+            if in_connection is None:
                 break
-            for in_connection in element._ins[_in]:
-                in_connection.source.delete_output_connection(out_connection.output_label)
-                in_connection.destination.delete_input_connection(out_connection.input_label)
+            in_connection.source.delete_output_connection(in_connection.output_label)
+            in_connection.destination.delete_input_connection(in_connection.input_label)
 
         self._elements.remove(element)
 
@@ -113,20 +124,17 @@ class Scheme:
         raise NotImplementedError
 
     def run(self):
-        raise NotImplementedError
+        self._reset()
+
 
     def __iter__(self):
         return iter(self._elements)
 
     def _reset(self):
-        raise NotImplementedError
+        for element in self._elements:
+            if isinstance(element, BasicLogicGate):
+                element.reset_value()
 
     def __str__(self):
         return str(self._elements)
 
-if __name__ == '__main__':
-    scheme = Scheme()
-    scheme.add_element('AndGate', 1)
-    scheme.add_element('NandGate', 2)
-    scheme.add_connection(1, 'out', 2, 'in1')
-    scheme.delete_element(2)
