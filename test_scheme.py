@@ -66,6 +66,19 @@ class TestScheme(unittest.TestCase):
         self.assertIsNone(elem2.ins['in1'])
         self.assertTrue(len(self.scheme._elements) == 0)
 
+    def test_run(self):
+        self.scheme.add_element('constant', 1, 1)
+        self.scheme.add_element('constant', 2, 0)
+        self.scheme.add_element('or', 3, 2)
+        self.scheme.add_element('and', 4, 2)
+        self.scheme.add_connection(1, 'out', 3, 'in1')
+        self.scheme.add_connection(2, 'out', 3, 'in2')
+        self.scheme.add_connection(1, 'out', 4, 'in1')
+        self.scheme.add_connection(2, 'out', 4, 'in2')
+        self.assertEqual(list(list(self.scheme.run().values())[0][0].values())[0], 1)
+        self.assertEqual(list(list(self.scheme.run().values())[1][0].values())[0], 0)
+
+
 
 if __name__ == "__main__":
     unittest.main()
