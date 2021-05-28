@@ -26,7 +26,7 @@ class Scheme:
     ADT Scheme that contains elements
     '''
     def __init__(self):
-        self._elements = []
+        self._elements = {}
 
     def add_element(self, element_type, element_id, *spec_args):
         packed_args = [arg for arg in spec_args if arg is not None]
@@ -47,18 +47,16 @@ class Scheme:
         new_element = elem_type_to_class_dct[element_type](element_id, *packed_args)
 
         new_element.id = element_id
-        self._elements.append(new_element)
+        self._elements[element_id] = new_element
 
     def _validate_id(self, id: str) -> bool:
         '''
-        Checks if the <id> is already assigned to an element in <self._elements>
+        Checks if the <id> is already assigned to an element in <self._elements> (there is
+        an element with such id as key in the self._elements dictionary)
         Return:  True if id is available
                  False if id is already taken
         '''
-        for element in self._elements:
-            if element.id == id:
-                return False
-        return True
+        return False if id in self._elements.keys() else True
 
     def add_connection(self, source_id, output_label, destination_id, input_label):
         '''
@@ -69,8 +67,8 @@ class Scheme:
         If there is no such output label / input label, corresponding Exception
         will be raised
         '''
-        source = self._get_by_id(source_id)
-        destination = self._get_by_id(destination_id)
+        source = self._elements[source_id]
+        destination = self._elements[destination_id]
 
         connection = elements.Connection(source, output_label, destination, input_label)
         # self._validate_connection(connection)
@@ -86,19 +84,16 @@ class Scheme:
             raise NoSuchInputLabelError(input_label)
 
 
-    def _get_by_id(self, element_id: str) -> elements.BasicElement:
-        for element in self._elements:
-            if element.id == element_id:
-                return element
-
     def delete_element(self, element_id: str):
         '''
         Deletes element from scheme with all conections. Corresponding connections
         of connected elements are set to None
         '''
-        element = self._get_by_id(element_id)
-        if element is None:
+        if element_id not in self._elements.keys():
             raise NoSuchIdError(element_id)
+
+        element = self._elements[element_id]
+
         for _out in element.outs:
             for out_connection in element.outs[_out]:
                 out_connection.source.delete_output_connection(out_connection.output_label)
@@ -111,7 +106,7 @@ class Scheme:
             in_connection.source.delete_output_connection(in_connection.output_label)
             in_connection.destination.delete_input_connection(in_connection.input_label)
 
-        self._elements.remove(element)
+        self._elements.pop(element_id)
 
     def delete_connection(self, source: elements.BasicElement, output_label,
                            destination: elements.BasicElement, input_label):
@@ -128,18 +123,18 @@ class Scheme:
         self._reset()
 
     def __iter__(self):
-        return iter(self._elements)
+        return iter(self._elements.values())
 
     def _reset(self):
-        for element in self._elements:
+        for element in self._elements.values():
             if isinstance(element, BasicLogicGate):
                 element.reset_value()
 
     def __str__(self):
-        return str(self._elements)
+        return str(list(self._elements.items()))
 
     def clear(self):
         iter_elements = self._elements.copy()
-        for element in iter_elements:
-            self.delete_element(element.id)
+        for elem_id in iter_elements.keys():
+            self.delete_element(elem_id)
 
