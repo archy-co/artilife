@@ -121,13 +121,20 @@ class Scheme:
 
     def run(self):
         self._reset()
+        results = {}
+        for element in self._elements.values():
+            for out in element.outs:
+                if element.outs[out] == []:
+                    results[element.id] = results.get(element.id, []) + [element.value]
+
+        return results
 
     def __iter__(self):
         return iter(self._elements.values())
 
     def _reset(self):
         for element in self._elements.values():
-            if isinstance(element, BasicLogicGate):
+            if isinstance(element, elements.BasicLogicGate):
                 element.reset_value()
 
     def __str__(self):
