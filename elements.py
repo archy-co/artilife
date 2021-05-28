@@ -91,6 +91,7 @@ class BasicElement:
         self._outs = {}
         self._value = None
         self._id = id_
+        self._element_type = None
 
     def set_input_connection(self, connection: Connection):
         if connection.input_label not in self._ins:
@@ -114,6 +115,10 @@ class BasicElement:
 
     def reset_value(self):
         pass
+
+    @property
+    def element_type(self):
+        return self._element_type
 
     def _read_input_value(self, input_label: str):
         connection = self._ins[input_label]
@@ -169,22 +174,37 @@ class BasicLogicGate(BasicElement):
 
 
 class AndGate(BasicLogicGate):
+    def __init__(self, id_, num_inputs):
+        super().__init__(id_, num_inputs)
+        self._element_type = "AND " + str(num_inputs)
     def _logic_of_element(self, *inputs):
         return functools.reduce(lambda a, b: a and b, inputs)
 
 class OrGate(BasicLogicGate):
+    def __init__(self, id_, num_inputs):
+        super().__init__(id_, num_inputs)
+        self._element_type = "OR " + str(num_inputs)
     def _logic_of_element(self, *inputs):
         return functools.reduce(lambda a, b: a or b, inputs)
 
 class XorGate(BasicLogicGate):
+    def __init__(self, id_, num_inputs):
+        super().__init__(id_, num_inputs)
+        self._element_type = "XOR " + str(num_inputs)
     def _logic_of_element(self, *inputs):
         return functools.reduce(lambda a, b: a != b, inputs)
 
 class NandGate(BasicLogicGate):
+    def __init__(self, id_, num_inputs):
+        super().__init__(id_, num_inputs)
+        self._element_type = "NAND " + str(num_inputs)
     def _logic_of_element(self, *inputs):
         return not functools.reduce(lambda a, b: a and b, inputs)
 
 class NorGate(BasicLogicGate):
+    def __init__(self, id_, num_inputs):
+        super().__init__(id_, num_inputs)
+        self._element_type = "NOR " + str(num_inputs)
     def _logic_of_element(self, *inputs):
         return not functools.reduce(lambda a, b: a or b, inputs)
 
@@ -200,6 +220,7 @@ class NotGate(BasicElement):
         super().__init__(id_)
         self._ins['in'] = None
         self._outs['out'] = []
+        self._element_type = "NOT"
 
     @property
     def value(self):
@@ -224,6 +245,7 @@ class Constant(BasicElement):
         super().__init__(id_)
         self._constant_value = constant_value
         self._outs['out'] = []
+        self._element_type = "CONSTANT"
 
     @property
     def value(self):
@@ -262,6 +284,7 @@ class Multiplexer(BasicElement):
         for i in range(1, 2**num_select_lines + 1):
             self._ins[f'input line {i}'] = None
         self._outs['out'] = None
+        self._element_type = "MULTIPLEXER " + str(num_select_lines)
 
     def _get_number_of_selected_line(self):
         base = "select line "
@@ -311,6 +334,7 @@ class Encoder(BasicElement):
             self._ins[f'input line {i}'] = None
         for i in range(1, num_output_lines+1):
             self._outs[f'output line {i}'] = None
+        self._element_type = "ENCODER " + str(num_output_lines)
 
     def _input_lines_to_number(self):
         base = "input line "
@@ -364,6 +388,7 @@ class Decoder(BasicElement):
             self._ins[f'input line {i}'] = None
         for i in range(1, 2**num_input_lines+1):
             self._outs[f'output line {i}'] = None
+        self._element_type = "DECODER " + str(num_input_lines)
 
     def _input_lines_to_number(self):
         base = "input line "
