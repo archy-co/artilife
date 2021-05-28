@@ -130,6 +130,10 @@ class BasicElement:
     def outs(self):
         return self._outs
 
+    @property
+    def ins(self):
+        return self._ins
+
 
 class BasicLogicGate(BasicElement):
     """An abstract class for basic logic gates (such as AND, OR, XOR, NAND, NOR).
