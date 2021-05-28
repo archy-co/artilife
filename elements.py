@@ -126,6 +126,10 @@ class BasicElement:
             return False
         return connection.source.value[connection.output_label]
 
+    @property
+    def outs(self):
+        return self._outs
+
 
 class BasicLogicGate(BasicElement):
     """An abstract class for basic logic gates (such as AND, OR, XOR, NAND, NOR).
