@@ -22,6 +22,9 @@ class NoSuchInputLabelError(Exception):
 
 
 class Scheme:
+    '''
+    ADT Scheme that contains elements
+    '''
     def __init__(self):
         self._elements = []
 
@@ -34,7 +37,7 @@ class Scheme:
             new_element.id = element_id
             self._elements.append(new_element)
 
-    def _validate_id(self, id):
+    def _validate_id(self, id: str) -> bool:
         '''
         Checks if the <id> is already assigned to an element in <self._elements>
         Return:  True if id is available
@@ -46,6 +49,14 @@ class Scheme:
         return True
 
     def add_connection(self, source_id, output_label, destination_id, input_label):
+        '''
+        Add connection from *output_label* output of element with id *source_id*
+        to *input_label* input of element with id *destination_id* if validation
+        is successful
+
+        If there is no such output label / input label, corresponding Exception
+        will be raised
+        '''
         source = self._get_by_id(source_id)
         destination = self._get_by_id(destination_id)
 
@@ -63,12 +74,16 @@ class Scheme:
             raise NoSuchInputLabelError(input_label)
 
 
-    def _get_by_id(self, element_id) -> elements.BasicElement:
+    def _get_by_id(self, element_id: str) -> elements.BasicElement:
         for element in self._elements:
             if element.id == element_id:
                 return element
 
-    def delete_element(self, element_id):
+    def delete_element(self, element_id: str):
+        '''
+        Deletes element from scheme with all conections. Corresponding connections
+        of connected elements are set to None
+        '''
         element = self._get_by_id(element_id)
         if element is None:
             raise NoSuchIdError(element_id)
