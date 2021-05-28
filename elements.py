@@ -86,7 +86,7 @@ class BasicElement:
     reset_value()
         Forgets the previously calculated value
     """
-    def __init__(self, id_: str):
+    def __init__(self, id_):
         self._ins = {}
         self._outs = {}
         self._value = None
@@ -147,7 +147,7 @@ class BasicLogicGate(BasicElement):
         out
     """
 
-    def __init__(self, id_: str, num_inputs: int):
+    def __init__(self, id_, num_inputs: int):
         """Initialize an instance with num_inputs.
         :id_: name or id of the element
         :num_inputs: the number of inputs of an element
@@ -178,35 +178,35 @@ class BasicLogicGate(BasicElement):
 
 
 class AndGate(BasicLogicGate):
-    def __init__(self, id_, num_inputs):
+    def __init__(self, id_, num_inputs=2):
         super().__init__(id_, num_inputs)
         self._element_type = "AND " + str(num_inputs)
     def _logic_of_element(self, *inputs):
         return functools.reduce(lambda a, b: a and b, inputs)
 
 class OrGate(BasicLogicGate):
-    def __init__(self, id_, num_inputs):
+    def __init__(self, id_, num_inputs=2):
         super().__init__(id_, num_inputs)
         self._element_type = "OR " + str(num_inputs)
     def _logic_of_element(self, *inputs):
         return functools.reduce(lambda a, b: a or b, inputs)
 
 class XorGate(BasicLogicGate):
-    def __init__(self, id_, num_inputs):
+    def __init__(self, id_, num_inputs=2):
         super().__init__(id_, num_inputs)
         self._element_type = "XOR " + str(num_inputs)
     def _logic_of_element(self, *inputs):
         return functools.reduce(lambda a, b: a != b, inputs)
 
 class NandGate(BasicLogicGate):
-    def __init__(self, id_, num_inputs):
+    def __init__(self, id_, num_inputs=2):
         super().__init__(id_, num_inputs)
         self._element_type = "NAND " + str(num_inputs)
     def _logic_of_element(self, *inputs):
         return not functools.reduce(lambda a, b: a and b, inputs)
 
 class NorGate(BasicLogicGate):
-    def __init__(self, id_, num_inputs):
+    def __init__(self, id_, num_inputs=2):
         super().__init__(id_, num_inputs)
         self._element_type = "NOR " + str(num_inputs)
     def _logic_of_element(self, *inputs):
@@ -243,7 +243,7 @@ class Constant(BasicElement):
     - output:
         out
     """
-    def __init__(self, id_: str, constant_value: bool):
+    def __init__(self, id_, constant_value: bool = True):
         """Initialize a constant with its value and id.
         """
         super().__init__(id_)
@@ -276,7 +276,7 @@ class Multiplexer(BasicElement):
     - output:
         out
     """
-    def __init__(self, id_: str, num_select_lines: int):
+    def __init__(self, id_, num_select_lines: int = 2):
         """Initialize a multiplexer with teh number of select lines.
         """
         if num_select_lines < 1:
@@ -327,7 +327,7 @@ class Encoder(BasicElement):
         ...
         output line {num_output_lines}
     """
-    def __init__(self, id_: str, num_output_lines: int):
+    def __init__(self, id_, num_output_lines: int = 2):
         """Initialize an encoder with the number of output lines and id.
         """
         if num_output_lines < 1:
@@ -381,7 +381,7 @@ class Decoder(BasicElement):
         ...
         output line {num_input_lines**2}
     """
-    def __init__(self, id_: str, num_input_lines: int):
+    def __init__(self, id_, num_input_lines: int = 2):
         """Initialize a decoder with number of input lines and id.
         """
         if num_input_lines < 1:
