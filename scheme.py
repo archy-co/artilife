@@ -28,8 +28,9 @@ class Scheme:
     def __init__(self):
         self._elements = []
 
-    def add_element(self, element_type, element_id):
-        element_type_to_class_dct = {
+    def add_element(self, element_type, element_id, *spec_args):
+        packed_args = [arg for arg in spec_args if arg is not None]
+        elem_type_to_class_dct = {
             'multiplexer': elements.Multiplexer,
             'and': elements.AndGate,
             'or': elements.OrGate,
@@ -43,7 +44,7 @@ class Scheme:
         }
         if not self._validate_id(element_id):
             raise IdIsAlreadyTakenError(element_id)
-        new_element = element_type_to_class_dct[element_type](element_id, 2)
+        new_element = elem_type_to_class_dct[element_type](element_id, *packed_args)
 
         new_element.id = element_id
         self._elements.append(new_element)
@@ -126,7 +127,6 @@ class Scheme:
     def run(self):
         self._reset()
 
-
     def __iter__(self):
         return iter(self._elements)
 
@@ -137,4 +137,9 @@ class Scheme:
 
     def __str__(self):
         return str(self._elements)
+
+    def clear(self):
+        iter_elements = self._elements.copy()
+        for element in iter_elements:
+            self.delete_element(element.id)
 
