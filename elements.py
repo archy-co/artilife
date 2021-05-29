@@ -98,7 +98,7 @@ class BasicElement:
 
     def set_input_connection(self, connection: Connection):
         if connection.input_label not in self._ins:
-            raise ValueError("No such label in the labels of inputs.")
+            raise KeyError("No such label in the labels of inputs.")
         self._ins[connection.input_label] = connection
 
     def delete_input_connection(self, input_label: str):
@@ -106,11 +106,15 @@ class BasicElement:
 
     def set_output_connection(self, connection: Connection):
         if connection.output_label not in self._outs:
-            raise ValueError("No such label in the labels of outputs.")
+            raise KeyError("No such label in the labels of outputs.")
         self._outs[connection.output_label].append(connection)
 
     def delete_output_connection(self, output_label: str):
         self._outs[output_label] = []
+
+    @property
+    def id(self):
+        return self._id
 
     @property
     def value(self) -> dict:
