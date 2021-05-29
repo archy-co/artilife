@@ -1,13 +1,37 @@
 from schemdraw import logic
 import schemdraw
+from schemdraw import elements as sd_elem
 
+table_unit = 3
 
-d = schemdraw.Drawing()
-d.push()
-d += logic.And()
-d.pop()
-d += logic.Or()
-d.draw()
+# d = schemdraw.Drawing()
+# # d.push()
+# # cell_coordinates = (table_unit * 1, table_unit * 0.5)
+# # d += logic.And().at(cell_coordinates)
+# # d.pop()
+# # cell_coordinates = (table_unit * 0, table_unit * 0.5)
+# # # at() sets element beginning position
+# # d += logic.Or().at(cell_coordinates)
+# elems = {}
+# for i in range(10):
+#     cell_coordinates = (table_unit * i, table_unit * 0.5)
+#     elems[i] = d.add(logic.And().at(cell_coordinates))
+# 
+# elems[0].color('red')
+# elems[1].color('blue')
+# print(elems[0].__dict__, elems[1].__dict__, sep="\n")
+# line = sd_elem.Line().endpoints(elems[0].absanchors['out'],
+#                                 elems[1].absanchors['in1'])
+# line = d.add(line)
+# line.color('green')
+# 
+# d.pop()
+# 
+# d.add(sd_elem.CPE())
+# 
+# d.draw()
+
+# ------------------------------
 
 # d = schemdraw.Drawing()
 # d += logic.Line().length(d.unit/4).label('R', 'left')
@@ -34,33 +58,30 @@ d.draw()
 # d.draw()
 
 
-
-
 # first try
 
-# d = schemdraw.Drawing()
-#
-# and_start = logic.And(inputs=3, label='START')
-# and_final = logic.And(inputs=2, label='END').label(label='label', loc='bottom')
-#
-# print(and_final.__dict__)
-#
-# # and_start.anchor('out').at(and_final.anchors['in1'])
-#
-# and_final.anchor('out').at(and_start.anchors['in1'])
-# # and_final.anchor('in1').at(and_start.anchors['in2'])
-# # and_final.anchor('in2').at(and_start.anchors['in3'])
-#
-# # and_start.at(and_final.anchors['in1'])
-#
-# and_start.label(label='0', loc='out')
-#
-# d += and_final
-# d += and_start # .anchor('in1')
+d = schemdraw.Drawing()
+
+and_start = logic.And(inputs=3, label='START')
+and_final = logic.And(inputs=2, label='END').label(label='label', loc='bottom')
+
+print(and_final.__dict__)
+
+# and_start.anchor('out').at(and_final.anchors['in1'])
+
+and_final.anchor('out').at(and_start.anchors['in1'])
+# and_final.anchor('in1').at(and_start.anchors['in2'])
+# and_final.anchor('in2').at(and_start.anchors['in3'])
+
+# and_start.at(and_final.anchors['in1'])
+
+and_start.label(label='0', loc='out')
+
+d += and_final
+d += and_start # .anchor('in1')
 
 
-
-# d.draw(backend='matplotlib')
+d.draw(backend='matplotlib')
 
 # while True:
 #     inps = int(input("Enter num of inps: "))
