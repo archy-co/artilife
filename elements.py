@@ -14,6 +14,9 @@ You can use the following classes from this module:
 - Multiplexer
 - Encoder
 - Decoder
+- FullAdder
+- AdderSubtractor
+- RightShifter
 """
 
 
@@ -469,17 +472,17 @@ class AdderSubtractor(BasicElement):
         A0
         A1
         ...
-        A{num_bits}
+        A{num_bits-1}
         B0
         B1
         ...
-        B{num_bits}
+        B{num_bits-1}
         sub
     - output:
         S0
         S1
         ...
-        S{num_bits}
+        S{num_bits-1}
         Cout
     """
     def __init__(self, id_, num_bits: int = 4):
@@ -523,6 +526,65 @@ class AdderSubtractor(BasicElement):
 
     def reset_value(self):
         self._value = None
+
+
+class RightShifter(BasicElement):
+    """A class for right shifter element.
+    A right shifter element shifts bits by some number of bits that depends on which shift line is high.
+    In cases when several or zero shift lines are high, the element behaves according to the scheme it implements.
+    The following scheme is implemented in this class: images/schemes/right_shifter.png
+    Note that it is reasonable to use this element with a decoder.
+
+    The interface of a right shifter element is the following:
+    - input:
+        in0
+        in1
+        ...
+        in{num_bits-1}
+        shift_line0
+        shift_line1
+        ...
+        shift_line{num_bits-1}
+    - output:
+        out0
+        out1
+        ...
+        out{num_bits-1}
+    """
+    def __init__(self, id_, num_bits: int = 4):
+        """Initialize a right shifter element with the number of bits and id.
+        """
+        if num_bits < 2:
+            raise ValueError("Number of bits must be >= 2")
+        super().__init__(id_)
+        self._num_bits = num_bits
+        for i in range(num_bits):
+            self._ins[f'in{i}'] = None
+            self._ins[f'shift_line{i}'] = None
+            self._outs[f'out{i}'] = None
+        self._element_type = "SHIFTER " + str(num_bits)
+
+    def _read_input(self, base: str):
+        number = []
+        for i in range(self._num_bits):
+            number.append(self._read_input_value(base + str(i)))
+        return number
+
+    @property
+    def value(self):
+        if self._value is None:
+            self._value = {}
+            shift_by = self._read_input('shift_line')
+            to_shift = self._read_input('in')
+            for i in range(self._num_bits):
+                self._value[f"out{i}"] = False
+                for j in range(i+1):
+                    self._value[f"out{i}"] = self._value[f"out{i}"] or (to_shift[j] and shift_by[i])
+        return self._value
+
+    def reset_value(self):
+        self._value = None
+
 
 if __name__ == "__main__":
     constant = Constant("1", False)
