@@ -86,10 +86,12 @@ class BasicElement:
     reset_value()
         Forgets the previously calculated value
     """
-    def __init__(self):
+    def __init__(self, id_):
         self._ins = {}
         self._outs = {}
         self._value = None
+        self._id = id_
+        self._element_type = None
 
     def set_input_connection(self, connection: Connection):
         if connection.input_label not in self._ins:
@@ -104,7 +106,6 @@ class BasicElement:
             raise ValueError("No such label in the labels of outputs.")
         self._outs[connection.output_label].append(connection)
 
-
     def delete_output_connection(self, output_label: str):
         self._outs[output_label] = []
 
@@ -115,11 +116,23 @@ class BasicElement:
     def reset_value(self):
         pass
 
+    @property
+    def element_type(self):
+        return self._element_type
+
     def _read_input_value(self, input_label: str):
         connection = self._ins[input_label]
         if connection is None:
             return False
         return connection.source.value[connection.output_label]
+
+    @property
+    def outs(self):
+        return self._outs
+
+    @property
+    def ins(self):
+        return self._ins
 
 
 class BasicLogicGate(BasicElement):
@@ -138,13 +151,14 @@ class BasicLogicGate(BasicElement):
         out
     """
 
-    def __init__(self, num_inputs: int):
+    def __init__(self, id_, num_inputs: int):
         """Initialize an instance with num_inputs.
+        :id_: name or id of the element
         :num_inputs: the number of inputs of an element
         """
         if num_inputs < 2:
             raise ValueError("Number of inputs should be >= 2")
-        super().__init__()
+        super().__init__(id_)
         self._num_inputs = num_inputs
         for i in range(1, num_inputs+1):
             self._ins['in' + str(i)] = None
@@ -168,22 +182,37 @@ class BasicLogicGate(BasicElement):
 
 
 class AndGate(BasicLogicGate):
+    def __init__(self, id_, num_inputs=2):
+        super().__init__(id_, num_inputs)
+        self._element_type = "AND " + str(num_inputs)
     def _logic_of_element(self, *inputs):
         return functools.reduce(lambda a, b: a and b, inputs)
 
 class OrGate(BasicLogicGate):
+    def __init__(self, id_, num_inputs=2):
+        super().__init__(id_, num_inputs)
+        self._element_type = "OR " + str(num_inputs)
     def _logic_of_element(self, *inputs):
         return functools.reduce(lambda a, b: a or b, inputs)
 
 class XorGate(BasicLogicGate):
+    def __init__(self, id_, num_inputs=2):
+        super().__init__(id_, num_inputs)
+        self._element_type = "XOR " + str(num_inputs)
     def _logic_of_element(self, *inputs):
         return functools.reduce(lambda a, b: a != b, inputs)
 
 class NandGate(BasicLogicGate):
+    def __init__(self, id_, num_inputs=2):
+        super().__init__(id_, num_inputs)
+        self._element_type = "NAND " + str(num_inputs)
     def _logic_of_element(self, *inputs):
         return not functools.reduce(lambda a, b: a and b, inputs)
 
 class NorGate(BasicLogicGate):
+    def __init__(self, id_, num_inputs=2):
+        super().__init__(id_, num_inputs)
+        self._element_type = "NOR " + str(num_inputs)
     def _logic_of_element(self, *inputs):
         return not functools.reduce(lambda a, b: a or b, inputs)
 
@@ -195,10 +224,11 @@ class NotGate(BasicElement):
     - output:
         out
     """
-    def __init__(self):
-        super().__init__()
+    def __init__(self, id_):
+        super().__init__(id_)
         self._ins['in'] = None
         self._outs['out'] = []
+        self._element_type = "NOT"
 
     @property
     def value(self):
@@ -217,12 +247,13 @@ class Constant(BasicElement):
     - output:
         out
     """
-    def __init__(self, constant_value: bool):
-        """Initialize a constant with its value.
+    def __init__(self, id_, constant_value: bool = True):
+        """Initialize a constant with its value and id.
         """
-        super().__init__()
+        super().__init__(id_)
         self._constant_value = constant_value
         self._outs['out'] = []
+        self._element_type = "CONSTANT"
 
     @property
     def value(self):
@@ -249,18 +280,19 @@ class Multiplexer(BasicElement):
     - output:
         out
     """
-    def __init__(self, num_select_lines: int):
+    def __init__(self, id_, num_select_lines: int = 2):
         """Initialize a multiplexer with teh number of select lines.
         """
         if num_select_lines < 1:
             raise ValueError("Number of select lines must be >= 1")
-        super().__init__()
+        super().__init__(id_)
         self._num_select_lines = num_select_lines
         for i in range(1, num_select_lines+1):
             self._ins[f'select line {i}'] = None
         for i in range(1, 2**num_select_lines + 1):
             self._ins[f'input line {i}'] = None
         self._outs['out'] = None
+        self._element_type = "MULTIPLEXER " + str(num_select_lines)
 
     def _get_number_of_selected_line(self):
         base = "select line "
@@ -299,17 +331,18 @@ class Encoder(BasicElement):
         ...
         output line {num_output_lines}
     """
-    def __init__(self, num_output_lines: int):
-        """Initialize an encoder with the number of output lines.
+    def __init__(self, id_, num_output_lines: int = 2):
+        """Initialize an encoder with the number of output lines and id.
         """
         if num_output_lines < 1:
             raise ValueError("Number of output lines must be >= 1")
-        super().__init__()
+        super().__init__(id_)
         self._num_output_lines = num_output_lines
         for i in range(1, 2**num_output_lines + 1):
             self._ins[f'input line {i}'] = None
         for i in range(1, num_output_lines+1):
             self._outs[f'output line {i}'] = None
+        self._element_type = "ENCODER " + str(num_output_lines)
 
     def _input_lines_to_number(self):
         base = "input line "
@@ -352,17 +385,18 @@ class Decoder(BasicElement):
         ...
         output line {num_input_lines**2}
     """
-    def __init__(self, num_input_lines: int):
-        """Initialize a decoder with number of input lines.
+    def __init__(self, id_, num_input_lines: int = 2):
+        """Initialize a decoder with number of input lines and id.
         """
         if num_input_lines < 1:
             raise ValueError("Number of input lines must be >= 1")
-        super().__init__()
+        super().__init__(id_)
         self._num_input_lines = num_input_lines
         for i in range(1, num_input_lines + 1):
             self._ins[f'input line {i}'] = None
         for i in range(1, 2**num_input_lines+1):
             self._outs[f'output line {i}'] = None
+        self._element_type = "DECODER " + str(num_input_lines)
 
     def _input_lines_to_number(self):
         base = "input line "
@@ -381,12 +415,118 @@ class Decoder(BasicElement):
         return self._value
 
     def reset_value(self):
-        self._value = None        
+        self._value = None
 
+
+class FullAdder(BasicElement):
+    """A class for full adder element.
+    A full adder element calculates the sum of three bits (2 summands and 1 carry) and outputs the
+    sum and the resulting carry.
+
+    The interface of the full adder element is the following:
+    - input:
+        A
+        B
+        Cin
+    - output:
+        S
+        Cout
+    """
+    def __init__(self, id_):
+        """Initialize a full adder element with id.
+        """
+        super().__init__(id_)
+        self._ins['A'] = None
+        self._ins['B'] = None
+        self._ins['Cin'] = None
+        self._outs['S'] = None
+        self._outs['Cout'] = None
+        self._element_type = "FULLADDER"
+
+    @property
+    def value(self):
+        if self._value is None:
+            bitA = self._read_input_value("A")
+            bitB = self._read_input_value("B")
+            carry_in = self._read_input_value('Cin')
+
+            self._value = {'S': (bitA != bitB) != carry_in,
+                    'Cout': (bitA and bitB) or (bitA and carry_in) or (bitB and carry_in)}
+
+        return self._value
+
+    def reset_value(self):
+        self._value = None
+
+
+class AdderSubtractor(BasicElement):
+    """A class for adder-subtractor element.
+    An adder-subtractor element calculates the sum or the difference (based on the state of 'sub')
+    of two n-digit numbers.
+
+    The interface of an adder-subtractor element is the following:
+    - input:
+        A0
+        A1
+        ...
+        A{num_bits}
+        B0
+        B1
+        ...
+        B{num_bits}
+        sub
+    - output:
+        S0
+        S1
+        ...
+        S{num_bits}
+        Cout
+    """
+    def __init__(self, id_, num_bits: int = 4):
+        """Initialize an adder/subtractor element with number of bits and id.
+        """
+        if num_bits < 1:
+            raise ValueError("Number of bits must be >= 1")
+        super().__init__(id_)
+        self._num_bits = num_bits
+        for i in range(num_bits):
+            self._ins[f'A{i}'] = None
+            self._ins[f'B{i}'] = None
+        self._ins['sub'] = None
+        for i in range(2**num_bits):
+            self._outs[f'S{i}'] = None
+        self._outs['Cout'] = None
+        self._element_type = "ADDERSUBTRACTOR " + str(num_bits)
+
+    def _get_number(self, base, invert=False):
+        number = []
+        for i in range(self._num_bits):
+            val = self._read_input_value(base + str(i))
+            number.append(val != invert)
+        return number
+
+    @property
+    def value(self):
+        if self._value is None:
+            sub = self._read_input_value('sub')
+            number_A = self._get_number("A")
+            number_B = self._get_number("B", sub)
+
+            self._value = {}
+            carry = sub
+            for i in range(self._num_bits):
+                self._value["S" + str(i)] = (number_A[i] != number_B[i]) != carry
+                carry = (number_A[i] and number_B[i]) or (number_A[i] and carry) or (number_B[i] and carry)
+            self._value['Cout'] = carry
+
+        return self._value
+
+    def reset_value(self):
+        self._value = None
 
 if __name__ == "__main__":
-    constant = Constant(False)
-    or_gate = OrGate(num_inputs=2)
+    constant = Constant("1", False)
+    or_gate = OrGate("2", num_inputs=2)
 
     connection = Connection(constant, 'out', or_gate, 'in1')
     or_gate.set_input_connection(connection)
