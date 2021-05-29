@@ -8,14 +8,14 @@ from elements import Multiplexer, Encoder, Decoder, FullAdder, AdderSubtractor, 
 
 class TestElements(unittest.TestCase):
     def setUp(self):
-        self.true_constant = Constant("true constant", True)
-        self.false_constant = Constant("false constant", False)
-        self.and_gate = AndGate("and gate", 2)
-        self.or_gate = OrGate('or gate', 2)
+        self.true_constant = Constant("true constant", constant_value=True)
+        self.false_constant = Constant("false constant", constant_value=False)
+        self.and_gate = AndGate("and gate", num_inputs=2)
+        self.or_gate = OrGate('or gate', num_inputs=2)
         self.not_gate = NotGate('not gate')
-        self.xor_gate = XorGate('xor gate', 2)
-        self.nand_gate = NandGate('nand gate', 2)
-        self.nor_gate = NorGate('nor gate', 2)
+        self.xor_gate = XorGate('xor gate', num_inputs=2)
+        self.nand_gate = NandGate('nand gate', num_inputs=2)
+        self.nor_gate = NorGate('nor gate', num_inputs=2)
 
     def test_constant(self):
         self.assertEqual(self.true_constant.value['out'], True)
@@ -37,15 +37,15 @@ class TestElements(unittest.TestCase):
         self.and_gate.set_input_connection(connection)
         self.assertEqual(self.and_gate.value['out'], False)
 
-        self.assertEqual(self.and_gate.element_type, "AND 2")
+        self.assertEqual(self.and_gate.element_type, "AND")
 
     def test_multi_and(self):
         num_inputs = 1000
         multi_and = AndGate('and1', num_inputs=num_inputs)
         self.assertFalse(multi_and.value['out'])
-        self.assertEqual(multi_and.element_type, "AND 1000")
+        self.assertEqual(multi_and.element_type, "AND")
         for i in range(1, num_inputs+1):
-            constant = Constant(f'const{i}', True)
+            constant = Constant(f'const{i}', constant_value=True)
             connection = Connection(constant, 'out', multi_and, 'in' + str(i))
             constant.set_output_connection(connection)
             multi_and.set_input_connection(connection)
@@ -60,7 +60,7 @@ class TestElements(unittest.TestCase):
 
         self.assertEqual(multiplexer.value['out'], False)
 
-        constant = Constant('constant', True)
+        constant = Constant('constant', constant_value=True)
         connection = Connection(constant, 'out', multiplexer, 'input line 1')
         multiplexer.set_input_connection(connection)
         constant.set_output_connection(connection)
@@ -68,7 +68,7 @@ class TestElements(unittest.TestCase):
         multiplexer.reset_value()
         self.assertEqual(multiplexer.value['out'], True)
 
-        constant = Constant('constant', False)
+        constant = Constant('constant', constant_value=False)
         connection = Connection(constant, 'out', multiplexer, 'input line 2')
         multiplexer.set_input_connection(connection)
         constant.set_output_connection(connection)
@@ -76,7 +76,7 @@ class TestElements(unittest.TestCase):
         multiplexer.reset_value()
         self.assertEqual(multiplexer.value['out'], True)
 
-        constant = Constant('constant', True)
+        constant = Constant('constant', constant_value=True)
         connection = Connection(constant, 'out', multiplexer, 'select line 1')
         multiplexer.set_input_connection(connection)
         constant.set_output_connection(connection)
@@ -84,21 +84,21 @@ class TestElements(unittest.TestCase):
         multiplexer.reset_value()
         self.assertEqual(multiplexer.value['out'], False)
 
-        constant = Constant('constant', False)
+        constant = Constant('constant', constant_value=False)
         connection = Connection(constant, 'out', multiplexer, 'select line 1')
         multiplexer.set_input_connection(connection)
         constant.set_output_connection(connection)
 
         multiplexer.reset_value()
         self.assertEqual(multiplexer.value['out'], True)
-        self.assertEqual(multiplexer.element_type, "MULTIPLEXER 1")
+        self.assertEqual(multiplexer.element_type, "MULTIPLEXER")
 
     def test_encoder(self):
         encoder = Encoder('encoder', num_output_lines=1)
 
         self.assertEqual(encoder.value, {'output line 1': False})
 
-        constant = Constant('constant', True)
+        constant = Constant('constant', constant_value=True)
         connection = Connection(constant, 'out', encoder, 'input line 1')
         encoder.set_input_connection(connection)
         constant.set_output_connection(connection)
@@ -106,7 +106,7 @@ class TestElements(unittest.TestCase):
         encoder.reset_value()
         self.assertEqual(encoder.value, {'output line 1': False})
 
-        constant = Constant('constant', False)
+        constant = Constant('constant', constant_value=False)
         connection = Connection(constant, 'out', encoder, 'input line 1')
         encoder.set_input_connection(connection)
         constant.set_output_connection(connection)
@@ -114,7 +114,7 @@ class TestElements(unittest.TestCase):
         encoder.reset_value()
         self.assertEqual(encoder.value, {'output line 1': False})
 
-        constant = Constant('constant', True)
+        constant = Constant('constant', constant_value=True)
         connection = Connection(constant, 'out', encoder, 'input line 2')
         encoder.set_input_connection(connection)
         constant.set_output_connection(connection)
@@ -122,14 +122,14 @@ class TestElements(unittest.TestCase):
         encoder.reset_value()
         self.assertEqual(encoder.value, {'output line 1': True})
 
-        self.assertEqual(encoder.element_type, "ENCODER 1")
+        self.assertEqual(encoder.element_type, "ENCODER")
 
     def test_decoder(self):
         decoder = Decoder('decoder', num_input_lines=1)
 
         self.assertEqual(decoder.value, {'output line 1': True, 'output line 2': False})
 
-        constant = Constant('constant', True)
+        constant = Constant('constant', constant_value=True)
         connection = Connection(constant, 'out', decoder, 'input line 1')
         decoder.set_input_connection(connection)
         constant.set_output_connection(connection)
@@ -137,7 +137,7 @@ class TestElements(unittest.TestCase):
         decoder.reset_value()
         self.assertEqual(decoder.value, {'output line 1': False, 'output line 2': True})
 
-        constant = Constant('constant', False)
+        constant = Constant('constant', constant_value=False)
         connection = Connection(constant, 'out', decoder, 'input line 1')
         decoder.set_input_connection(connection)
         constant.set_output_connection(connection)
@@ -145,14 +145,14 @@ class TestElements(unittest.TestCase):
         decoder.reset_value()
         self.assertEqual(decoder.value, {'output line 1': True, 'output line 2': False})
 
-        self.assertEqual(decoder.element_type, "DECODER 1")
+        self.assertEqual(decoder.element_type, "DECODER")
 
     def test_fulladder(self):
         fullAdder = FullAdder('full adder 1')
 
         self.assertEqual(fullAdder.value, {'Cout': False, 'S': False})
 
-        constant = Constant("c1", True)
+        constant = Constant("c1", constant_value=True)
         connection = Connection(constant, 'out', fullAdder, 'A')
         constant.set_output_connection(connection)
         fullAdder.set_input_connection(connection)
@@ -160,7 +160,7 @@ class TestElements(unittest.TestCase):
         fullAdder.reset_value()
         self.assertEqual(fullAdder.value, {'Cout': False, 'S': True})
 
-        constant = Constant("c2", True)
+        constant = Constant("c2", constant_value=True)
         connection = Connection(constant, 'out', fullAdder, 'Cin')
         constant.set_output_connection(connection)
         fullAdder.set_input_connection(connection)
@@ -168,7 +168,7 @@ class TestElements(unittest.TestCase):
         fullAdder.reset_value()
         self.assertEqual(fullAdder.value, {'Cout': True, 'S': False})
 
-        constant = Constant("c3", True)
+        constant = Constant("c3", constant_value=True)
         connection = Connection(constant, 'out', fullAdder, 'B')
         constant.set_output_connection(connection)
         fullAdder.set_input_connection(connection)
@@ -177,11 +177,11 @@ class TestElements(unittest.TestCase):
         self.assertEqual(fullAdder.value, {'Cout': True, 'S': True})
 
     def test_addersubtractor(self):
-        addersubtractor = AdderSubtractor("Adder-subtractor1", 2)
+        addersubtractor = AdderSubtractor("Adder-subtractor1", num_bits=2)
 
         self.assertEqual(addersubtractor.value, {"S0": False, "S1": False, "Cout": False})
 
-        constant = Constant('c1', False)
+        constant = Constant('c1', constant_value=False)
         connection = Connection(constant, "out", addersubtractor, "A0")
         constant.set_output_connection(connection)
         addersubtractor.set_input_connection(connection)
@@ -189,7 +189,7 @@ class TestElements(unittest.TestCase):
         addersubtractor.reset_value()
         self.assertEqual(addersubtractor.value, {"S0": False, "S1": False, "Cout": False})
 
-        constant = Constant('c1', True)
+        constant = Constant('c1', constant_value=True)
         connection = Connection(constant, "out", addersubtractor, "B1")
         constant.set_output_connection(connection)
         addersubtractor.set_input_connection(connection)
@@ -198,7 +198,7 @@ class TestElements(unittest.TestCase):
         addersubtractor.reset_value()
         self.assertEqual(addersubtractor.value, {"S0": False, "S1": True, "Cout": False})
 
-        constant = Constant('c1', True)
+        constant = Constant('c1', constant_value=True)
         connection = Connection(constant, "out", addersubtractor, "sub")
         constant.set_output_connection(connection)
         addersubtractor.set_input_connection(connection)
@@ -210,7 +210,7 @@ class TestElements(unittest.TestCase):
         right_shifter = RightShifter(id_="rightShifter1", num_bits=2)
         self.assertEqual(right_shifter.value, {'out0': False, 'out1': False})
 
-        constant = Constant('c1', True)
+        constant = Constant('c1', constant_value=True)
         connection = Connection(constant, 'out', right_shifter, 'shift_line0')
         constant.set_output_connection(connection)
         right_shifter.set_input_connection(connection)
@@ -218,7 +218,7 @@ class TestElements(unittest.TestCase):
         right_shifter.reset_value()
         self.assertEqual(right_shifter.value, {'out0': False, 'out1': False})
 
-        constant = Constant('c2', True)
+        constant = Constant('c2', constant_value=True)
         connection = Connection(constant, 'out', right_shifter, 'in0')
         constant.set_output_connection(connection)
         right_shifter.set_input_connection(connection)
@@ -226,7 +226,7 @@ class TestElements(unittest.TestCase):
         right_shifter.reset_value()
         self.assertEqual(right_shifter.value, {'out0': True, 'out1': False})
 
-        constant = Constant('c3', True)
+        constant = Constant('c3', constant_value=True)
         connection = Connection(constant, 'out', right_shifter, 'shift_line1')
         constant.set_output_connection(connection)
         right_shifter.set_input_connection(connection)
@@ -237,7 +237,7 @@ class TestElements(unittest.TestCase):
         constant.delete_output_connection('out')
         right_shifter.delete_input_connection('shift_line0')
 
-        constant = Constant('c4', False)
+        constant = Constant('c4', constant_value=False)
         connection = Connection(constant, 'out', right_shifter, 'shift_line0')
         constant.set_output_connection(connection)
         right_shifter.set_input_connection(connection)

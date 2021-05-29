@@ -193,35 +193,35 @@ class BasicLogicGate(BasicElement):
 
 
 class AndGate(BasicLogicGate):
-    def __init__(self, id_, position, num_inputs=2):
+    def __init__(self, id_, position=None, num_inputs=2):
         super().__init__(id_, position, num_inputs)
         self._element_type = "AND"
     def _logic_of_element(self, *inputs):
         return functools.reduce(lambda a, b: a and b, inputs)
 
 class OrGate(BasicLogicGate):
-    def __init__(self, id_, position, num_inputs=2):
+    def __init__(self, id_, position=None, num_inputs=2):
         super().__init__(id_, position, num_inputs)
         self._element_type = "OR"
     def _logic_of_element(self, *inputs):
         return functools.reduce(lambda a, b: a or b, inputs)
 
 class XorGate(BasicLogicGate):
-    def __init__(self, id_, position, num_inputs=2):
+    def __init__(self, id_, position=None, num_inputs=2):
         super().__init__(id_, position, num_inputs)
         self._element_type = "XOR"
     def _logic_of_element(self, *inputs):
         return functools.reduce(lambda a, b: a != b, inputs)
 
 class NandGate(BasicLogicGate):
-    def __init__(self, id_, position, num_inputs=2):
+    def __init__(self, id_, position=None, num_inputs=2):
         super().__init__(id_, position, num_inputs)
         self._element_type = "NAND"
     def _logic_of_element(self, *inputs):
         return not functools.reduce(lambda a, b: a and b, inputs)
 
 class NorGate(BasicLogicGate):
-    def __init__(self, id_, position, num_inputs=2):
+    def __init__(self, id_, position=None, num_inputs=2):
         super().__init__(id_, position, num_inputs)
         self._element_type = "NOR"
     def _logic_of_element(self, *inputs):
@@ -235,7 +235,7 @@ class NotGate(BasicElement):
     - output:
         out
     """
-    def __init__(self, id_, position):
+    def __init__(self, id_, position=None):
         super().__init__(id_, position)
         self._ins['in'] = None
         self._outs['out'] = []
@@ -258,7 +258,7 @@ class Constant(BasicElement):
     - output:
         out
     """
-    def __init__(self, id_, position, constant_value: bool = True):
+    def __init__(self, id_, position=None, constant_value: bool = True):
         """Initialize a constant with its value and id.
         """
         super().__init__(id_, position)
@@ -291,7 +291,7 @@ class Multiplexer(BasicElement):
     - output:
         out
     """
-    def __init__(self, id_, position, num_select_lines: int = 2):
+    def __init__(self, id_, position=None, num_select_lines: int = 2):
         """Initialize a multiplexer with teh number of select lines.
         """
         if num_select_lines < 1:
@@ -342,7 +342,7 @@ class Encoder(BasicElement):
         ...
         output line {num_output_lines}
     """
-    def __init__(self, id_, position, num_output_lines: int = 2):
+    def __init__(self, id_, position=None, num_output_lines: int = 2):
         """Initialize an encoder with the number of output lines and id.
         """
         if num_output_lines < 1:
@@ -396,7 +396,7 @@ class Decoder(BasicElement):
         ...
         output line {num_input_lines**2}
     """
-    def __init__(self, id_, position, num_input_lines: int = 2):
+    def __init__(self, id_, position=None, num_input_lines: int = 2):
         """Initialize a decoder with number of input lines and id.
         """
         if num_input_lines < 1:
@@ -443,10 +443,10 @@ class FullAdder(BasicElement):
         S
         Cout
     """
-    def __init__(self, id_, position):
+    def __init__(self, id_, position=None):
         """Initialize a full adder element with id.
         """
-        super().__init__(id_, position)
+        super().__init__(id_, position=position)
         self._ins['A'] = None
         self._ins['B'] = None
         self._ins['Cin'] = None
@@ -493,7 +493,7 @@ class AdderSubtractor(BasicElement):
         S{num_bits-1}
         Cout
     """
-    def __init__(self, id_, position, num_bits: int = 4):
+    def __init__(self, id_, position=None, num_bits: int = 4):
         """Initialize an adder/subtractor element with number of bits and id.
         """
         if num_bits < 1:
@@ -559,18 +559,18 @@ class RightShifter(BasicElement):
         ...
         out{num_bits-1}
     """
-    def __init__(self, id_, num_bits: int = 4):
+    def __init__(self, id_, position=None, num_bits: int = 4):
         """Initialize a right shifter element with the number of bits and id.
         """
         if num_bits < 2:
             raise ValueError("Number of bits must be >= 2")
-        super().__init__(id_)
+        super().__init__(id_, position=position)
         self._num_bits = num_bits
         for i in range(num_bits):
             self._ins[f'in{i}'] = None
             self._ins[f'shift_line{i}'] = None
             self._outs[f'out{i}'] = None
-        self._element_type = "SHIFTER " + str(num_bits)
+        self._element_type = "SHIFTER"
 
     def _read_input(self, base: str):
         number = []
@@ -595,7 +595,7 @@ class RightShifter(BasicElement):
 
 
 if __name__ == "__main__":
-    constant = Constant("1", False)
+    constant = Constant("1", constant_value=False)
     or_gate = OrGate("2", num_inputs=2)
 
     connection = Connection(constant, 'out', or_gate, 'in1')
