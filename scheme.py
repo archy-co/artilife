@@ -46,7 +46,6 @@ class Scheme:
             raise IdIsAlreadyTakenError(element_id)
         new_element = elem_type_to_class_dct[element_type](element_id, position, **kwargs)
 
-        new_element.id = element_id
         self._elements[element_id] = new_element
 
     def _validate_id(self, id: str) -> bool:
