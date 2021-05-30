@@ -20,6 +20,21 @@ class NoSuchInputLabelError(Exception):
         self.message = f'There\'s no <{input_label}> input label'
         super().__init__(self.message)
 
+class InputIsTakenError(Exception):
+    '''
+    This exception is raised in Scheme _validate_connection method when user tries
+    to connect new element to already taken input of the existing element.
+
+    This is not fatal Error, but user may have option to be informed about this
+    occasion and may have an opporunity to tackle it.
+
+    Also this exception can be handled without user interference, ignoring this
+    exception it in main module
+    '''
+    def __init__(self, input_label):
+        self.message = f'Input <{input_label}> is already taken'
+        super().__init__(self.message)
+
 
 class Scheme:
     '''
@@ -73,7 +88,7 @@ class Scheme:
         destination = self._elements[destination_id]
 
         connection = elements.Connection(source, output_label, destination, input_label)
-        # self._validate_connection(connection)
+        self._validate_connection(connection)
 
         try:
             source.set_output_connection(connection)
@@ -85,6 +100,9 @@ class Scheme:
         except KeyError:
             raise NoSuchInputLabelError(input_label)
 
+    def _validate_connection(self, connection):
+        if connection.destination.ins[connection.input_label]:
+            raise InputIsTakenError(connection.input_label)
 
     def delete_element(self, element_id: str):
         '''
@@ -117,9 +135,6 @@ class Scheme:
         '''
         source.delete_output_connection(output_label)
         destination.delete_input_connection(input_label)
-
-    def _validate_connection(self):
-        raise NotImplementedError
 
     def run(self):
         self._reset()
