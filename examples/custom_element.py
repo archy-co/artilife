@@ -2,32 +2,21 @@ from schemdraw import logic
 import schemdraw
 from schemdraw import elements as elm
 
-# d = schemdraw.Drawing()
-#
-# and_start = logic.And(inputs=3, label='START')
-# and_final = logic.And(inputs=2, label='END')
-#
-# # print(and_final.__dict__)
-#
-# and_start.anchor('out').at(and_final.anchors['in1'])
-# and_start.anchor('out').at(and_final.anchors['in2'])
-#
-# and_final.label(label='0', loc='out')
-#
-# d += and_final
-# d += and_start
+d = schemdraw.Drawing()
 
-# d.draw(backend='matplotlib')
+kwargs = {}
+kwargs['pins'] = []
+num_output_lines = 4
+for i in range(1, num_output_lines + 1):
+    kwargs['pins'].append(sd_elem.IcPin(name=f'out{i}', anchorname=f'output line {i}', side='right'))
+for i in range(1, 2 ** num_output_lines + 1):
+    kwargs['pins'].append(sd_elem.IcPin(name=f'in{i}', anchorname=f'input line {i}', side='left'))
+JK = elm.Ic(pins=[elm.IcPin(name='>', side='left'),
+                  elm.IcPin(name='K', side='left'),
+                  elm.IcPin(name='J', side='left'),
+                  elm.IcPin(name='$\overline{Q}$', side='right', anchorname='QBAR'),
+                  elm.IcPin(name='Q', pin='15', side='right')])
 
-d1 = schemdraw.Drawing()
-d1 += elm.Resistor()
-d1.push()
-d1 += elm.Capacitor().down()
-d1 += elm.Line().left()
-d1.pop()
+d.add(JK)
 
-d2 = schemdraw.Drawing()   # Add a second drawing
-for i in range(3):
-    d2 += elm.ElementDrawing(d1)   # Add the first drawing to it 3 times
-d2.draw(backend='matplotlib')
-
+d.draw()

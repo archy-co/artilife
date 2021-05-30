@@ -41,6 +41,9 @@ class Scheme:
             'constant': elements.Constant,
             'decoder': elements.Decoder,
             'encoder': elements.Encoder,
+            'fulladder': elements.FullAdder,
+            'addersubtractor': elements.AdderSubtractor,
+            'shifter': elements.RightShifter
         }
         if not self._validate_id(element_id):
             raise IdIsAlreadyTakenError(element_id)

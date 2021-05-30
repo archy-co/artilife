@@ -314,6 +314,10 @@ class Multiplexer(BasicElement):
         return selected_line + 1
 
     @property
+    def number_select_lines(self):
+        return self._num_select_lines
+
+    @property
     def value(self):
         if self._value is None:
             needed_input = 'input line ' + str(self._get_number_of_selected_line())
@@ -361,6 +365,10 @@ class Encoder(BasicElement):
             if self._read_input_value(base + str(i+1)):
                 return i
         return -1
+
+    @property
+    def number_output_lines(self):
+        return self._num_output_lines
 
     @property
     def value(self):
@@ -416,6 +424,10 @@ class Decoder(BasicElement):
             if self._read_input_value(base + str(i+1)):
                 number += 2**i
         return number + 1
+
+    @property
+    def number_input_lines(self):
+        return self._num_input_lines
 
     @property
     def value(self):
@@ -504,7 +516,7 @@ class AdderSubtractor(BasicElement):
             self._ins[f'A{i}'] = None
             self._ins[f'B{i}'] = None
         self._ins['sub'] = None
-        for i in range(2**num_bits):
+        for i in range(num_bits):
             self._outs[f'S{i}'] = None
         self._outs['Cout'] = None
         self._element_type = "ADDERSUBTRACTOR"
@@ -515,6 +527,10 @@ class AdderSubtractor(BasicElement):
             val = self._read_input_value(base + str(i))
             number.append(val != invert)
         return number
+
+    @property
+    def number_bits(self):
+        return self._num_bits
 
     @property
     def value(self):
@@ -577,6 +593,10 @@ class RightShifter(BasicElement):
         for i in range(self._num_bits):
             number.append(self._read_input_value(base + str(i)))
         return number
+
+    @property
+    def number_bits(self):
+        return self._num_bits
 
     @property
     def value(self):

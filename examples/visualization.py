@@ -67,25 +67,15 @@ and_final = logic.And(inputs=2, label='END').label(label='label', loc='bottom')
 
 print(and_final.__dict__)
 
-# and_start.anchor('out').at(and_final.anchors['in1'])
-
 and_final.anchor('out').at(and_start.anchors['in1'])
-# and_final.anchor('in1').at(and_start.anchors['in2'])
-# and_final.anchor('in2').at(and_start.anchors['in3'])
 
-# and_start.at(and_final.anchors['in1'])
 
-and_start.label(label='0', loc='out')
 
 d += and_final
-d += and_start # .anchor('in1')
+and_start = d.add(and_start)
 
+# don't work because can't change labels after set to drawing
+and_start.label(label='0', loc='out')
+and_start.color('red')
 
 d.draw(backend='matplotlib')
-
-# while True:
-#     inps = int(input("Enter num of inps: "))
-#     d += logic.And(inputs=inps)
-#     d.draw(backend='matplotlib')
-
-# d.save('schematic.svg')
