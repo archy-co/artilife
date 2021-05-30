@@ -607,7 +607,7 @@ class RightShifter(BasicElement):
             for i in range(self._num_bits):
                 self._value[f"out{i}"] = False
                 for j in range(i+1):
-                    self._value[f"out{i}"] = self._value[f"out{i}"] or (to_shift[j] and shift_by[i])
+                    self._value[f"out{i}"] = self._value[f"out{i}"] or (to_shift[i-j] and shift_by[j])
         return self._value
 
     def reset_value(self):

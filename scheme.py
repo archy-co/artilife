@@ -155,8 +155,7 @@ class Scheme:
 
     def _reset(self):
         for element in self._elements.values():
-            if isinstance(element, elements.BasicLogicGate):
-                element.reset_value()
+            element.reset_value()
 
     def __str__(self):
         return str(list(self._elements.items()))

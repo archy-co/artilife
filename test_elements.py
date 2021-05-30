@@ -245,6 +245,58 @@ class TestElements(unittest.TestCase):
         right_shifter.reset_value()
         self.assertEqual(right_shifter.value, {'out0': False, 'out1': True})
 
+    def test_right_shifter4(self):
+            right_shifter = RightShifter(id_="rightShifter1")
+            self.assertEqual(right_shifter.value, {'out0': False, 'out1': False, 'out2': False, 'out3': False})
+
+            constant = Constant('c1', constant_value=True)
+            connection = Connection(constant, 'out', right_shifter, 'shift_line1')
+            constant.set_output_connection(connection)
+            right_shifter.set_input_connection(connection)
+
+            right_shifter.reset_value()
+            self.assertEqual(right_shifter.value, {'out0': False, 'out1': False, 'out2': False, 'out3': False})
+
+            constant = Constant('c2', constant_value=True)
+            connection = Connection(constant, 'out', right_shifter, 'in3')
+            constant.set_output_connection(connection)
+            right_shifter.set_input_connection(connection)
+
+            right_shifter.reset_value()
+            self.assertEqual(right_shifter.value, {'out0': False, 'out1': False, 'out2': False, 'out3': False})
+
+            constant = Constant('c3', constant_value=True)
+            connection = Connection(constant, 'out', right_shifter, 'in2')
+            constant.set_output_connection(connection)
+            right_shifter.set_input_connection(connection)
+
+            right_shifter.reset_value()
+            self.assertEqual(right_shifter.value, {'out0': False, 'out1': False, 'out2': False, 'out3': True})
+
+            constant = Constant('c4', constant_value=True)
+            connection = Connection(constant, 'out', right_shifter, 'in2')
+            constant.set_output_connection(connection)
+            right_shifter.set_input_connection(connection)
+
+            right_shifter.reset_value()
+            self.assertEqual(right_shifter.value, {'out0': False, 'out1': False, 'out2': False, 'out3': True})
+
+            constant = Constant('c5', constant_value=True)
+            connection = Connection(constant, 'out', right_shifter, 'in0')
+            constant.set_output_connection(connection)
+            right_shifter.set_input_connection(connection)
+
+            right_shifter.reset_value()
+            self.assertEqual(right_shifter.value, {'out0': False, 'out1': True, 'out2': False, 'out3': True})
+
+            constant = Constant('c6', constant_value=True)
+            connection = Connection(constant, 'out', right_shifter, 'shift_line3')
+            constant.set_output_connection(connection)
+            right_shifter.set_input_connection(connection)
+
+            right_shifter.reset_value()
+            self.assertEqual(right_shifter.value, {'out0': False, 'out1': True, 'out2': False, 'out3': True})
+
 
 if __name__ == "__main__":
     unittest.main()
