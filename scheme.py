@@ -125,14 +125,14 @@ class Scheme:
         except KeyError as keyerror:
             raise NoSuchOutputLabelError(output_label) from keyerror
 
-        try:
-            destination.set_input_connection(connection)
-        except KeyError as keyerror:
-            raise NoSuchInputLabelError(input_label) from keyerror
+        destination.set_input_connection(connection)
 
     def _validate_connection(self, connection: elements.Connection):
-        if connection.destination.ins[connection.input_label]:
-            raise InputIsTakenError(connection.input_label)
+        try:
+            if connection.destination.ins[connection.input_label]:
+                raise InputIsTakenError(connection.input_label)
+        except KeyError as keyerror:
+            raise NoSuchInputLabelError(connection.input_label) from keyerror
 
     def delete_element(self, element_id: str) -> elements.BasicElement:
         '''
@@ -190,6 +190,9 @@ class Scheme:
         return str(list(self._elements.items()))
 
     def clear(self):
+        '''
+        Deletes all elements from scheme and their connections
+        '''
         iter_elements = self._elements.copy()
         for elem_id in iter_elements.keys():
             self.delete_element(elem_id)

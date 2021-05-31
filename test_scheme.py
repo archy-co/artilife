@@ -1,9 +1,12 @@
+'''
+Test module for Scheme
+'''
+import unittest
 from scheme import Scheme
 from scheme import IdIsAlreadyTakenError
 from scheme import NoSuchOutputLabelError
 from scheme import NoSuchInputLabelError
 from scheme import NoSuchIdError
-import unittest
 
 
 class TestScheme(unittest.TestCase):
@@ -17,6 +20,8 @@ class TestScheme(unittest.TestCase):
         self.assertTrue(len(self.scheme._elements) == 2)
         self.scheme.delete_element(1)
         self.assertRaises(NoSuchIdError, self.scheme.delete_element, 1)
+
+        self.assertRaises(IdIsAlreadyTakenError, self.scheme.add_element, 'and', 2, (4, 1))
         self.assertTrue(len(self.scheme._elements) == 1)
         self.scheme.add_element('constant', 1, position=(1, 2))
 
@@ -27,6 +32,7 @@ class TestScheme(unittest.TestCase):
         self.scheme.add_element('constant', 4, False)
         elem4 = self.scheme._elements[4]
         self.assertFalse(elem3.value['out'])
+        self.assertEqual(len(list(self.scheme.__iter__())), 4)
 
     def test_connections(self):
         self.scheme.add_element('constant', 1, position=(1, 1))
@@ -37,6 +43,8 @@ class TestScheme(unittest.TestCase):
         self.assertEqual(elem1.outs[list(elem1.outs.keys())[0]], [])
         self.assertIsNone(elem2.ins['in1'])
 
+        self.assertRaises(NoSuchOutputLabelError, self.scheme.add_connection, 1, 'out1', 2, 'in2')
+        self.assertRaises(NoSuchInputLabelError, self.scheme.add_connection, 1, 'out', 2, 'in5')
         self.scheme.add_connection(1, 'out', 2, 'in1')
 
         self.assertNotEqual(elem1.outs[list(elem1.outs.keys())[0]], [])
@@ -65,6 +73,17 @@ class TestScheme(unittest.TestCase):
         self.assertEqual(elem1.outs[list(elem1.outs.keys())[0]], [])
         self.assertIsNone(elem2.ins['in1'])
         self.assertTrue(len(self.scheme._elements) == 0)
+
+        # delete unexisting connection
+        self.scheme.add_element('constant', 1, position=(4, 2))
+        self.scheme.add_element('xor', 2, position=(5, 2))
+        t_elem1 = self.scheme._elements[1]
+        t_elem2 = self.scheme._elements[2]
+
+        self.assertEqual(t_elem1.outs['out'], [])
+        self.scheme.delete_connection(t_elem1, 'out', t_elem2, 'in1')
+        self.assertEqual(t_elem1.outs['out'], [])
+
 
     def test_run(self):
         self.scheme.add_element('constant', 1, constant_value=True, position=(1, 1))
