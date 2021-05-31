@@ -78,6 +78,10 @@ class BasicElement:
     position: tuple
         Cell that element posses on separated square.
         First cell has position (1, 1)
+    outs: dict
+        outputs of the element
+    ins: dict
+        inputs of the element
 
     Methods
     -------

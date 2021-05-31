@@ -152,7 +152,7 @@ class Scheme:
         for _in in element.ins:
             in_connection = element.ins[_in]
             if in_connection is None:
-                break
+                continue
             in_connection.source.delete_output_connection(in_connection.output_label)
             in_connection.destination.delete_input_connection(in_connection.input_label)
 
