@@ -1,13 +1,27 @@
+'''
+scheme.py
+
+Implements Scheme class and related exceptions
+'''
+
+from typing import Tuple
 import elements
 
 class IdIsAlreadyTakenError(Exception):
-    def __init__(self, id):
-        self.message = f'ID <{id}> is already taken'
+    '''
+    This exception is raised in Scheme add_element method if the id argument
+    for this method is already taken by another element in the scheme
+    '''
+    def __init__(self, id_):
+        self.message = f'ID <{id_}> is already taken'
         super().__init__(self.message)
 
 class NoSuchIdError(Exception):
-    def __init__(self, id):
-        self.message = f'There\'s no element with ID <{id}>'
+    '''
+    This exception is raised when scheme element is being accessed with non-existent id
+    '''
+    def __init__(self, id_):
+        self.message = f'There\'s no element with ID <{id_}>'
         super().__init__(self.message)
 
 class NoSuchOutputLabelError(Exception):
@@ -35,6 +49,15 @@ class InputIsTakenError(Exception):
         self.message = f'Input <{input_label}> is already taken'
         super().__init__(self.message)
 
+class WrongElementTypeError(Exception):
+    '''
+    This exception is raised when specified element type represented by str does not
+    match any class, so it can not be created
+    '''
+    def __init__(self, element_type):
+        self.message = f'Element type <{element_type}> is does not exist or is not supported'
+        super().__init__(self.message)
+
 
 class Scheme:
     '''
@@ -43,8 +66,11 @@ class Scheme:
     def __init__(self):
         self._elements = {}
 
-    def add_element(self, element_type, element_id, position, **kwargs):
-        # packed_args = [arg for arg in spec_args if arg is not None]
+    def add_element(self, element_type: str, element_id: str, position: Tuple[int], **kwargs):
+        '''
+        Validates element_id and element_type, then if they are valid,
+        adds new element to the scheme at specified position
+        '''
         elem_type_to_class_dct = {
             'multiplexer': elements.Multiplexer,
             'and': elements.AndGate,
@@ -62,18 +88,22 @@ class Scheme:
         }
         if not self._validate_id(element_id):
             raise IdIsAlreadyTakenError(element_id)
-        new_element = elem_type_to_class_dct[element_type](element_id, position, **kwargs)
+
+        try:
+            new_element = elem_type_to_class_dct[element_type](element_id, position, **kwargs)
+        except KeyError as keyerror:
+            raise WrongElementTypeError(element_type) from keyerror
 
         self._elements[element_id] = new_element
 
-    def _validate_id(self, id: str) -> bool:
+    def _validate_id(self, id_: str) -> bool:
         '''
         Checks if the <id> is already assigned to an element in <self._elements> (there is
         an element with such id as key in the self._elements dictionary)
         Return:  True if id is available
                  False if id is already taken
         '''
-        return False if id in self._elements.keys() else True
+        return not id_ in self._elements.keys()
 
     def add_connection(self, source_id, output_label, destination_id, input_label):
         '''
@@ -92,19 +122,19 @@ class Scheme:
 
         try:
             source.set_output_connection(connection)
-        except KeyError:
-            raise NoSuchOutputLabelError(output_label)
+        except KeyError as keyerror:
+            raise NoSuchOutputLabelError(output_label) from keyerror
 
         try:
             destination.set_input_connection(connection)
-        except KeyError:
-            raise NoSuchInputLabelError(input_label)
+        except KeyError as keyerror:
+            raise NoSuchInputLabelError(input_label) from keyerror
 
-    def _validate_connection(self, connection):
+    def _validate_connection(self, connection: elements.Connection):
         if connection.destination.ins[connection.input_label]:
             raise InputIsTakenError(connection.input_label)
 
-    def delete_element(self, element_id: str):
+    def delete_element(self, element_id: str) -> elements.BasicElement:
         '''
         Deletes element from scheme with all conections. Corresponding connections
         of connected elements are set to None
@@ -128,8 +158,8 @@ class Scheme:
 
         self._elements.pop(element_id)
 
-    def delete_connection(self, source: elements.BasicElement, output_label,
-                           destination: elements.BasicElement, input_label):
+    def delete_connection(self, source: elements.BasicElement, output_label:str,
+                            destination: elements.BasicElement, input_label:str):
         '''
         Deletes connection between elements by deliting source output and destination input
         '''
@@ -142,7 +172,6 @@ class Scheme:
         for element in self._elements.values():
             for out in element.outs:
                 if not element.outs[out]:
-                    # results[element.id] = results.get(element.id, []) + [element.value]
                     if element.id in results:
                         results[element.id][out] = element.value[out]
                     else:
