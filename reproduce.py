@@ -1,5 +1,5 @@
 '''
-Experimentatoin module
+Experimentation module
 
 Represents scheme from #1 (https://github.com/archy-co/l4logic/issues/1)
 '''
@@ -22,8 +22,8 @@ const1 = scheme1[1]
 const0 = scheme1[2]
 xor1 = scheme1[3]
 xor2 = scheme1[4]
-xot1 = scheme1[5]
-xot2 = scheme1[6]
+not1 = scheme1[5]
+not2 = scheme1[6]
 
 scheme1.add_connection(1, 'out', 3, 'in1')
 scheme1.add_connection(2, 'out', 4, 'in1')
