@@ -2,6 +2,7 @@ import unittest
 
 from elements import Connection
 from elements import Constant
+from elements import BasicLogicGate
 from elements import AndGate, OrGate, NotGate, XorGate, NandGate, NorGate
 from elements import Multiplexer, Encoder, Decoder, FullAdder, AdderSubtractor, RightShifter
 
@@ -38,6 +39,68 @@ class TestElements(unittest.TestCase):
         self.assertEqual(self.and_gate.value['out'], False)
 
         self.assertEqual(self.and_gate.element_type, "AND")
+
+    @staticmethod
+    def _create_element_with_constants(type_, constants):
+        """Helper method
+        type_ must be a class which inherits from BasicLogicGate.
+        constants must be a list of boolean values.
+        """
+        element = type_(id_="1", num_inputs=len(constants))
+        for idx, val in enumerate(constants):
+            constant = Constant("c"+str(idx), constant_value=val)
+            conn = Connection(constant, 'out', element, 'in' + str(idx+1))
+            constant.set_output_connection(conn)
+            element.set_input_connection(conn)
+        return element
+
+    def test_or(self):
+        el = self._create_element_with_constants(OrGate, [True, False, True, True, False, False])
+        self.assertEqual(el.value, {'out': True})
+        el = self._create_element_with_constants(OrGate, [False, False, False])
+        self.assertEqual(el.value, {'out': False})
+
+    def test_xor(self):
+        el = self._create_element_with_constants(XorGate, [False, False, False])
+        self.assertEqual(el.value, {'out': False})
+        el = self._create_element_with_constants(XorGate, [True, False, False])
+        self.assertEqual(el.value, {'out': True})
+        el = self._create_element_with_constants(XorGate, [True, True, False])
+        self.assertEqual(el.value, {'out': False})
+        el = self._create_element_with_constants(XorGate, [True, True, False])
+        self.assertEqual(el.value, {'out': False})
+
+    def test_nand(self):
+        el = self._create_element_with_constants(NandGate, [False, True])
+        self.assertEqual(el.value, {'out': True})
+        el = self._create_element_with_constants(NandGate, [False, False, False])
+        self.assertEqual(el.value, {'out': True})
+        el = self._create_element_with_constants(NandGate, [True, False, False])
+        self.assertEqual(el.value, {'out': True})
+        el = self._create_element_with_constants(NandGate, [True] * 1000)
+        self.assertEqual(el.value, {'out': False})
+
+    def test_nor(self):
+        el = self._create_element_with_constants(NorGate, [False, True])
+        self.assertEqual(el.value, {'out': False})
+        el = self._create_element_with_constants(NorGate, [False, False, False])
+        self.assertEqual(el.value, {'out': True})
+        el = self._create_element_with_constants(NorGate, [True, False, False])
+        self.assertEqual(el.value, {'out': False})
+        el = self._create_element_with_constants(NorGate, [False] * 1000)
+        self.assertEqual(el.value, {'out': True})
+
+    def test_not(self):
+        not_gate = NotGate("not_gate0")
+        self.assertEqual(not_gate.value, {'out': True})
+
+        constant = Constant("c0", constant_value=True)
+        connection = Connection(constant, "out", not_gate, "in")
+        constant.set_output_connection(connection)
+        not_gate.set_input_connection(connection)
+
+        not_gate.reset_value()
+        self.assertEqual(not_gate.value, {'out': False})
 
     def test_multi_and(self):
         num_inputs = 1000

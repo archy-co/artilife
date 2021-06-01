@@ -17,6 +17,7 @@ You can use the following classes from this module:
 - FullAdder
 - AdderSubtractor
 - RightShifter
+- SRFlipFlop
 """
 
 
@@ -248,7 +249,7 @@ class NotGate(BasicElement):
     @property
     def value(self):
         if self._value is None:
-            self._value = self._read_input_value('in')
+            self._value = not self._read_input_value('in')
         return {'out': self._value}
 
     def reset_value(self):
@@ -612,6 +613,61 @@ class RightShifter(BasicElement):
                 self._value[f"out{i}"] = False
                 for j in range(i+1):
                     self._value[f"out{i}"] = self._value[f"out{i}"] or (to_shift[i-j] and shift_by[j])
+        return self._value
+
+    def reset_value(self):
+        self._value = None
+
+
+class SRFlipFlop(BasicElement):
+    """A class for SR flip-flop element.
+    An SR flip-flop can store a single bit.
+
+    If both S and R inputs are off, the output of the element is a bit that is stored.
+    If S is on and R is off, then the "1" bit is written to the "memory" and the output is high.
+    If S is off and R is on, then the "0" bit is written to the "memory" and the output is low.
+    If both S and R inputs are on, then the value of written bit is set randomly to either 0 or 1, but the output will be low.
+
+    The interface of a right shifter element is the following:
+    - input:
+        S
+        R
+    - output:
+        Q
+    """
+    def __init__(self, position=None, *, init_state: bool = None):
+        """Initialize an SR flipflop element with, optionally, its position and initial value of
+        the stored bit.
+        If the initial state is not specified, then the initial value of stored bit is chosen randomly.
+        """
+        super().__init__(id_, position=position)
+        self._ins[f'S'] = None
+        self._ins[f'R'] = None
+        self._outs[f'Q'] = None
+        self._element_type = "SR_FLIPFLOP"
+        if init_state is None:
+            self._state = random.choice([True, False])
+        else:
+            self._state = init_state
+
+    def _logic(self, s, r):
+        if (not s) and (not r):
+            return self._state
+        if (not s) and r:
+            self._state = False
+            return False
+        if s and (not r):
+            self._state = True
+            return True
+        if s and r:
+            self._state = random.choice([True, False])
+            return False
+
+    @property
+    def value(self):
+        if self._value is None:
+            output = self._logic(self._read_input_value('S'), self._read_input_value('R'))
+            self._value = {'Q': output}
         return self._value
 
     def reset_value(self):
