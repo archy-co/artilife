@@ -1,7 +1,7 @@
 import unittest
 
 from elements import Connection
-from elements import Constant
+from elements import Constant, Variable
 from elements import BasicLogicGate
 from elements import AndGate, OrGate, NotGate, XorGate, NandGate, NorGate
 from elements import Multiplexer, Encoder, Decoder, FullAdder, AdderSubtractor, RightShifter
@@ -12,6 +12,7 @@ class TestElements(unittest.TestCase):
     def setUp(self):
         self.true_constant = Constant("true constant", constant_value=True)
         self.false_constant = Constant("false constant", constant_value=False)
+        self.variable = Variable("variable", init_value=False)
         self.and_gate = AndGate("and gate", num_inputs=2)
         self.or_gate = OrGate('or gate', num_inputs=2)
         self.not_gate = NotGate('not gate')
@@ -25,6 +26,13 @@ class TestElements(unittest.TestCase):
 
         self.assertEqual(self.true_constant.element_type, 'CONSTANT')
         self.assertEqual(self.false_constant.element_type, 'CONSTANT')
+
+    def test_variable(self):
+        self.assertEqual(self.variable.value, {"out": False})
+        self.variable.switch()
+        self.assertEqual(self.variable.value, {"out": True})
+        self.variable.switch()
+        self.assertEqual(self.variable.value, {"out": False})
 
     def test_and(self):
         self.assertEqual(self.and_gate.value['out'], False)

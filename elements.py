@@ -5,6 +5,7 @@ A module containing implementaions of logic elements.
 You can use the following classes from this module:
 - Connnection
 - Constant
+- Variable
 - AndGate
 - OrGate
 - NotGate
@@ -257,14 +258,14 @@ class NotGate(BasicElement):
 
 
 class Constant(BasicElement):
-    """A class for constant voltage source.
-    The interface of the constant gate is the following:
+    """A class for constant source of signal.
+    The interface of the element is the following:
     - input:
     - output:
         out
     """
     def __init__(self, id_, position=None, constant_value: bool = True):
-        """Initialize a constant with its value and id.
+        """Initialize a constant with its value and id and position.
         """
         super().__init__(id_, position)
         self._constant_value = constant_value
@@ -274,6 +275,30 @@ class Constant(BasicElement):
     @property
     def value(self):
         return {'out': self._constant_value}
+
+
+class Variable(BasicElement):
+    """A class for variable source of signal.
+    The interface of the element is the following:
+    - input:
+    - output:
+        out
+    """
+    def __init__(self, id_, position=None, init_value: bool = True):
+        """Initialize a variable source of signal with its initial value, id and position.
+        """
+        super().__init__(id_, position)
+        self._variable_value = init_value
+        self._outs['out'] = []
+        self._element_type = "VARIABLE"
+
+    def switch(self):
+        self._variable_value = not self._variable_value
+
+    @property
+    def value(self):
+        return {'out': self._variable_value}
+
 
 class Multiplexer(BasicElement):
     """A class for multiplexor element.
@@ -304,7 +329,7 @@ class Multiplexer(BasicElement):
             self._ins[f'select line {i}'] = None
         for i in range(1, 2**num_select_lines + 1):
             self._ins[f'input line {i}'] = None
-        self._outs['out'] = None
+        self._outs['out'] = []
         self._element_type = "MULTIPLEXER"
 
     def _get_number_of_selected_line(self):
@@ -358,7 +383,7 @@ class Encoder(BasicElement):
         for i in range(1, 2**num_output_lines + 1):
             self._ins[f'input line {i}'] = None
         for i in range(1, num_output_lines+1):
-            self._outs[f'output line {i}'] = None
+            self._outs[f'output line {i}'] = []
         self._element_type = "ENCODER"
 
     def _input_lines_to_number(self):
@@ -416,7 +441,7 @@ class Decoder(BasicElement):
         for i in range(1, num_input_lines + 1):
             self._ins[f'input line {i}'] = None
         for i in range(1, 2**num_input_lines+1):
-            self._outs[f'output line {i}'] = None
+            self._outs[f'output line {i}'] = []
         self._element_type = "DECODER"
 
     def _input_lines_to_number(self):
@@ -464,8 +489,8 @@ class FullAdder(BasicElement):
         self._ins['A'] = None
         self._ins['B'] = None
         self._ins['Cin'] = None
-        self._outs['S'] = None
-        self._outs['Cout'] = None
+        self._outs['S'] = []
+        self._outs['Cout'] = []
         self._element_type = "FULLADDER"
 
     @property
@@ -519,8 +544,8 @@ class AdderSubtractor(BasicElement):
             self._ins[f'B{i}'] = None
         self._ins['sub'] = None
         for i in range(num_bits):
-            self._outs[f'S{i}'] = None
-        self._outs['Cout'] = None
+            self._outs[f'S{i}'] = []
+        self._outs['Cout'] = []
         self._element_type = "ADDERSUBTRACTOR"
 
     def _get_number(self, base, invert=False):
@@ -587,7 +612,7 @@ class RightShifter(BasicElement):
         for i in range(num_bits):
             self._ins[f'in{i}'] = None
             self._ins[f'shift_line{i}'] = None
-            self._outs[f'out{i}'] = None
+            self._outs[f'out{i}'] = []
         self._element_type = "SHIFTER"
 
     def _read_input(self, base: str):
@@ -640,7 +665,7 @@ class SRFlipFlop(BasicElement):
         super().__init__(id_, position=position)
         self._ins[f'S'] = None
         self._ins[f'R'] = None
-        self._outs[f'Q'] = None
+        self._outs[f'Q'] = []
         self._element_type = "SR_FLIPFLOP"
         if init_state is None:
             self._state = random.choice([True, False])
