@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from schemdraw import logic
 from schemdraw import elements as sd_elem
 import schemdraw
@@ -128,7 +130,7 @@ class Visualizer:
                 drawing.add(line)
 
     @staticmethod
-    def visualize(scheme):
+    def get_scheme_img_bytes(scheme):
         drawing = schemdraw.Drawing()
 
         # configure and add visual elements
@@ -136,7 +138,7 @@ class Visualizer:
 
         Visualizer._add_input_connections(scheme, visual_elements, drawing)
 
-        drawing.draw(backend='matplotlib')
+        return drawing.get_imagedata('jpg')
 
 
 if __name__ == "__main__":
@@ -189,10 +191,14 @@ if __name__ == "__main__":
     s.add_element('constant', 2, (1, 3),
                   constant_value=1)
     s.add_element('shifter', 3, (3, 1), num_bits=4)
+    # s.add_element('and', 4, (3, 3))
 
     s.add_connection(0, 'out', 3, 'in2')
     s.add_connection(1, 'out', 3, 'in3')
     s.add_connection(2, 'out', 3, 'shift_line1')
 
+    scheme_elements_outs = s.run()
+    print(scheme_elements_outs)
+
     # print(s.run())
-    Visualizer.visualize(s)
+    Visualizer.get_scheme_img_bytes(s)

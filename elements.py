@@ -270,9 +270,6 @@ class Constant(BasicElement):
     def value(self):
         return {'out': self._constant_value}
 
-    def reset_value(self):
-        self._value = None
-
 class Multiplexer(BasicElement):
     """A class for multiplexor element.
     A multiplexer has n select lines and 2**n input lines. The select lines decide signal from
