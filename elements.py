@@ -42,26 +42,10 @@ class Connection:
     """
 
     def __init__(self, source, output_label, destination, input_label):
-        self._source = source
-        self._output_label = output_label
-        self._destination = destination
-        self._input_label = input_label
-
-    @property
-    def source(self):
-        return self._source
-
-    @property
-    def output_label(self):
-        return self._output_label
-
-    @property
-    def destination(self):
-        return self._destination
-
-    @property
-    def input_label(self):
-        return self._input_label
+        self.source = source
+        self.output_label = output_label
+        self.destination = destination
+        self.input_label = input_label
 
 
 class BasicElement:
@@ -104,8 +88,8 @@ class BasicElement:
         self._ins = {}
         self._outs = {}
         self._value = None
-        self._id = id_
-        self._element_type = None
+        self.id = id_
+        self.element_type = None
         self.position = position
 
     def set_input_connection(self, connection: Connection):
@@ -125,33 +109,17 @@ class BasicElement:
         self._outs[output_label] = []
 
     @property
-    def id(self):
-        return self._id
-
-    @property
     def value(self) -> dict:
         raise NotImplementedError
 
     def reset_value(self):
         self._value = None
 
-    @property
-    def element_type(self):
-        return self._element_type
-
     def _read_input_value(self, input_label: str):
         connection = self._ins[input_label]
         if connection is None:
             return False
         return connection.source.value[connection.output_label]
-
-    @property
-    def outs(self):
-        return self._outs
-
-    @property
-    def ins(self):
-        return self._ins
 
 
 class BasicLogicGate(BasicElement):
@@ -351,10 +319,6 @@ class Multiplexer(BasicElement):
         return selected_line + 1
 
     @property
-    def number_select_lines(self):
-        return self._num_select_lines
-
-    @property
     def value(self):
         if self._value is None:
             needed_input = 'input line ' + str(self._get_number_of_selected_line())
@@ -400,10 +364,6 @@ class Encoder(BasicElement):
             if self._read_input_value(base + str(i + 1)):
                 return i
         return -1
-
-    @property
-    def number_output_lines(self):
-        return self._num_output_lines
 
     @property
     def value(self):
@@ -457,10 +417,6 @@ class Decoder(BasicElement):
             if self._read_input_value(base + str(i + 1)):
                 number += 2 ** i
         return number + 1
-
-    @property
-    def number_input_lines(self):
-        return self._num_input_lines
 
     @property
     def value(self):
@@ -558,10 +514,6 @@ class AdderSubtractor(BasicElement):
         return number
 
     @property
-    def number_bits(self):
-        return self._num_bits
-
-    @property
     def value(self):
         if self._value is None:
             sub = self._read_input_value('sub')
@@ -620,10 +572,6 @@ class RightShifter(BasicElement):
         for i in range(self._num_bits):
             number.append(self._read_input_value(base + str(i)))
         return number
-
-    @property
-    def number_bits(self):
-        return self._num_bits
 
     @property
     def value(self):
