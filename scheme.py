@@ -181,7 +181,11 @@ class Scheme:
                     if element.id in results:
                         results[element.id][out] = element.value[out]
                     else:
-                        results[element.id] = {out: element.value[out]}
+                        try:
+                            results[element.id] = {out: element.value[out]}
+                        except RecursionError:
+                            continue
+
 
         return results
 
