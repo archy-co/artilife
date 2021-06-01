@@ -189,7 +189,7 @@ class XorGate(BasicLogicGate):
         self._element_type = "XOR"
 
     def _logic_of_element(self, *inputs):
-        return functools.reduce(lambda a, b: a != b, inputs)
+        return functools.reduce(lambda a, b: a is not b, inputs)
 
 
 class NandGate(BasicLogicGate):
@@ -198,7 +198,7 @@ class NandGate(BasicLogicGate):
         self._element_type = "NAND"
 
     def _logic_of_element(self, *inputs):
-        return not functools.reduce(lambda a, b: a and b, inputs)
+        return not functools.reduce(lambda a, b: not (a and b), inputs)
 
 
 class NorGate(BasicLogicGate):
@@ -207,7 +207,7 @@ class NorGate(BasicLogicGate):
         self._element_type = "NOR"
 
     def _logic_of_element(self, *inputs):
-        return not functools.reduce(lambda a, b: a or b, inputs)
+        return not functools.reduce(lambda a, b: not (a or b), inputs)
 
 
 class NotGate(BasicElement):
