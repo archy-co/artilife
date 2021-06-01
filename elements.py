@@ -1,6 +1,5 @@
 """
 elements.py
-
 A module containing implementaions of logic elements.
 You can use the following classes from this module:
 - Connnection
@@ -28,7 +27,6 @@ import random
 class Connection:
     """Represents the connection between the output of some element and the input of
     another element.
-
     Attributes
     ----------
     source: BasicElement
@@ -50,13 +48,11 @@ class Connection:
 
 class BasicElement:
     """An abstract class for defining the interface of logic elements.
-
     Logic element:
     - has inputs with associated labels
     - each input is associated with zero or one connections (see class Connection)
     - has outputs with associated labels
     - each output can be associated with any number of connections (see class Connection).
-
     Attributes
     ----------
     value: dict
@@ -69,7 +65,6 @@ class BasicElement:
         outputs of the element
     ins: dict
         inputs of the element
-
     Methods
     -------
     set_input_connection(connection)
@@ -88,8 +83,8 @@ class BasicElement:
         self._ins = {}
         self._outs = {}
         self._value = None
-        self.id = id_
-        self.element_type = None
+        self._id = id_
+        self._element_type = None
         self.position = position
 
     def set_input_connection(self, connection: Connection):
@@ -112,8 +107,16 @@ class BasicElement:
     def value(self) -> dict:
         raise NotImplementedError
 
+    @property
+    def id(self):
+        return self._id
+
     def reset_value(self):
         self._value = None
+
+    @property
+    def element_type(self):
+        return self._element_type
 
     def _read_input_value(self, input_label: str):
         connection = self._ins[input_label]
@@ -121,13 +124,19 @@ class BasicElement:
             return False
         return connection.source.value[connection.output_label]
 
+    @property
+    def outs(self):
+        return self._outs
+
+    @property
+    def ins(self):
+        return self._ins
+
 
 class BasicLogicGate(BasicElement):
     """An abstract class for basic logic gates (such as AND, OR, XOR, NAND, NOR).
     AndGate, OrGate, XorGate, NandGate and NorGate classes inherit from this class.
-
     This class provides multi-input variants of the elements mentioned above.
-
     The interface of every gate mentioned above is the following:
     - input:
         in1
@@ -189,7 +198,7 @@ class XorGate(BasicLogicGate):
         self._element_type = "XOR"
 
     def _logic_of_element(self, *inputs):
-        return functools.reduce(lambda a, b: a is not b, inputs)
+        return functools.reduce(lambda a, b: a != b, inputs)
 
 
 class NandGate(BasicLogicGate):
@@ -198,7 +207,7 @@ class NandGate(BasicLogicGate):
         self._element_type = "NAND"
 
     def _logic_of_element(self, *inputs):
-        return not functools.reduce(lambda a, b: not (a and b), inputs)
+        return not functools.reduce(lambda a, b: a and b, inputs)
 
 
 class NorGate(BasicLogicGate):
@@ -207,7 +216,7 @@ class NorGate(BasicLogicGate):
         self._element_type = "NOR"
 
     def _logic_of_element(self, *inputs):
-        return not functools.reduce(lambda a, b: not (a or b), inputs)
+        return not functools.reduce(lambda a, b: a or b, inputs)
 
 
 class NotGate(BasicElement):
@@ -281,7 +290,6 @@ class Multiplexer(BasicElement):
     """A class for multiplexor element.
     A multiplexer has n select lines and 2**n input lines. The select lines decide signal from
     which input line to send to the output.
-
     The interface of the multiplexer element is the following:
     - input:
         select line 1
@@ -319,6 +327,10 @@ class Multiplexer(BasicElement):
         return selected_line + 1
 
     @property
+    def number_select_lines(self):
+        return self._num_select_lines
+
+    @property
     def value(self):
         if self._value is None:
             needed_input = 'input line ' + str(self._get_number_of_selected_line())
@@ -331,7 +343,6 @@ class Encoder(BasicElement):
     A decoder knows the number of the high input line, and outputs this number represented by n output lines.
     If several input lines are high, this implementation of encoder takes into account the first one that is high.
     If none of input lines are high, then the all the output lines are low.
-
     The interface of the encoder element is the following:
     - input:
         input line 1
@@ -366,6 +377,10 @@ class Encoder(BasicElement):
         return -1
 
     @property
+    def number_output_lines(self):
+        return self._num_output_lines
+
+    @property
     def value(self):
         if self._value is None:
             self._value = {key: False for key in self._outs}
@@ -383,7 +398,6 @@ class Decoder(BasicElement):
     """A class for decoder element.
     A decoder reads a number represented by n input lines and based on that turns on
     one of 2**n output lines.
-
     The interface of the encoder element is the following:
     - input:
         input line 1
@@ -419,6 +433,10 @@ class Decoder(BasicElement):
         return number + 1
 
     @property
+    def number_input_lines(self):
+        return self._num_input_lines
+
+    @property
     def value(self):
         if self._value is None:
             self._value = {key: False for key in self._outs}
@@ -431,7 +449,6 @@ class FullAdder(BasicElement):
     """A class for full adder element.
     A full adder element calculates the sum of three bits (2 summands and 1 carry) and outputs the
     sum and the resulting carry.
-
     The interface of the full adder element is the following:
     - input:
         A
@@ -470,7 +487,6 @@ class AdderSubtractor(BasicElement):
     """A class for adder-subtractor element.
     An adder-subtractor element calculates the sum or the difference (based on the state of 'sub')
     of two n-digit numbers.
-
     The interface of an adder-subtractor element is the following:
     - input:
         A0
@@ -514,6 +530,10 @@ class AdderSubtractor(BasicElement):
         return number
 
     @property
+    def number_bits(self):
+        return self._num_bits
+
+    @property
     def value(self):
         if self._value is None:
             sub = self._read_input_value('sub')
@@ -536,7 +556,6 @@ class RightShifter(BasicElement):
     In cases when several or zero shift lines are high, the element behaves according to the scheme it implements.
     The following scheme is implemented in this class: images/schemes/right_shifter.png
     Note that it is reasonable to use this element with a decoder.
-
     The interface of a right shifter element is the following:
     - input:
         in0
@@ -574,6 +593,10 @@ class RightShifter(BasicElement):
         return number
 
     @property
+    def number_bits(self):
+        return self._num_bits
+
+    @property
     def value(self):
         if self._value is None:
             self._value = {}
@@ -589,12 +612,10 @@ class RightShifter(BasicElement):
 class SRFlipFlop(BasicElement):
     """A class for SR flip-flop element.
     An SR flip-flop can store a single bit.
-
     If both S and R inputs are off, the output of the element is a bit that is stored.
     If S is on and R is off, then the "1" bit is written to the "memory" and the output is high.
     If S is off and R is on, then the "0" bit is written to the "memory" and the output is low.
     If both S and R inputs are on, then the value of written bit is set randomly to either 0 or 1, but the output will be low.
-
     The interface of an SR flip-flop element is the following:
     - input:
         S
