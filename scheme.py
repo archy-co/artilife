@@ -66,7 +66,7 @@ class Scheme:
     def __init__(self):
         self._elements = {}
 
-    def add_element(self, element_type: str, element_id: str, position: Tuple[int], **kwargs):
+    def add_element(self, element_type: str, element_id: str, position: Tuple[int, int], **kwargs):
         '''
         Validates element_id and element_type, then if they are valid,
         adds new element to the scheme at specified position
