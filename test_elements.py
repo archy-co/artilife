@@ -5,6 +5,7 @@ from elements import Constant
 from elements import BasicLogicGate
 from elements import AndGate, OrGate, NotGate, XorGate, NandGate, NorGate
 from elements import Multiplexer, Encoder, Decoder, FullAdder, AdderSubtractor, RightShifter
+from elements import SRFlipFlop
 
 
 class TestElements(unittest.TestCase):
@@ -309,56 +310,104 @@ class TestElements(unittest.TestCase):
         self.assertEqual(right_shifter.value, {'out0': False, 'out1': True})
 
     def test_right_shifter4(self):
-            right_shifter = RightShifter(id_="rightShifter1")
-            self.assertEqual(right_shifter.value, {'out0': False, 'out1': False, 'out2': False, 'out3': False})
+        right_shifter = RightShifter(id_="rightShifter1")
+        self.assertEqual(right_shifter.value, {'out0': False, 'out1': False, 'out2': False, 'out3': False})
 
-            constant = Constant('c1', constant_value=True)
-            connection = Connection(constant, 'out', right_shifter, 'shift_line1')
-            constant.set_output_connection(connection)
-            right_shifter.set_input_connection(connection)
+        constant = Constant('c1', constant_value=True)
+        connection = Connection(constant, 'out', right_shifter, 'shift_line1')
+        constant.set_output_connection(connection)
+        right_shifter.set_input_connection(connection)
 
-            right_shifter.reset_value()
-            self.assertEqual(right_shifter.value, {'out0': False, 'out1': False, 'out2': False, 'out3': False})
+        right_shifter.reset_value()
+        self.assertEqual(right_shifter.value, {'out0': False, 'out1': False, 'out2': False, 'out3': False})
 
-            constant = Constant('c2', constant_value=True)
-            connection = Connection(constant, 'out', right_shifter, 'in3')
-            constant.set_output_connection(connection)
-            right_shifter.set_input_connection(connection)
+        constant = Constant('c2', constant_value=True)
+        connection = Connection(constant, 'out', right_shifter, 'in3')
+        constant.set_output_connection(connection)
+        right_shifter.set_input_connection(connection)
 
-            right_shifter.reset_value()
-            self.assertEqual(right_shifter.value, {'out0': False, 'out1': False, 'out2': False, 'out3': False})
+        right_shifter.reset_value()
+        self.assertEqual(right_shifter.value, {'out0': False, 'out1': False, 'out2': False, 'out3': False})
 
-            constant = Constant('c3', constant_value=True)
-            connection = Connection(constant, 'out', right_shifter, 'in2')
-            constant.set_output_connection(connection)
-            right_shifter.set_input_connection(connection)
+        constant = Constant('c3', constant_value=True)
+        connection = Connection(constant, 'out', right_shifter, 'in2')
+        constant.set_output_connection(connection)
+        right_shifter.set_input_connection(connection)
 
-            right_shifter.reset_value()
-            self.assertEqual(right_shifter.value, {'out0': False, 'out1': False, 'out2': False, 'out3': True})
+        right_shifter.reset_value()
+        self.assertEqual(right_shifter.value, {'out0': False, 'out1': False, 'out2': False, 'out3': True})
 
-            constant = Constant('c4', constant_value=True)
-            connection = Connection(constant, 'out', right_shifter, 'in2')
-            constant.set_output_connection(connection)
-            right_shifter.set_input_connection(connection)
+        constant = Constant('c4', constant_value=True)
+        connection = Connection(constant, 'out', right_shifter, 'in2')
+        constant.set_output_connection(connection)
+        right_shifter.set_input_connection(connection)
 
-            right_shifter.reset_value()
-            self.assertEqual(right_shifter.value, {'out0': False, 'out1': False, 'out2': False, 'out3': True})
+        right_shifter.reset_value()
+        self.assertEqual(right_shifter.value, {'out0': False, 'out1': False, 'out2': False, 'out3': True})
 
-            constant = Constant('c5', constant_value=True)
-            connection = Connection(constant, 'out', right_shifter, 'in0')
-            constant.set_output_connection(connection)
-            right_shifter.set_input_connection(connection)
+        constant = Constant('c5', constant_value=True)
+        connection = Connection(constant, 'out', right_shifter, 'in0')
+        constant.set_output_connection(connection)
+        right_shifter.set_input_connection(connection)
 
-            right_shifter.reset_value()
-            self.assertEqual(right_shifter.value, {'out0': False, 'out1': True, 'out2': False, 'out3': True})
+        right_shifter.reset_value()
+        self.assertEqual(right_shifter.value, {'out0': False, 'out1': True, 'out2': False, 'out3': True})
 
-            constant = Constant('c6', constant_value=True)
-            connection = Connection(constant, 'out', right_shifter, 'shift_line3')
-            constant.set_output_connection(connection)
-            right_shifter.set_input_connection(connection)
+        constant = Constant('c6', constant_value=True)
+        connection = Connection(constant, 'out', right_shifter, 'shift_line3')
+        constant.set_output_connection(connection)
+        right_shifter.set_input_connection(connection)
 
-            right_shifter.reset_value()
-            self.assertEqual(right_shifter.value, {'out0': False, 'out1': True, 'out2': False, 'out3': True})
+        right_shifter.reset_value()
+        self.assertEqual(right_shifter.value, {'out0': False, 'out1': True, 'out2': False, 'out3': True})
+
+    @staticmethod
+    def _connect_two_elements(element1, output, element2, input_):
+        connection = Connection(element1, output, element2, input_)
+        element1.set_output_connection(connection)
+        element2.set_input_connection(connection)
+
+    def test_sr_flipflop(self):
+        flip_flop = SRFlipFlop("id0", init_state=True)
+
+        self.assertEqual(flip_flop.value['Q'], True)
+
+        constant = Constant('c0', constant_value=True)
+        self._connect_two_elements(constant, 'out', flip_flop, 'S')
+        flip_flop.reset_value()
+        self.assertEqual(flip_flop.value, {'Q': True})
+
+        constant = Constant('c1', constant_value=False)
+        self._connect_two_elements(constant, 'out', flip_flop, 'S')
+        flip_flop.reset_value()
+        self.assertEqual(flip_flop.value, {'Q': True})
+
+        constant = Constant('c2', constant_value=True)
+        self._connect_two_elements(constant, 'out', flip_flop, 'R')
+        flip_flop.reset_value()
+        self.assertEqual(flip_flop.value, {'Q': False})
+
+        constant = Constant('c3', constant_value=False)
+        self._connect_two_elements(constant, 'out', flip_flop, 'R')
+        flip_flop.reset_value()
+        self.assertEqual(flip_flop.value, {'Q': False})
+
+        constant = Constant('c4', constant_value=True)
+        self._connect_two_elements(constant, 'out', flip_flop, 'S')
+        constant = Constant('c5', constant_value=True)
+        self._connect_two_elements(constant, 'out', flip_flop, 'R')
+        flip_flop.reset_value()
+        self.assertEqual(flip_flop.value, {'Q': False})
+
+        constant = Constant('c4', constant_value=False)
+        self._connect_two_elements(constant, 'out', flip_flop, 'S')
+        constant = Constant('c5', constant_value=False)
+        self._connect_two_elements(constant, 'out', flip_flop, 'R')
+        flip_flop.reset_value()
+        self.assertTrue(flip_flop.value['Q'] in [True, False])
+
+        flip_flop1 = SRFlipFlop("id1")
+        self.assertTrue(flip_flop1.value['Q'] in [True, False])
 
 
 if __name__ == "__main__":

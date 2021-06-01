@@ -20,8 +20,8 @@ You can use the following classes from this module:
 - SRFlipFlop
 """
 
-
 import functools
+import random
 
 
 class Connection:
@@ -625,15 +625,15 @@ class SRFlipFlop(BasicElement):
     If S is off and R is on, then the "0" bit is written to the "memory" and the output is low.
     If both S and R inputs are on, then the value of written bit is set randomly to either 0 or 1, but the output will be low.
 
-    The interface of a right shifter element is the following:
+    The interface of an SR flip-flop element is the following:
     - input:
         S
         R
     - output:
         Q
     """
-    def __init__(self, position=None, *, init_state: bool = None):
-        """Initialize an SR flipflop element with, optionally, its position and initial value of
+    def __init__(self, id_, position=None, *, init_state: bool = None):
+        """Initialize an SR flipflop element with id and, optionally, its position and initial value of
         the stored bit.
         If the initial state is not specified, then the initial value of stored bit is chosen randomly.
         """
