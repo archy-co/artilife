@@ -19,7 +19,6 @@ You can use the following classes from this module:
 - RightShifter
 """
 
-
 import functools
 
 
@@ -38,6 +37,7 @@ class Connection:
     input_label: str
         the name of the input of the destination element (it can have several inputs)
     """
+
     def __init__(self, source, output_label, destination, input_label):
         self._source = source
         self._output_label = output_label
@@ -96,6 +96,7 @@ class BasicElement:
     reset_value()
         Forgets the previously calculated value
     """
+
     def __init__(self, id_, position):
         self._ins = {}
         self._outs = {}
@@ -129,7 +130,7 @@ class BasicElement:
         raise NotImplementedError
 
     def reset_value(self):
-        pass
+        self._value = None
 
     @property
     def element_type(self):
@@ -175,7 +176,7 @@ class BasicLogicGate(BasicElement):
             raise ValueError("Number of inputs should be >= 2")
         super().__init__(id_, position)
         self._num_inputs = num_inputs
-        for i in range(1, num_inputs+1):
+        for i in range(1, num_inputs + 1):
             self._ins['in' + str(i)] = None
         self._outs['out'] = []
 
@@ -192,44 +193,51 @@ class BasicLogicGate(BasicElement):
             self._value = self._logic_of_element(*self._iterate_over_input_values())
         return {'out': self._value}
 
-    def reset_value(self):
-        self._value = None
-
 
 class AndGate(BasicLogicGate):
     def __init__(self, id_, position=None, num_inputs=2):
         super().__init__(id_, position, num_inputs)
         self._element_type = "AND"
+
     def _logic_of_element(self, *inputs):
         return functools.reduce(lambda a, b: a and b, inputs)
+
 
 class OrGate(BasicLogicGate):
     def __init__(self, id_, position=None, num_inputs=2):
         super().__init__(id_, position, num_inputs)
         self._element_type = "OR"
+
     def _logic_of_element(self, *inputs):
         return functools.reduce(lambda a, b: a or b, inputs)
+
 
 class XorGate(BasicLogicGate):
     def __init__(self, id_, position=None, num_inputs=2):
         super().__init__(id_, position, num_inputs)
         self._element_type = "XOR"
+
     def _logic_of_element(self, *inputs):
         return functools.reduce(lambda a, b: a != b, inputs)
+
 
 class NandGate(BasicLogicGate):
     def __init__(self, id_, position=None, num_inputs=2):
         super().__init__(id_, position, num_inputs)
         self._element_type = "NAND"
+
     def _logic_of_element(self, *inputs):
         return not functools.reduce(lambda a, b: a and b, inputs)
+
 
 class NorGate(BasicLogicGate):
     def __init__(self, id_, position=None, num_inputs=2):
         super().__init__(id_, position, num_inputs)
         self._element_type = "NOR"
+
     def _logic_of_element(self, *inputs):
         return not functools.reduce(lambda a, b: a or b, inputs)
+
 
 class NotGate(BasicElement):
     """A class for NOT gate.
@@ -239,6 +247,7 @@ class NotGate(BasicElement):
     - output:
         out
     """
+
     def __init__(self, id_, position=None):
         super().__init__(id_, position)
         self._ins['in'] = None
@@ -251,9 +260,6 @@ class NotGate(BasicElement):
             self._value = self._read_input_value('in')
         return {'out': self._value}
 
-    def reset_value(self):
-        self._value = None
-
 
 class Constant(BasicElement):
     """A class for constant voltage source.
@@ -262,6 +268,7 @@ class Constant(BasicElement):
     - output:
         out
     """
+
     def __init__(self, id_, position=None, constant_value: bool = True):
         """Initialize a constant with its value and id.
         """
@@ -274,8 +281,6 @@ class Constant(BasicElement):
     def value(self):
         return {'out': self._constant_value}
 
-    def reset_value(self):
-        self._value = None
 
 class Multiplexer(BasicElement):
     """A class for multiplexor element.
@@ -295,6 +300,7 @@ class Multiplexer(BasicElement):
     - output:
         out
     """
+
     def __init__(self, id_, position=None, num_select_lines: int = 2):
         """Initialize a multiplexer with teh number of select lines.
         """
@@ -302,9 +308,9 @@ class Multiplexer(BasicElement):
             raise ValueError("Number of select lines must be >= 1")
         super().__init__(id_, position)
         self._num_select_lines = num_select_lines
-        for i in range(1, num_select_lines+1):
+        for i in range(1, num_select_lines + 1):
             self._ins[f'select line {i}'] = None
-        for i in range(1, 2**num_select_lines + 1):
+        for i in range(1, 2 ** num_select_lines + 1):
             self._ins[f'input line {i}'] = None
         self._outs['out'] = None
         self._element_type = "MULTIPLEXER"
@@ -313,8 +319,8 @@ class Multiplexer(BasicElement):
         base = "select line "
         selected_line = 0
         for i in range(self._num_select_lines):
-            if self._read_input_value(base + str(i+1)):
-                selected_line += 2**i
+            if self._read_input_value(base + str(i + 1)):
+                selected_line += 2 ** i
         return selected_line + 1
 
     @property
@@ -327,9 +333,6 @@ class Multiplexer(BasicElement):
             needed_input = 'input line ' + str(self._get_number_of_selected_line())
             self._value = self._read_input_value(needed_input)
         return {'out': self._value}
-
-    def reset_value(self):
-        self._value = None
 
 
 class Encoder(BasicElement):
@@ -350,6 +353,7 @@ class Encoder(BasicElement):
         ...
         output line {num_output_lines}
     """
+
     def __init__(self, id_, position=None, num_output_lines: int = 2):
         """Initialize an encoder with the number of output lines and id.
         """
@@ -357,16 +361,16 @@ class Encoder(BasicElement):
             raise ValueError("Number of output lines must be >= 1")
         super().__init__(id_, position)
         self._num_output_lines = num_output_lines
-        for i in range(1, 2**num_output_lines + 1):
+        for i in range(1, 2 ** num_output_lines + 1):
             self._ins[f'input line {i}'] = None
-        for i in range(1, num_output_lines+1):
+        for i in range(1, num_output_lines + 1):
             self._outs[f'output line {i}'] = None
         self._element_type = "ENCODER"
 
     def _input_lines_to_number(self):
         base = "input line "
-        for i in range(2**self._num_output_lines):
-            if self._read_input_value(base + str(i+1)):
+        for i in range(2 ** self._num_output_lines):
+            if self._read_input_value(base + str(i + 1)):
                 return i
         return -1
 
@@ -387,9 +391,6 @@ class Encoder(BasicElement):
 
         return self._value
 
-    def reset_value(self):
-        self._value = None
-
 
 class Decoder(BasicElement):
     """A class for decoder element.
@@ -408,6 +409,7 @@ class Decoder(BasicElement):
         ...
         output line {num_input_lines**2}
     """
+
     def __init__(self, id_, position=None, num_input_lines: int = 2):
         """Initialize a decoder with number of input lines and id.
         """
@@ -417,7 +419,7 @@ class Decoder(BasicElement):
         self._num_input_lines = num_input_lines
         for i in range(1, num_input_lines + 1):
             self._ins[f'input line {i}'] = None
-        for i in range(1, 2**num_input_lines+1):
+        for i in range(1, 2 ** num_input_lines + 1):
             self._outs[f'output line {i}'] = None
         self._element_type = "DECODER"
 
@@ -425,8 +427,8 @@ class Decoder(BasicElement):
         base = "input line "
         number = 0
         for i in range(self._num_input_lines):
-            if self._read_input_value(base + str(i+1)):
-                number += 2**i
+            if self._read_input_value(base + str(i + 1)):
+                number += 2 ** i
         return number + 1
 
     @property
@@ -440,9 +442,6 @@ class Decoder(BasicElement):
             self._value[f"output line {self._input_lines_to_number()}"] = True
 
         return self._value
-
-    def reset_value(self):
-        self._value = None
 
 
 class FullAdder(BasicElement):
@@ -459,6 +458,7 @@ class FullAdder(BasicElement):
         S
         Cout
     """
+
     def __init__(self, id_, position=None):
         """Initialize a full adder element with id.
         """
@@ -478,12 +478,9 @@ class FullAdder(BasicElement):
             carry_in = self._read_input_value('Cin')
 
             self._value = {'S': (bitA != bitB) != carry_in,
-                    'Cout': (bitA and bitB) or (bitA and carry_in) or (bitB and carry_in)}
+                           'Cout': (bitA and bitB) or (bitA and carry_in) or (bitB and carry_in)}
 
         return self._value
-
-    def reset_value(self):
-        self._value = None
 
 
 class AdderSubtractor(BasicElement):
@@ -509,6 +506,7 @@ class AdderSubtractor(BasicElement):
         S{num_bits-1}
         Cout
     """
+
     def __init__(self, id_, position=None, num_bits: int = 4):
         """Initialize an adder/subtractor element with number of bits and id.
         """
@@ -552,9 +550,6 @@ class AdderSubtractor(BasicElement):
 
         return self._value
 
-    def reset_value(self):
-        self._value = None
-
 
 class RightShifter(BasicElement):
     """A class for right shifter element.
@@ -579,6 +574,7 @@ class RightShifter(BasicElement):
         ...
         out{num_bits-1}
     """
+
     def __init__(self, id_, position=None, num_bits: int = 4):
         """Initialize a right shifter element with the number of bits and id.
         """
@@ -610,12 +606,9 @@ class RightShifter(BasicElement):
             to_shift = self._read_input('in')
             for i in range(self._num_bits):
                 self._value[f"out{i}"] = False
-                for j in range(i+1):
-                    self._value[f"out{i}"] = self._value[f"out{i}"] or (to_shift[i-j] and shift_by[j])
+                for j in range(i + 1):
+                    self._value[f"out{i}"] = self._value[f"out{i}"] or (to_shift[i - j] and shift_by[j])
         return self._value
-
-    def reset_value(self):
-        self._value = None
 
 
 if __name__ == "__main__":
