@@ -69,6 +69,8 @@ print(and_final.__dict__)
 
 and_final.anchor('out').at(and_start.anchors['in1'])
 
+and_start.scale(0.2)
+and_start.label(label='start', loc='out')
 
 
 d += and_final

@@ -90,7 +90,7 @@ class Scheme:
             raise IdIsAlreadyTakenError(element_id)
 
         try:
-            new_element = elem_type_to_class_dct[element_type](element_id, position, **kwargs)
+            new_element = elem_type_to_class_dct[element_type.lower()](element_id, position, **kwargs)
         except KeyError as keyerror:
             raise WrongElementTypeError(element_type) from keyerror
 
@@ -133,6 +133,12 @@ class Scheme:
                 raise InputIsTakenError(connection.input_label)
         except KeyError as keyerror:
             raise NoSuchInputLabelError(connection.input_label) from keyerror
+
+    def __getitem__(self, key):
+        try:
+            return self._elements[key]
+        except KeyError as keyerror:
+            raise NoSuchIdError(key) from keyerror
 
     def delete_element(self, element_id: str) -> elements.BasicElement:
         '''
