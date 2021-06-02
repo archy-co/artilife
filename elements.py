@@ -619,53 +619,7 @@ class ForbiddenSrLatchStateError(Exception):
         super().__init__(self.message)
 
 
-class SRFlipFlop(BasicElement):
-    """A class for SR (set - reset) flip-flop element.
-    An SR flip-flop can store a single bit.
-    The truth table of this element is the following:
-    S = 0, R = 0 -> initial or previous state
-    S = 1, R = 0 -> 1
-    S = 0, R = 1 -> 0
-    S = 1, R = 1 -> Forbidden SR latch state
-    - input:
-        S
-        R
-    - output:
-        Q
-    """
-
-    def __init__(self, id_, position=None):
-        """Initialize an SR flipflop element with id and, optionally, its position and initial value of
-        the stored bit.
-        """
-        super().__init__(id_, position=position)
-        self._ins[f'S'] = None
-        self._ins[f'R'] = None
-        self._outs[f'Q'] = []
-        self._element_type = "SR_FLIPFLOP"
-        self._state = 1
-
-    def _logic(self, s, r):
-        if not s and not r:
-            return self._state
-        if not s and r:
-            self._state = False
-            return False
-        if s and not r:
-            self._state = True
-            return True
-        if s and r:
-            raise ForbiddenSrLatchStateError()
-
-    @property
-    def value(self):
-        if self._value is None:
-            output = self._logic(self._read_input_value('S'), self._read_input_value('R'))
-            self._value = {'Q': output}
-        return self._value
-
-
-class GatedSRFlipFlop(SRFlipFlop):
+class GatedSRFlipFlop(BasicElement):
     """A class for Gated SR (set - reset) flip-flop element.
     A Gated SR flip-flop can store a single bit.
     It can be either turned on or turned off.
@@ -688,30 +642,80 @@ class GatedSRFlipFlop(SRFlipFlop):
     """
 
     def __init__(self, id_, position=None, enable_state: bool = 1):
-        """Initialize an SR flipflop element with id and, optionally, its position and initial value of
-        the stored bit.
-        """
+        """Initialize a gated SR flipflop element with id and, optionally,
+        its position and initial enable state"""
         super().__init__(id_, position)
+        self._ins[f'S'] = None
+        self._ins[f'R'] = None
+        self._outs[f'Q'] = []
+        self._element_type = "SR_FLIPFLOP"
+        self._q = 1
         self.enable_state = enable_state
 
     def _logic(self, s, r):
         if self.enable_state:
             if not s and not r:
-                return self._state
+                return self._q
             if not s and r:
-                self._state = False
+                self._q = False
                 return False
             if s and not r:
-                self._state = True
+                self._q = True
                 return True
             if s and r:
                 raise ForbiddenSrLatchStateError()
-        return self._state
+        return self._q
+
+    def switch_enable_state(self):
+        self.enable_state = not self.enable_state
 
     @property
     def value(self):
         if self._value is None:
             output = self._logic(self._read_input_value('S'), self._read_input_value('R'))
+            self._value = {'Q': output}
+        return self._value
+
+
+class GatedDFlipFlop(BasicElement):
+    """A class for gated D (data) flip-flop element.
+    A gated D flip-flop can store a single bit.
+    It behaves exactly as gated SR flip flop but has 2 inputs instead of 3 and it always behaves predictably
+    The truth table of this element is the following:
+    E = 1
+        D = Q -> Q
+    E = 0
+        Return Q regardless of D state
+    - input:
+        D
+        E
+    - output:
+        Q
+    """
+
+    def __init__(self, id_, position=None, enable_state: bool = 1):
+        """Initialize a gated D flipflop element with id and, optionally,
+        its position and initial enable state"""
+        super().__init__(id_, position)
+        self._ins[f'D'] = None
+        self._outs[f'Q'] = []
+        self._element_type = "D_FLIPFLOP"
+        self._q = False
+        self.enable_state = enable_state
+
+    def _logic(self, d):
+        if self.enable_state:
+            self._q = d
+            return self._q
+        return self._q
+
+    def switch_enable_state(self):
+        self.enable_state = not self.enable_state
+
+    @property
+    def value(self):
+        if self._value is None:
+            output = self._logic(self._read_input_value('D'))
             self._value = {'Q': output}
         return self._value
 
