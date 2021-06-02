@@ -23,17 +23,17 @@ class SchemeGUI:
         self.scheme = Scheme()
 
         # test scheme
-        self.scheme.add_element('constant', 0, (1, 1),
-                                constant_value=1)
-        self.scheme.add_element('constant', 1, (1, 2),
-                                constant_value=1)
-        self.scheme.add_element('constant', 2, (1, 3),
-                                constant_value=1)
-        self.scheme.add_element('shifter', 3, (3, 1), num_bits=4)
-
-        self.scheme.add_connection(0, 'out', 3, 'in2')
-        self.scheme.add_connection(1, 'out', 3, 'in3')
-        self.scheme.add_connection(2, 'out', 3, 'shift_line1')
+        # self.scheme.add_element('constant', 0, (1, 1),
+        #                         constant_value=1)
+        # self.scheme.add_element('constant', 1, (1, 2),
+        #                         constant_value=1)
+        # self.scheme.add_element('constant', 2, (1, 3),
+        #                         constant_value=1)
+        # self.scheme.add_element('shifter', 3, (3, 1), num_bits=4)
+        #
+        # self.scheme.add_connection(0, 'out', 3, 'in2')
+        # self.scheme.add_connection(1, 'out', 3, 'in3')
+        # self.scheme.add_connection(2, 'out', 3, 'shift_line1')
 
         # control variables
         self.interrupt_work = False
@@ -54,7 +54,8 @@ class SchemeGUI:
         self.status_lbl.grid(column=1, row=1)
         self.user_command = tk.StringVar()
         self.command_entry = tk.Entry(self.tool_frame,
-                                      textvariable=self.user_command)
+                                      textvariable=self.user_command,
+                                      width=90)
 
         # layout
         self.scheme_frame.grid(column=0, row=0)
@@ -71,8 +72,8 @@ class SchemeGUI:
         self.scheme_img_label.place(x=self.scheme_frame.winfo_width() / 2,
                                     y=self.scheme_frame.winfo_height() / 2,
                                     anchor='center')
-        self.help_btn.grid(column=1, row=0)
-        self.command_entry.grid(column=0, row=2, columnspan=3)
+        self.help_btn.grid(column=1, row=2)
+        self.command_entry.grid(column=0, row=0, columnspan=3)
 
         # bindings
         self._master.bind('<KeyPress-s>', lambda e: self.start_scheme())
