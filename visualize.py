@@ -9,14 +9,11 @@ from PIL import Image, ImageTk
 import io
 import matplotlib.pyplot as plt
 from typing import Dict, Union, List
+import elements
 
 
 class Visualizer:
     """Visualize scheme elements with schemdraw library"""
-
-    # multipliers for elements coordinates
-    width_unit = 1.5
-    height_unit = 1.5
 
     elements_match = {'AND': logic.And,
                       'OR': logic.Or,
@@ -31,9 +28,11 @@ class Visualizer:
                       'FULLADDER': sd_elem.Ic,
                       'ADDERSUBTRACTOR': sd_elem.Ic,
                       'SHIFTER': sd_elem.Ic}
+    default_label_size = 8
 
     @staticmethod
-    def _add_visual_elements(scheme: Scheme, drawing: schemdraw.Drawing, iterate_circuit: bool = False) -> Dict[
+    def _add_visual_elements(scheme: Scheme, drawing: schemdraw.Drawing,
+                             iterate_circuit: bool = False) -> Dict[
         str, sd_elem.Element]:
         """Add visual elements to drawing and return dictionary
         with added elements
@@ -51,23 +50,26 @@ class Visualizer:
         for scheme_element in scheme:
             # create visual element
             start_coordinates = (
-                scheme_element.position[0] * Visualizer.height_unit,
-                scheme_element.position[1] * Visualizer.width_unit)
+                scheme_element.position[0],
+                scheme_element.position[1])
             # create integrated circuit visual element custom attributes
             # depending on element type
             kwargs = Visualizer._create_elements_kwargs(scheme_element)
-            # TODO: hook each element at the same anchor (left bottom corner)
             visual_element = Visualizer.elements_match[
-                scheme_element.element_type](**kwargs).label(
-                str(scheme_element.id), color='blue').at(
-                start_coordinates)
+                scheme_element.element_type](**kwargs)
+            if 'center' not in visual_element.anchors:
+                visual_element.anchors['center'] = (0, 0)
+            visual_element = visual_element.label(
+                str(scheme_element.id), color='blue', loc='center').anchor(
+                'center').at(start_coordinates)
 
             # configure element outputs
             # set labels now because after element is added to drawing
             # you can't change their labels
             if iterate_circuit:
                 if scheme_element.id in scheme_elements_outs:
-                    for label, value in scheme_elements_outs[scheme_element.id].items():
+                    for label, value in scheme_elements_outs[
+                        scheme_element.id].items():
                         visual_element.label(label=str(int(value)), loc=label,
                                              color='green')
 
@@ -77,15 +79,19 @@ class Visualizer:
         return visual_elements
 
     @staticmethod
-    def _create_elements_kwargs(scheme_element: sd_elem.Element) -> Dict[
+    def _create_elements_kwargs(scheme_element: elements.BasicElement) -> Dict[
         str, Union[bool, List[sd_elem.IcPin]]]:
         """Create custom attributes for integrated
         circuits elements"""
 
         kwargs = {}
 
+        if Visualizer.elements_match[scheme_element.element_type] == sd_elem.Ic:
+            kwargs['plblsize'] = Visualizer.default_label_size
+
         if scheme_element.element_type == "CONSTANT":
             kwargs['constant_value'] = scheme_element.value['out']
+            kwargs['lbl_size'] = Visualizer.default_label_size
 
         if scheme_element.element_type == "MULTIPLEXER":
             kwargs['pins'] = []
@@ -175,7 +181,8 @@ class Visualizer:
 
     @staticmethod
     def get_tkinter_image(scheme: Scheme, max_width: int,
-                          max_height: int, iterate_circuit: bool = False) -> ImageTk.PhotoImage:
+                          max_height: int,
+                          iterate_circuit: bool = False) -> ImageTk.PhotoImage:
         """Return tkinter image for current scheme state
 
         Arguments
@@ -183,10 +190,11 @@ class Visualizer:
             iterate_circuit: specifies if to calculate output for image
             and iterate circuit
         """
-        drawing = schemdraw.Drawing()
+        drawing = schemdraw.Drawing(lw=1, fontsize=Visualizer.default_label_size)
 
         # configure and add visual elements
-        visual_elements = Visualizer._add_visual_elements(scheme, drawing, iterate_circuit)
+        visual_elements = Visualizer._add_visual_elements(scheme, drawing,
+                                                          iterate_circuit)
 
         Visualizer._add_input_connections(scheme, visual_elements, drawing)
 
@@ -199,12 +207,16 @@ class Visualizer:
         inch_width, inch_height = int(max_width / pixels_inch * axis_multiplier), \
                                   int(max_height / pixels_inch * axis_multiplier)
         fig.set_size_inches((inch_width, inch_height))
+        plt.grid()
 
         # to create fig object inside drawing
         # with custom axis and frame
         drawing.draw(showframe=True, show=False, ax=ax)
 
         image_bytes = drawing.get_imagedata('png')
+
+        # test drawing
+        # plt.show()
 
         # fix bug that schemdraw doesn't close matplotlib figures
         plt.close('all')
@@ -279,21 +291,17 @@ if __name__ == "__main__":
 
     # test shifter
 
-    s.add_element('constant', 0, (1, 1),
-                  constant_value=1)
-    s.add_element('constant', 1, (1, 2),
-                  constant_value=1)
+    # s.add_element('constant', 0, (1, 1),
+    #               constant_value=1)
+    # s.add_element('constant', 1, (1, 2),
+    #               constant_value=1)
     s.add_element('constant', 2, (1, 3),
                   constant_value=1)
     s.add_element('shifter', 3, (3, 1), num_bits=4)
     # s.add_element('and', 4, (3, 3))
 
-    s.add_connection(0, 'out', 3, 'in2')
-    s.add_connection(1, 'out', 3, 'in3')
-    s.add_connection(2, 'out', 3, 'shift_line1')
+    # s.add_connection(0, 'out', 3, 'in2')
+    # s.add_connection(1, 'out', 3, 'in3')
+    # s.add_connection(2, 'out', 3, 'shift_line1')
 
-    scheme_elements_outs = s.run()
-    print(scheme_elements_outs)
-
-    # print(s.run())
-    Visualizer.get_tkinter_image(s)
+    Visualizer.get_tkinter_image(s, 800, 800)

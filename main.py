@@ -8,6 +8,9 @@ from input_module import raw_input
 
 class SchemeGUI:
     """Encapsulate tkinter widgets and events functions"""
+    # TODO: 1. create log readonly entry
+    #  2. make entry wider
+    #  3. fix loops
 
     def __init__(self, master: tkinter.Tk):
         self._master = master
@@ -20,17 +23,17 @@ class SchemeGUI:
         self.scheme = Scheme()
 
         # test scheme
-        # self.scheme.add_element('constant', 0, (1, 1),
-        #                         constant_value=1)
-        # self.scheme.add_element('constant', 1, (1, 2),
-        #                         constant_value=1)
-        # self.scheme.add_element('constant', 2, (1, 3),
-        #                         constant_value=1)
-        # self.scheme.add_element('shifter', 3, (3, 1), num_bits=4)
-        #
-        # self.scheme.add_connection(0, 'out', 3, 'in2')
-        # self.scheme.add_connection(1, 'out', 3, 'in3')
-        # self.scheme.add_connection(2, 'out', 3, 'shift_line1')
+        self.scheme.add_element('constant', 0, (1, 1),
+                                constant_value=1)
+        self.scheme.add_element('constant', 1, (1, 2),
+                                constant_value=1)
+        self.scheme.add_element('constant', 2, (1, 3),
+                                constant_value=1)
+        self.scheme.add_element('shifter', 3, (3, 1), num_bits=4)
+
+        self.scheme.add_connection(0, 'out', 3, 'in2')
+        self.scheme.add_connection(1, 'out', 3, 'in3')
+        self.scheme.add_connection(2, 'out', 3, 'shift_line1')
 
         # control variables
         self.interrupt_work = False
@@ -86,7 +89,8 @@ class SchemeGUI:
                           '- "s" to start scheme\n'
                           '- "t" to stop scheme\n'
                           '- "r" to once redraw scheme\n'
-                          '- "h" to open help'))
+                          '- "h" to open help\n'
+                          '- "Enter" to execute command'))
 
     def start_scheme(self):
         """Start infinite scheme update"""
