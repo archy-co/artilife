@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter.messagebox import showinfo
 from visualize import Visualizer
 from scheme import Scheme
+from input_module import raw_input
 
 
 class SchemeGUI:
@@ -19,17 +20,17 @@ class SchemeGUI:
         self.scheme = Scheme()
 
         # test scheme
-        self.scheme.add_element('constant', 0, (1, 1),
-                                constant_value=1)
-        self.scheme.add_element('constant', 1, (1, 2),
-                                constant_value=1)
-        self.scheme.add_element('constant', 2, (1, 3),
-                                constant_value=1)
-        self.scheme.add_element('shifter', 3, (3, 1), num_bits=4)
-
-        self.scheme.add_connection(0, 'out', 3, 'in2')
-        self.scheme.add_connection(1, 'out', 3, 'in3')
-        self.scheme.add_connection(2, 'out', 3, 'shift_line1')
+        # self.scheme.add_element('constant', 0, (1, 1),
+        #                         constant_value=1)
+        # self.scheme.add_element('constant', 1, (1, 2),
+        #                         constant_value=1)
+        # self.scheme.add_element('constant', 2, (1, 3),
+        #                         constant_value=1)
+        # self.scheme.add_element('shifter', 3, (3, 1), num_bits=4)
+        #
+        # self.scheme.add_connection(0, 'out', 3, 'in2')
+        # self.scheme.add_connection(1, 'out', 3, 'in3')
+        # self.scheme.add_connection(2, 'out', 3, 'shift_line1')
 
         # control variables
         self.interrupt_work = False
@@ -75,6 +76,7 @@ class SchemeGUI:
         self._master.bind('<KeyPress-t>', lambda e: self.stop_scheme())
         self._master.bind('<KeyPress-r>', lambda e: self.redraw_scheme())
         self._master.bind('<KeyPress-h>', lambda e: self.open_help())
+        self._master.bind('<Return>', lambda e: self.execute_command())
 
         # last tunings
 
@@ -119,6 +121,11 @@ class SchemeGUI:
 
         self.scheme_img_label.configure(image=scheme_image)
         self.scheme_img_label.image = scheme_image
+
+    def execute_command(self):
+        command = self.user_command.get()
+        raw_input(self.scheme, command)
+        self.redraw_scheme()
 
 
 if __name__ == "__main__":
