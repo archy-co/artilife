@@ -6,7 +6,7 @@ from scheme import Scheme
 
 
 class SchemeGUI:
-    """Incapsulate tkinter widgets and events functions"""
+    """Encapsulate tkinter widgets and events functions"""
 
     def __init__(self, master: tkinter.Tk):
         self._master = master
@@ -34,7 +34,7 @@ class SchemeGUI:
         # control variables
         self.interrupt_work = False
         self.update_interval = 100
-        self.scheme_max_width = 1000
+        self.scheme_max_width = 800
         self.scheme_max_height = 800
 
         # widgets
@@ -101,16 +101,21 @@ class SchemeGUI:
         """Update scheme every specified update interval"""
         if self.interrupt_work:
             return
-        self.redraw_scheme()
+        self.redraw_scheme(iterate_circuit=True)
         self._master.after(self.update_interval, self.update_scheme)
 
-    def redraw_scheme(self):
-        """Redraw scheme once"""
-        # TODO: separate in 2 methods: redraw (only draw without calculations)
-        #  and iterate (get next state of scheme)
+    def redraw_scheme(self, iterate_circuit: bool = False):
+        """Redraw scheme once
+
+        Arguments
+        ----------
+            iterate_circuit: specifies if to calculate values
+            for output on image and iterate circuit
+        """
         scheme_image = Visualizer.get_tkinter_image(self.scheme,
                                                     self.scheme_max_width,
-                                                    self.scheme_max_height)
+                                                    self.scheme_max_height,
+                                                    iterate_circuit)
 
         self.scheme_img_label.configure(image=scheme_image)
         self.scheme_img_label.image = scheme_image

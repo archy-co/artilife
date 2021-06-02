@@ -33,13 +33,20 @@ class Visualizer:
                       'SHIFTER': sd_elem.Ic}
 
     @staticmethod
-    def _add_visual_elements(scheme: Scheme, drawing: schemdraw.Drawing) -> Dict[
+    def _add_visual_elements(scheme: Scheme, drawing: schemdraw.Drawing, iterate_circuit: bool = False) -> Dict[
         str, sd_elem.Element]:
         """Add visual elements to drawing and return dictionary
-        with added elements"""
+        with added elements
+
+        Arguments
+        ----------
+            iterate_circuit: specifies if to calculate output for image
+            and iterate circuit
+        """
         visual_elements = {}
 
-        scheme_elements_outs = scheme.run()
+        if iterate_circuit:
+            scheme_elements_outs = scheme.run()
 
         for scheme_element in scheme:
             # create visual element
@@ -49,16 +56,20 @@ class Visualizer:
             # create integrated circuit visual element custom attributes
             # depending on element type
             kwargs = Visualizer._create_elements_kwargs(scheme_element)
+            # TODO: hook each element at the same anchor (left bottom corner)
             visual_element = Visualizer.elements_match[
                 scheme_element.element_type](**kwargs).label(
                 str(scheme_element.id), color='blue').at(
                 start_coordinates)
 
             # configure element outputs
-            if scheme_element.id in scheme_elements_outs:
-                for label, value in scheme_elements_outs[scheme_element.id].items():
-                    visual_element.label(label=str(int(value)), loc=label,
-                                         color='green')
+            # set labels now because after element is added to drawing
+            # you can't change their labels
+            if iterate_circuit:
+                if scheme_element.id in scheme_elements_outs:
+                    for label, value in scheme_elements_outs[scheme_element.id].items():
+                        visual_element.label(label=str(int(value)), loc=label,
+                                             color='green')
 
             # add element to drawing
             visual_elements[scheme_element.id] = drawing.add(visual_element)
@@ -164,14 +175,34 @@ class Visualizer:
 
     @staticmethod
     def get_tkinter_image(scheme: Scheme, max_width: int,
-                          max_height: int) -> ImageTk.PhotoImage:
-        """Return tkinter image for current scheme state"""
+                          max_height: int, iterate_circuit: bool = False) -> ImageTk.PhotoImage:
+        """Return tkinter image for current scheme state
+
+        Arguments
+        ----------
+            iterate_circuit: specifies if to calculate output for image
+            and iterate circuit
+        """
         drawing = schemdraw.Drawing()
 
         # configure and add visual elements
-        visual_elements = Visualizer._add_visual_elements(scheme, drawing)
+        visual_elements = Visualizer._add_visual_elements(scheme, drawing, iterate_circuit)
 
         Visualizer._add_input_connections(scheme, visual_elements, drawing)
+
+        # create custom axis
+        fig, ax = plt.subplots()
+        # ax.set_xlim(0, 25)
+        # ax.set_ylim(0, 25)
+        pixels_inch = 96
+        axis_multiplier = 1.15
+        inch_width, inch_height = int(max_width / pixels_inch * axis_multiplier), \
+                                  int(max_height / pixels_inch * axis_multiplier)
+        fig.set_size_inches((inch_width, inch_height))
+
+        # to create fig object inside drawing
+        # with custom axis and frame
+        drawing.draw(showframe=True, show=False, ax=ax)
 
         image_bytes = drawing.get_imagedata('png')
 
