@@ -1,12 +1,13 @@
-"""Contains custom created elements"""
+"""Custom visual elements for schemdraw library"""
 
 from schemdraw.segments import Segment, SegmentText
 import schemdraw.elements as sd_elem
 
 
 class Constant(sd_elem.Element):
+    """Element that holds one value all time"""
+
     def __init__(self, *d, constant_value: bool = True, **kwargs):
-        print(constant_value)
         super().__init__(*d, **kwargs)
 
         clen = 0.5
