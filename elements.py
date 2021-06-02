@@ -609,14 +609,24 @@ class RightShifter(BasicElement):
         return self._value
 
 
+class ForbiddenSrLatchStateError(Exception):
+    """
+    The exception is raised when both inputs S and R of SR latch equal to 1
+    In such a case the output is determined randomly which is unacceptable in real electric circuits
+    """
+    def __init__(self):
+        self.message = "The forbidden state of SR latch has been reached!"
+        super().__init__(self.message)
+
+
 class SRFlipFlop(BasicElement):
-    """A class for SR flip-flop element.
+    """A class for SR (set - reset) flip-flop element.
     An SR flip-flop can store a single bit.
-    If both S and R inputs are off, the output of the element is a bit that is stored.
-    If S is on and R is off, then the "1" bit is written to the "memory" and the output is high.
-    If S is off and R is on, then the "0" bit is written to the "memory" and the output is low.
-    If both S and R inputs are on, then the value of written bit is set randomly to either 0 or 1, but the output will be low.
-    The interface of an SR flip-flop element is the following:
+    The truth table of this element is the following:
+    S = 0, R = 0 -> initial or previous state
+    S = 1, R = 0 -> 1
+    S = 0, R = 1 -> 0
+    S = 1, R = 1 -> Forbidden SR latch state
     - input:
         S
         R
@@ -624,33 +634,79 @@ class SRFlipFlop(BasicElement):
         Q
     """
 
-    def __init__(self, id_, position=None, *, init_state: bool = None):
+    def __init__(self, id_, position=None):
         """Initialize an SR flipflop element with id and, optionally, its position and initial value of
         the stored bit.
-        If the initial state is not specified, then the initial value of stored bit is chosen randomly.
         """
         super().__init__(id_, position=position)
         self._ins[f'S'] = None
         self._ins[f'R'] = None
         self._outs[f'Q'] = []
         self._element_type = "SR_FLIPFLOP"
-        if init_state is None:
-            self._state = random.choice([True, False])
-        else:
-            self._state = init_state
+        self._state = 1
 
     def _logic(self, s, r):
-        if (not s) and (not r):
+        if not s and not r:
             return self._state
-        if (not s) and r:
+        if not s and r:
             self._state = False
             return False
-        if s and (not r):
+        if s and not r:
             self._state = True
             return True
         if s and r:
-            self._state = random.choice([True, False])
-            return False
+            raise ForbiddenSrLatchStateError()
+
+    @property
+    def value(self):
+        if self._value is None:
+            output = self._logic(self._read_input_value('S'), self._read_input_value('R'))
+            self._value = {'Q': output}
+        return self._value
+
+
+class GatedSRFlipFlop(SRFlipFlop):
+    """A class for Gated SR (set - reset) flip-flop element.
+    A Gated SR flip-flop can store a single bit.
+    It can be either turned on or turned off.
+    If it's turned on then it acts like regular SR latch
+    It it's turned off then is doesn't react to any change of R and S and return saved output state
+    The truth table of this element is the following:
+    E = 1
+        S = 0, R = 0 -> Q (initial or previous state)
+        S = 1, R = 0 -> 1
+        S = 0, R = 1 -> 0
+        S = 1, R = 1 -> Forbidden SR latch state
+    E = 0
+        Return Q regardless of S and R states
+    - input:
+        S
+        R
+        E
+    - output:
+        Q
+    """
+
+    def __init__(self, id_, position=None, enable_state: bool = 1):
+        """Initialize an SR flipflop element with id and, optionally, its position and initial value of
+        the stored bit.
+        """
+        super().__init__(id_, position)
+        self.enable_state = enable_state
+
+    def _logic(self, s, r):
+        if self.enable_state:
+            if not s and not r:
+                return self._state
+            if not s and r:
+                self._state = False
+                return False
+            if s and not r:
+                self._state = True
+                return True
+            if s and r:
+                raise ForbiddenSrLatchStateError()
+        return self._state
 
     @property
     def value(self):
