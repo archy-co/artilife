@@ -2,6 +2,10 @@
 Test module for Scheme
 '''
 import unittest
+import sys
+
+sys.path.append("..")     # to run tests from tests directory directly
+
 from scheme import Scheme
 from scheme import IdIsAlreadyTakenError
 from scheme import NoSuchOutputLabelError
@@ -51,7 +55,7 @@ class TestScheme(unittest.TestCase):
         self.assertIsNotNone(elem2.ins['in1'])
         self.assertTrue(elem2.ins['in1'] in elem1.outs[list(elem1.outs.keys())[0]])
 
-        self.scheme.delete_connection(elem1, 'out', elem2, 'in1')
+        self.scheme.delete_connection(1, 'out', 2, 'in1')
 
         self.assertEqual(elem1.outs[list(elem1.outs.keys())[0]], [])
         self.assertIsNone(elem2.ins['in1'])
@@ -81,7 +85,7 @@ class TestScheme(unittest.TestCase):
         t_elem2 = self.scheme._elements[2]
 
         self.assertEqual(t_elem1.outs['out'], [])
-        self.scheme.delete_connection(t_elem1, 'out', t_elem2, 'in1')
+        self.scheme.delete_connection(1, 'out', 2, 'in1')
         self.assertEqual(t_elem1.outs['out'], [])
 
 

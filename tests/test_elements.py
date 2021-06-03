@@ -1,11 +1,14 @@
 import unittest
+import sys
+
+sys.path.append("..")     # to run tests from tests directory directly
 
 from elements import Connection
 from elements import Constant, Variable
 from elements import BasicLogicGate
 from elements import AndGate, OrGate, NotGate, XorGate, NandGate, NorGate
 from elements import Multiplexer, Encoder, Decoder, FullAdder, AdderSubtractor, RightShifter
-from elements import SRFlipFlop
+from elements import GatedSRFlipFlop as SRFlipFlop
 
 
 class TestElements(unittest.TestCase):
@@ -376,7 +379,7 @@ class TestElements(unittest.TestCase):
         element2.set_input_connection(connection)
 
     def test_sr_flipflop(self):
-        flip_flop = SRFlipFlop("id0", init_state=True)
+        flip_flop = SRFlipFlop("id0", enable_state=True)
 
         self.assertEqual(flip_flop.value['Q'], True)
 
@@ -404,8 +407,8 @@ class TestElements(unittest.TestCase):
         self._connect_two_elements(constant, 'out', flip_flop, 'S')
         constant = Constant('c5', constant_value=True)
         self._connect_two_elements(constant, 'out', flip_flop, 'R')
-        flip_flop.reset_value()
         self.assertEqual(flip_flop.value, {'Q': False})
+        flip_flop.reset_value()
 
         constant = Constant('c4', constant_value=False)
         self._connect_two_elements(constant, 'out', flip_flop, 'S')
