@@ -84,7 +84,9 @@ class Scheme:
             'encoder': elements.Encoder,
             'fulladder': elements.FullAdder,
             'addersubtractor': elements.AdderSubtractor,
-            'shifter': elements.RightShifter
+            'shifter': elements.RightShifter,
+            'srflipflop': elements.GatedSRFlipFlop,
+            'dflipflop': elements.GatedDFlipFlop
         }
         if not self._validate_id(element_id):
             raise IdIsAlreadyTakenError(element_id)
