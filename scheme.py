@@ -164,6 +164,7 @@ class Scheme:
 
         self._elements.pop(element_id)
 
+    # TODO: replace source with str source_id
     def delete_connection(self, source: elements.BasicElement, output_label:str,
                             destination: elements.BasicElement, input_label:str):
         '''
