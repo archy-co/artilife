@@ -56,12 +56,12 @@ class SchemeGUI:
 
         self.help_btn = tk.Button(self.tool_frame, text='Help',
                                   command=self.open_help)
-        self.user_command = tk.StringVar()
-        self.command_entry = tk.Entry(self.tool_frame,
-                                      textvariable=self.user_command,
-                                      width=50)
+        self.user_entry_var = tk.StringVar()
+        self.user_entry = tk.Entry(self.tool_frame,
+                                   textvariable=self.user_entry_var,
+                                   width=50)
         self.load_commands_btn = tk.Button(self.tool_frame, text='Load',
-                                           command=self.load_file)
+                                           command=self.load_from_file)
 
         self.commands_log_entry = tk.Text(self.tool_frame, height=20, width=50,
                                           state='disabled')
@@ -89,7 +89,7 @@ class SchemeGUI:
         self.tool_frame.columnconfigure(0, weight=1)
         self.tool_frame.columnconfigure(1, weight=1)
 
-        self.command_entry.grid(column=0, row=0, columnspan=2)
+        self.user_entry.grid(column=0, row=0, columnspan=2)
         self.load_commands_btn.grid(column=2, row=0)
         self.commands_log_entry.grid(column=0, row=2, columnspan=3, sticky=tk.EW)
         self.cmd_entry_scroll.grid(column=2, row=2, sticky='nse')
@@ -149,28 +149,46 @@ class SchemeGUI:
         self.scheme_img_label.configure(image=scheme_image)
         self.scheme_img_label.image = scheme_image
 
-    def execute_scheme_command(self):
-        command = self.user_command.get()
+    def execute_scheme_command(self, command: str = None):
+        if not command:
+            command = self.user_entry_var.get()
         try:
             raw_input(self.scheme, command)
         except Exception as ex:
             self.write_to_log(f"Command: {command}\n"
                               f"Status: Error\n"
-                              f"Error message: {ex}\n"
-                              f"-------------------------\n")
+                              f"Error message: {ex}\n")
         else:
             self.write_to_log(f"Command: {command}\n"
-                              f"Status: Completed\n"
-                              f"-------------------------\n")
+                              f"Status: Completed\n")
             self.redraw_scheme()
+        finally:
+            self.write_to_log(f"-------------------------\n")
 
     def write_to_log(self, info: str):
         self.commands_log_entry.configure(state='normal')
         self.commands_log_entry.insert('1.0', info)
         self.commands_log_entry.configure(state='disabled')
 
-    def load_file(self):
-        self.write_to_log('abc\nabc\n')
+    def load_from_file(self):
+        path = self.user_entry_var.get()
+        self.write_to_log(f"Command: read commands from {path}\n")
+
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+        except Exception as ex:
+            self.write_to_log(f"Status: Error\n"
+                              f"Error message: {ex}\n")
+            return
+        else:
+            self.write_to_log(f"Status: Completed\n")
+        finally:
+            self.write_to_log(f"-------------------------\n")
+
+        commands = [line.strip() for line in lines]
+        for cmd in commands:
+            self.execute_scheme_command(cmd)
 
     def close_app(self):
         showinfo(':)', 'Thanks for using L4Logic today')
