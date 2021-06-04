@@ -85,6 +85,27 @@ class TruthTable:
         idx = sum(vars[i] * 2**i for i in range(self._num_vars-1, -1, -1))
         return self._data[idx]
 
+    def predict_value(self, incomplete_vars: Dict[str, bool]):
+        """Given a dictionary that maps some of the variables to their values, return:
+        1. True or False if all unspecified variables are nonessential.
+        2. None if some of missed values of variables are essential.
+        """
+        first_index = sum(incomplete_vars[i] * 2**self._names_to_nums[i] for i in incomplete_vars)
+        num_missed_vars = self._num_vars - len(incomplete_vars)
+
+        missed = [2**self._names_to_nums[name] for name in self._names_to_nums if name not in incomplete_vars]
+
+        value = None
+        for i in range(2**num_missed_vars):
+            is_included = self._int_to_binary(i, num_missed_vars)
+            cur_index = first_index + sum(missed[j] for j in range(num_missed_vars) if is_included[j])
+            cur_value = self._data[cur_index]
+            if value == None:
+                value = cur_value
+            elif value != cur_value:
+                return
+        return value
+
     def __str__(self):
         str_repr = ""
         for i in range(2**self._num_vars):
@@ -775,3 +796,4 @@ if __name__ == "__main__":
     tt = TruthTable(['var1', 'var2', 'var3'], maj)
     print(tt.get_value([False, True, False]), end="\n\n")
     print(tt)
+    print(tt.predict_value({'var1': True, 'var2': True}))
