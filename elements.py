@@ -334,14 +334,6 @@ class Multiplexer(BasicElement):
         self._element_type = "MULTIPLEXER"
         self._truth_table = TruthTable.get_multiplexer_truth_table(num_select_lines=num_select_lines)
 
-    def _get_number_of_selected_line(self):
-        base = "sel"
-        selected_line = 0
-        for i in range(self._num_select_lines):
-            if self._read_input_value(base + str(i + 1)):
-                selected_line += 2 ** i
-        return selected_line + 1
-
     @property
     def number_select_lines(self):
         return self._num_select_lines
@@ -385,13 +377,6 @@ class Encoder(BasicElement):
         self._element_type = "ENCODER"
         self._truth_table = TruthTable.get_encoder_truth_table(num_output_lines)
 
-    def _input_lines_to_number(self):
-        base = "input line "
-        for i in range(2 ** self._num_output_lines):
-            if self._read_input_value(base + str(i + 1)):
-                return i
-        return -1
-
     @property
     def number_output_lines(self):
         return self._num_output_lines
@@ -399,7 +384,6 @@ class Encoder(BasicElement):
     @property
     def value(self):
         if self._value is None:
-            print(self._get_input_values())
             self._value = self._truth_table.predict_value(self._get_input_values())
 
         return self._value

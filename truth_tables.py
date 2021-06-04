@@ -1,7 +1,7 @@
 """
 truth_table.py
 
-A module for implemetation of truth table and truth tables of logic elements.
+A module containing the implemetation of truth table and truth tables of the logic elements.
 """
 
 import ctypes
@@ -14,13 +14,16 @@ class TruthTable:
     -------
     get_value(vars)
         Given a list of boolean values, return the value that was calculated by the logical function.
+    predict_value(vars)
+        Given a dictionary that maps some names of the variables to their values,
+        return the value of the function if possible.
     """
     def __init__(self, var_names: list, function: Callable):
         """Initialize a truth table with the names of variables and the logical function.
         """
         self._num_vars = len(var_names)
         self._data = (ctypes.py_object * 2**self._num_vars)() # stores data
-        self._names_to_nums = {name: num for num, name in enumerate(var_names)} # map from names of variables to some numbers
+        self._names_to_nums = {name: num for num, name in enumerate(reversed(var_names))} # map from names of variables to some numbers
         self._nums_to_names = {num: name for name, num in self._names_to_nums.items()} # reverse map
 
         for i in range(2**self._num_vars):
@@ -45,7 +48,7 @@ class TruthTable:
         return self._data[idx]
 
     def predict_value(self, incomplete_vars: Dict[str, bool]):
-        """Given a dictionary that maps some of the variables to their values, return:
+        """Given a dictionary that maps names of some of the variables to their values, return:
         1. True or False if all unspecified variables are nonessential.
         2. None if some of missed values of variables are essential.
         """
@@ -95,7 +98,7 @@ class TruthTable:
             for input_line in range(2**num_output_lines):
                 if lst_args[input_line] == True:
                     binary = cls._int_to_binary(input_line, num_output_lines)
-                    for idx, val in enumerate(binary):
+                    for idx, val in enumerate(binary[::-1]):
                         out[idx] = out[idx] or val
             return dict(zip([f"output line {i+1}" for i in range(num_output_lines)], out))
         var_names = [f"input line {i+1}" for i in range(2**num_output_lines)]
@@ -103,4 +106,5 @@ class TruthTable:
 
 
 if __name__ == "__main__":
-    print(TruthTable.get_encoder_truth_table(1).predict_value({}))
+    print(TruthTable.get_encoder_truth_table(1))
+    print(TruthTable.get_encoder_truth_table(1).predict_value({'input line 1': True, 'input line 2': True}))
