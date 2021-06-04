@@ -1,10 +1,9 @@
 import tkinter
 import tkinter as tk
-from tkinter import scrolledtext
 from tkinter.messagebox import showinfo
 from visualize import Visualizer
 from scheme import Scheme
-from input_module import raw_input
+from input_module import InputParser
 
 
 class SchemeGUI:
@@ -24,6 +23,7 @@ class SchemeGUI:
 
         # objects
         self.scheme = Scheme()
+        self._user_input_parser = InputParser(self.scheme)
 
         # test scheme
         # self.scheme.add_element('constant', 0, (1, 1),
@@ -154,7 +154,7 @@ class SchemeGUI:
         if not command:
             command = self.user_entry_var.get()
         try:
-            raw_input(self.scheme, command)
+            self._user_input_parser.parse_raw_input(command)
         except Exception as ex:
             self.write_to_log(f"Command: {command}\n"
                               f"Status: Error\n"
