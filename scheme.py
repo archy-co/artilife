@@ -142,7 +142,7 @@ class Scheme:
         except KeyError as keyerror:
             raise NoSuchIdError(key) from keyerror
 
-    def delete_element(self, element_id: str) -> elements.BasicElement:
+    def delete_element(self, element_id: str):
         '''
         Deletes element from scheme with all conections. Corresponding connections
         of connected elements are set to None

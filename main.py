@@ -10,9 +10,10 @@ from input_module import raw_input
 class SchemeGUI:
     """Encapsulate tkinter widgets and events functions"""
 
-    # TODO: 1. create log readonly entry
+    # TODO: 1. create log readonly entry +
     #  2. make entry wider +
     #  3. add updating clock
+    #  4.
 
     def __init__(self, master: tkinter.Tk):
         self._master = master
