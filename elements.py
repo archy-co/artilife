@@ -3,7 +3,6 @@ elements.py
 A module containing implementaions of logic elements.
 You can use the following classes from this module:
 - Connnection
-- TruthTable
 - Constant
 - Variable
 - AndGate
@@ -23,8 +22,8 @@ You can use the following classes from this module:
 
 import functools
 import random
-from typing import Dict, Callable
-import ctypes
+from typing import Dict
+from truth_tables import TruthTable
 
 
 class Connection:
@@ -47,73 +46,6 @@ class Connection:
         self.output_label = output_label
         self.destination = destination
         self.input_label = input_label
-
-
-class TruthTable:
-    """A class for the truth table of logical function.
-    Methods
-    -------
-    get_value(vars)
-        Given a list of boolean values, return the value that was calculated by the logical function.
-    """
-    def __init__(self, var_names: list, function: Callable):
-        """Initialize a truth table with the names of variables and the logical function.
-        """
-        self._num_vars = len(var_names)
-        self._data = (ctypes.py_object * 2**self._num_vars)() # stores data
-        self._names_to_nums = {name: num for num, name in enumerate(var_names)} # map from names of variables to some numbers
-        self._nums_to_names = {num: name for name, num in self._names_to_nums.items()} # reverse map
-
-        for i in range(2**self._num_vars):
-            self._data[i] = function(self._int_to_binary(i, self._num_vars))
-
-    @staticmethod
-    def _int_to_binary(integer, num_bits):
-        binary_repr = []
-        while integer != 0:
-            integer, remainder = divmod(integer, 2)
-            binary_repr.append(bool(remainder))
-
-        while len(binary_repr) != num_bits:
-            binary_repr.append(False)
-
-        binary_repr.reverse()
-
-        return binary_repr
-
-    def get_value(self, vars):
-        idx = sum(vars[i] * 2**i for i in range(self._num_vars-1, -1, -1))
-        return self._data[idx]
-
-    def predict_value(self, incomplete_vars: Dict[str, bool]):
-        """Given a dictionary that maps some of the variables to their values, return:
-        1. True or False if all unspecified variables are nonessential.
-        2. None if some of missed values of variables are essential.
-        """
-        first_index = sum(incomplete_vars[i] * 2**self._names_to_nums[i] for i in incomplete_vars)
-        num_missed_vars = self._num_vars - len(incomplete_vars)
-
-        missed = [2**self._names_to_nums[name] for name in self._names_to_nums if name not in incomplete_vars]
-
-        value = None
-        for i in range(2**num_missed_vars):
-            is_included = self._int_to_binary(i, num_missed_vars)
-            cur_index = first_index + sum(missed[j] for j in range(num_missed_vars) if is_included[j])
-            cur_value = self._data[cur_index]
-            if value == None:
-                value = cur_value
-            elif value != cur_value:
-                return
-        return value
-
-    def __str__(self):
-        str_repr = ""
-        for i in range(2**self._num_vars):
-            vars_values = self._int_to_binary(i, self._num_vars)
-            cur_row = f"{i:0{self._num_vars}b} "
-            cur_row += str(int(self.get_value(vars_values)))
-            str_repr += cur_row + "\n"
-        return str_repr
 
 
 class BasicElement:
@@ -191,7 +123,7 @@ class BasicElement:
     def _read_input_value(self, input_label: str):
         connection = self._ins[input_label]
         if connection is None:
-            return False
+            return None
         return connection.source.value[connection.output_label]
 
     @property
@@ -229,18 +161,20 @@ class BasicLogicGate(BasicElement):
         for i in range(1, num_inputs + 1):
             self._ins['in' + str(i)] = None
         self._outs['out'] = []
+        self._truth_table = TruthTable(self._ins, lambda lst: self._logic_of_element(*lst))
 
     def _logic_of_element(self, *inputs) -> bool:
         raise NotImplementedError
 
     def _iterate_over_input_values(self):
         for input_label in self._ins:
-            yield self._read_input_value(input_label)
+            yield input_label, self._read_input_value(input_label)
 
     @property
     def value(self):
         if self._value is None:
-            self._value = self._logic_of_element(*self._iterate_over_input_values())
+            # self._value = self._logic_of_element(*self._iterate_over_input_values())
+            self._value = self._truth_table.predict_value(dict(self._iterate_over_input_values()))
         return {'out': self._value}
 
 
@@ -791,9 +725,16 @@ class GatedDFlipFlop(BasicElement):
 
 
 if __name__ == "__main__":
-    def maj(lst):
-        return (lst[0] and lst[1]) or (lst[1] and lst[2]) or (lst[0] and lst[2])
-    tt = TruthTable(['var1', 'var2', 'var3'], maj)
-    print(tt.get_value([False, True, False]), end="\n\n")
-    print(tt)
-    print(tt.predict_value({'var1': True, 'var2': True}))
+    or_gate = OrGate("or", num_inputs=2)
+
+    # constant = Constant("c1", constant_value=True)
+    # connection = Connection(constant, 'out', or_gate, 'in1')
+    # or_gate.set_input_connection(connection)
+    # constant.set_output_connection(connection)
+
+    constant = Constant("c2", constant_value=False)
+    connection = Connection(constant, 'out', or_gate, 'in2')
+    or_gate.set_input_connection(connection)
+    constant.set_output_connection(connection)
+
+    print(or_gate.value)
