@@ -26,6 +26,8 @@ def raw_input(scheme, command):
         *id1(name)* *output_label1* !> *id2(name)* *input_label1*
     Example:
         0 out !> 1 in1
+    For switching the value of the variable source of signal user should use next command:
+        switch *id_of_variable_element*
     """
 
     line = command.strip().split()
@@ -33,6 +35,8 @@ def raw_input(scheme, command):
         scheme.add_element(line[1], line[2], (int(line[3]), int(line[4])))
     elif line[0] == 'del':
         scheme.delete_element(line[1])
+    elif line[0] == 'switch':
+        scheme[line[1]].switch()
     elif '>' in line:
         scheme.add_connection(line[0], line[1], line[3], line[4])
     elif '!>' in line:

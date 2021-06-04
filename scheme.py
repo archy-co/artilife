@@ -80,6 +80,7 @@ class Scheme:
             'xor': elements.XorGate,
             'nand': elements.NandGate,
             'constant': elements.Constant,
+            'variable': elements.Variable,
             'decoder': elements.Decoder,
             'encoder': elements.Encoder,
             'fulladder': elements.FullAdder,

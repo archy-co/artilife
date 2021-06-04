@@ -3,7 +3,7 @@ from pprint import pprint
 from schemdraw import logic
 from schemdraw import elements as sd_elem
 import schemdraw
-from custom_elements import Constant
+from custom_elements import Constant, Variable
 from scheme import Scheme
 from PIL import Image, ImageTk
 import io
@@ -22,6 +22,7 @@ class Visualizer:
                       'NOR': logic.Nor,
                       'NOT': logic.Not,
                       'CONSTANT': Constant,
+                      'VARIABLE': Variable,
                       'MULTIPLEXER': sd_elem.Multiplexer,
                       'ENCODER': sd_elem.Ic,
                       'DECODER': sd_elem.Ic,
@@ -91,6 +92,9 @@ class Visualizer:
 
         if scheme_element.element_type == "CONSTANT":
             kwargs['constant_value'] = scheme_element.value['out']
+            kwargs['lbl_size'] = Visualizer.default_label_size
+
+        if scheme_element.element_type == "VARIABLE":
             kwargs['lbl_size'] = Visualizer.default_label_size
 
         if scheme_element.element_type == "MULTIPLEXER":

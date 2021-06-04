@@ -26,3 +26,9 @@ class Constant(sd_elem.Element):
 
         self.anchors['out'] = (clen / 2 + 0.2, 0)
         self.anchors['center'] = (0, 0)
+
+
+class Variable(Constant):
+    def __init__(self, *d, lbl_size=10, **kwargs):
+        super().__init__(*d, True, lbl_size=lbl_size, **kwargs)
+        print("Run variable")
