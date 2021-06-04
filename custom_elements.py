@@ -29,6 +29,5 @@ class Constant(sd_elem.Element):
 
 
 class Variable(Constant):
-    def __init__(self, *d, lbl_size=10, **kwargs):
-        super().__init__(*d, True, lbl_size=lbl_size, **kwargs)
-        print("Run variable")
+    def __init__(self, *d, constant_value: bool = True, lbl_size: float = 10, **kwargs):
+        super().__init__(*d, constant_value=constant_value, lbl_size=lbl_size, **kwargs)
