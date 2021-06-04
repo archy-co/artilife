@@ -102,11 +102,11 @@ class Visualizer:
             num_select_lines = scheme_element.number_select_lines
             for i in range(1, num_select_lines + 1):
                 kwargs['pins'].append(
-                    sd_elem.IcPin(name=f'sel{i}', anchorname=f'select line {i}',
+                    sd_elem.IcPin(name=f'sel{i}', anchorname=f'sel{i}',
                                   side='B'))
             for i in range(1, 2 ** num_select_lines + 1):
                 kwargs['pins'].append(
-                    sd_elem.IcPin(name=f'in{i}', anchorname=f'input line {i}',
+                    sd_elem.IcPin(name=f'in{i}', anchorname=f'in{i}',
                                   side='L'))
             kwargs['pins'].append(sd_elem.IcPin(name='out', side='R'))
 
