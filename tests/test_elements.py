@@ -136,7 +136,7 @@ class TestElements(unittest.TestCase):
         self.assertEqual(multiplexer.value['out'], False)
 
         constant = Constant('constant', constant_value=True)
-        connection = Connection(constant, 'out', multiplexer, 'input line 1')
+        connection = Connection(constant, 'out', multiplexer, 'in1')
         multiplexer.set_input_connection(connection)
         constant.set_output_connection(connection)
 
@@ -144,7 +144,7 @@ class TestElements(unittest.TestCase):
         self.assertEqual(multiplexer.value['out'], True)
 
         constant = Constant('constant', constant_value=False)
-        connection = Connection(constant, 'out', multiplexer, 'input line 2')
+        connection = Connection(constant, 'out', multiplexer, 'in2')
         multiplexer.set_input_connection(connection)
         constant.set_output_connection(connection)
 
@@ -152,7 +152,7 @@ class TestElements(unittest.TestCase):
         self.assertEqual(multiplexer.value['out'], True)
 
         constant = Constant('constant', constant_value=True)
-        connection = Connection(constant, 'out', multiplexer, 'select line 1')
+        connection = Connection(constant, 'out', multiplexer, 'sel1')
         multiplexer.set_input_connection(connection)
         constant.set_output_connection(connection)
 
@@ -160,7 +160,7 @@ class TestElements(unittest.TestCase):
         self.assertEqual(multiplexer.value['out'], False)
 
         constant = Constant('constant', constant_value=False)
-        connection = Connection(constant, 'out', multiplexer, 'select line 1')
+        connection = Connection(constant, 'out', multiplexer, 'sel1')
         multiplexer.set_input_connection(connection)
         constant.set_output_connection(connection)
 

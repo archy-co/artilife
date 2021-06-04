@@ -103,6 +103,24 @@ class BasicElement:
     def delete_output_connection(self, output_label: str):
         self._outs[output_label] = []
 
+    def check_added_connection(self, compare_id: str, first_call: bool = False):
+        """Return True if connection doesn't create a cycle.
+        Otherwise, return False
+
+        Attributes
+        --------------
+            first_call: if element from the connection call this method
+        """
+        if not first_call and self._id == compare_id:
+            return False
+        for in_label, connection in self._ins.items():
+            if not connection:
+                continue
+            source = connection.source
+            if not source.check_added_connection(compare_id):
+                return False
+        return True
+
     @property
     def value(self) -> dict:
         raise NotImplementedError
@@ -287,19 +305,19 @@ class Variable(BasicElement):
 
 
 class Multiplexer(BasicElement):
-    """A class for multiplexor element.
+    """A class for multiplexer element.
     A multiplexer has n select lines and 2**n input lines. The select lines decide signal from
     which input line to send to the output.
     The interface of the multiplexer element is the following:
     - input:
-        select line 1
-        select line 2
+        sel1
+        sel2
         ...
-        select line {num_select_lines}
-        input line 1
-        input line 2
+        sel{num_select_lines}
+        in1
+        in2
         ...
-        input line {num_select_lines**2}
+        in{2**num_select_lines}
     - output:
         out
     """
@@ -312,14 +330,14 @@ class Multiplexer(BasicElement):
         super().__init__(id_, position)
         self._num_select_lines = num_select_lines
         for i in range(1, num_select_lines + 1):
-            self._ins[f'select line {i}'] = None
+            self._ins[f'sel{i}'] = None
         for i in range(1, 2 ** num_select_lines + 1):
-            self._ins[f'input line {i}'] = None
+            self._ins[f'in{i}'] = None
         self._outs['out'] = []
         self._element_type = "MULTIPLEXER"
 
     def _get_number_of_selected_line(self):
-        base = "select line "
+        base = "sel"
         selected_line = 0
         for i in range(self._num_select_lines):
             if self._read_input_value(base + str(i + 1)):
@@ -333,14 +351,14 @@ class Multiplexer(BasicElement):
     @property
     def value(self):
         if self._value is None:
-            needed_input = 'input line ' + str(self._get_number_of_selected_line())
+            needed_input = 'in' + str(self._get_number_of_selected_line())
             self._value = self._read_input_value(needed_input)
         return {'out': self._value}
 
 
 class Encoder(BasicElement):
     """A class for encoder element.
-    A decoder knows the number of the high input line, and outputs this number represented by n output lines.
+    An encoder knows the number of the high input line, and outputs this number represented by n output lines.
     If several input lines are high, this implementation of encoder takes into account the first one that is high.
     If none of input lines are high, then the all the output lines are low.
     The interface of the encoder element is the following:
@@ -348,7 +366,7 @@ class Encoder(BasicElement):
         input line 1
         input line 2
         ...
-        input line {num_output_lines**2}
+        input line {2**num_output_lines}
     - output:
         output line 1
         output line 2
@@ -396,7 +414,7 @@ class Encoder(BasicElement):
 
 class Decoder(BasicElement):
     """A class for decoder element.
-    A decoder reads a number represented by n input lines and based on that turns on
+    A decoder reads the number represented by n input lines and based on that turns on
     one of 2**n output lines.
     The interface of the encoder element is the following:
     - input:
@@ -408,7 +426,7 @@ class Decoder(BasicElement):
         output line 1
         output line 2
         ...
-        output line {num_input_lines**2}
+        output line {2**num_input_lines}
     """
 
     def __init__(self, id_, position=None, num_input_lines: int = 2):

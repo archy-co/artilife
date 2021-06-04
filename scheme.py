@@ -7,6 +7,15 @@ Implements Scheme class and related exceptions
 from typing import Tuple
 import elements
 
+class CycleNotAccepted(Exception):
+    '''
+    This exception is raised in Scheme add_connection method if currently
+    added connection created cycle
+    '''
+    def __init__(self):
+        self.message = f'Cycle is not accepted in current version'
+        super().__init__(self.message)
+
 class IdIsAlreadyTakenError(Exception):
     '''
     This exception is raised in Scheme add_element method if the id argument
@@ -80,6 +89,7 @@ class Scheme:
             'xor': elements.XorGate,
             'nand': elements.NandGate,
             'constant': elements.Constant,
+            'variable': elements.Variable,
             'decoder': elements.Decoder,
             'encoder': elements.Encoder,
             'fulladder': elements.FullAdder,
@@ -129,6 +139,11 @@ class Scheme:
 
         destination.set_input_connection(connection)
 
+        if not source.check_added_connection(source_id, first_call=True):
+            self.delete_connection(source_id, output_label, destination_id,
+                                   input_label)
+            raise CycleNotAccepted()
+
     def _validate_connection(self, connection: elements.Connection):
         try:
             if connection.destination.ins[connection.input_label]:
@@ -142,7 +157,7 @@ class Scheme:
         except KeyError as keyerror:
             raise NoSuchIdError(key) from keyerror
 
-    def delete_element(self, element_id: str) -> elements.BasicElement:
+    def delete_element(self, element_id: str):
         '''
         Deletes element from scheme with all conections. Corresponding connections
         of connected elements are set to None
