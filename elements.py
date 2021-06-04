@@ -317,7 +317,7 @@ class Multiplexer(BasicElement):
         in1
         in2
         ...
-        in{num_select_lines**2}
+        in{2**num_select_lines}
     - output:
         out
     """
@@ -366,7 +366,7 @@ class Encoder(BasicElement):
         input line 1
         input line 2
         ...
-        input line {num_output_lines**2}
+        input line {2**num_output_lines}
     - output:
         output line 1
         output line 2
@@ -426,7 +426,7 @@ class Decoder(BasicElement):
         output line 1
         output line 2
         ...
-        output line {num_input_lines**2}
+        output line {2**num_input_lines}
     """
 
     def __init__(self, id_, position=None, num_input_lines: int = 2):
