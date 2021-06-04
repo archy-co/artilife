@@ -502,13 +502,7 @@ class AdderSubtractor(BasicElement):
             self._outs[f'S{i}'] = []
         self._outs['Cout'] = []
         self._element_type = "ADDERSUBTRACTOR"
-
-    def _get_number(self, base, invert=False):
-        number = []
-        for i in range(self._num_bits):
-            val = self._read_input_value(base + str(i))
-            number.append(val != invert)
-        return number
+        self._truth_table = TruthTable.get_addersubtractor_truth_table(num_bits)
 
     @property
     def number_bits(self):
@@ -517,16 +511,7 @@ class AdderSubtractor(BasicElement):
     @property
     def value(self):
         if self._value is None:
-            sub = self._read_input_value('sub')
-            number_A = self._get_number("A")
-            number_B = self._get_number("B", sub)
-
-            self._value = {}
-            carry = sub
-            for i in range(self._num_bits):
-                self._value["S" + str(i)] = (number_A[i] != number_B[i]) != carry
-                carry = (number_A[i] and number_B[i]) or (number_A[i] and carry) or (number_B[i] and carry)
-            self._value['Cout'] = carry
+            self._value = self._truth_table.predict_value(self._get_input_values())
 
         return self._value
 
@@ -566,6 +551,7 @@ class RightShifter(BasicElement):
             self._ins[f'shift_line{i}'] = None
             self._outs[f'out{i}'] = []
         self._element_type = "SHIFTER"
+        self._truth_table = TruthTable.get_rightshifter_truth_table(num_bits=num_bits)
 
     def _read_input(self, base: str):
         number = []
@@ -580,13 +566,7 @@ class RightShifter(BasicElement):
     @property
     def value(self):
         if self._value is None:
-            self._value = {}
-            shift_by = self._read_input('shift_line')
-            to_shift = self._read_input('in')
-            for i in range(self._num_bits):
-                self._value[f"out{i}"] = False
-                for j in range(i + 1):
-                    self._value[f"out{i}"] = self._value[f"out{i}"] or (to_shift[i - j] and shift_by[j])
+            self._value = self._truth_table.predict_value(self._get_input_values())
         return self._value
 
 

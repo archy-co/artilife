@@ -127,7 +127,48 @@ class TruthTable:
 
         return cls(['A', 'B', 'Cin'], fulladder_func)
 
+    @classmethod
+    def get_addersubtractor_truth_table(cls, num_bits):
+        def addersubtractor_func(lst_args):
+            sub = lst_args[-1]
+            number_A = lst_args[:num_bits]
+            number_B = lst_args[num_bits: 2*num_bits]
+
+            if sub:
+                for idx, val in enumerate(number_B):
+                    number_B[idx] = not number_B[idx]
+
+            out = {}
+            carry = sub
+            for i in range(num_bits):
+                out["S" + str(i)] = (number_A[i] != number_B[i]) != carry
+                carry = (number_A[i] and number_B[i]) or (number_A[i] and carry) or (number_B[i] and carry)
+            out['Cout'] = carry
+            return out
+
+        var_names = [f'A{i}' for i in range(num_bits)]
+        var_names.extend([f'B{i}' for i in range(num_bits)])
+        var_names.append('sub')
+
+        return cls(var_names, addersubtractor_func)
+
+    @classmethod
+    def get_rightshifter_truth_table(cls, num_bits):
+        def rightshifter_func(lst_args):
+            out = {}
+            to_shift = lst_args[:num_bits]
+            shift_by = lst_args[num_bits:]
+            for i in range(num_bits):
+                out[f"out{i}"] = False
+                for j in range(i + 1):
+                    out[f"out{i}"] = out[f"out{i}"] or (to_shift[i - j] and shift_by[j])
+            return out
+        var_names = [f'in{i}' for i in range(num_bits)]
+        var_names.extend([f'shift_line{i}' for i in range(num_bits)])
+
+        return cls(var_names, rightshifter_func)
+
 
 if __name__ == "__main__":
-    print(TruthTable.get_decoder_truth_table(2))
-    print(TruthTable.get_decoder_truth_table(2).predict_value({}))
+    print(TruthTable.get_rightshifter_truth_table(2))
+    # print(TruthTable.get_rightshifter_truth_table(2).predict_value({}))
