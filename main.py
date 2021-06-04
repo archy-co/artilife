@@ -140,6 +140,7 @@ class SchemeGUI:
     def execute_scheme_command(self, command: str = None):
         if not command:
             command = self.user_entry_var.get()
+        # self._user_input_parser.parse_raw_input(command)
         try:
             self._user_input_parser.parse_raw_input(command)
         except Exception as ex:

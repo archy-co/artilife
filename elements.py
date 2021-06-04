@@ -103,6 +103,17 @@ class BasicElement:
     def delete_output_connection(self, output_label: str):
         self._outs[output_label] = []
 
+    def check_added_connection(self, compare_id: str, first_call: bool = False):
+        if not first_call and self._id == compare_id:
+            return False
+        for in_label, connection in self._ins.items():
+            if not connection:
+                continue
+            source = connection.source
+            if not source.check_added_connection(compare_id):
+                return False
+        return True
+
     @property
     def value(self) -> dict:
         raise NotImplementedError
