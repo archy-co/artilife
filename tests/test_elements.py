@@ -155,7 +155,7 @@ class TestElements(unittest.TestCase):
     def test_encoder(self):
         encoder = Encoder('encoder', num_output_lines=1)
 
-        self.assertEqual(encoder.value, {'output line 1': False})
+        self.assertEqual(encoder.value, None)
 
         constant = Constant('constant', constant_value=True)
         connection = Connection(constant, 'out', encoder, 'input line 1')
@@ -163,15 +163,7 @@ class TestElements(unittest.TestCase):
         constant.set_output_connection(connection)
 
         encoder.reset_value()
-        self.assertEqual(encoder.value, {'output line 1': False})
-
-        constant = Constant('constant', constant_value=False)
-        connection = Connection(constant, 'out', encoder, 'input line 1')
-        encoder.set_input_connection(connection)
-        constant.set_output_connection(connection)
-
-        encoder.reset_value()
-        self.assertEqual(encoder.value, {'output line 1': False})
+        self.assertEqual(encoder.value, None)
 
         constant = Constant('constant', constant_value=True)
         connection = Connection(constant, 'out', encoder, 'input line 2')
