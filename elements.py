@@ -3,6 +3,7 @@ elements.py
 A module containing implementaions of logic elements.
 You can use the following classes from this module:
 - Connnection
+- TruthTable
 - Constant
 - Variable
 - AndGate
@@ -22,6 +23,8 @@ You can use the following classes from this module:
 
 import functools
 import random
+from typing import Dict, Callable
+import ctypes
 
 
 class Connection:
@@ -44,6 +47,52 @@ class Connection:
         self.output_label = output_label
         self.destination = destination
         self.input_label = input_label
+
+
+class TruthTable:
+    """A class for the truth table of logical function.
+    Methods
+    -------
+    get_value(vars)
+        Given a list of boolean values, return the value that was calculated by the logical function.
+    """
+    def __init__(self, var_names: list, function: Callable):
+        """Initialize a truth table with the names of variables and the logical function.
+        """
+        self._num_vars = len(var_names)
+        self._data = (ctypes.py_object * 2**self._num_vars)() # stores data
+        self._names_to_nums = {name: num for num, name in enumerate(var_names)} # map from names of variables to some numbers
+        self._nums_to_names = {num: name for name, num in self._names_to_nums.items()} # reverse map
+
+        for i in range(2**self._num_vars):
+            self._data[i] = function(self._int_to_binary(i, self._num_vars))
+
+    @staticmethod
+    def _int_to_binary(integer, num_bits):
+        binary_repr = []
+        while integer != 0:
+            integer, remainder = divmod(integer, 2)
+            binary_repr.append(bool(remainder))
+
+        while len(binary_repr) != num_bits:
+            binary_repr.append(False)
+
+        binary_repr.reverse()
+
+        return binary_repr
+
+    def get_value(self, vars):
+        idx = sum(vars[i] * 2**i for i in range(self._num_vars-1, -1, -1))
+        return self._data[idx]
+
+    def __str__(self):
+        str_repr = ""
+        for i in range(2**self._num_vars):
+            vars_values = self._int_to_binary(i, self._num_vars)
+            cur_row = f"{i:0{self._num_vars}b} "
+            cur_row += str(int(self.get_value(vars_values)))
+            str_repr += cur_row + "\n"
+        return str_repr
 
 
 class BasicElement:
@@ -721,11 +770,8 @@ class GatedDFlipFlop(BasicElement):
 
 
 if __name__ == "__main__":
-    constant = Constant("1", constant_value=False)
-    or_gate = OrGate("2", num_inputs=2)
-
-    connection = Connection(constant, 'out', or_gate, 'in1')
-    or_gate.set_input_connection(connection)
-    constant.set_output_connection(connection)
-
-    print(or_gate.value)
+    def maj(lst):
+        return (lst[0] and lst[1]) or (lst[1] and lst[2]) or (lst[0] and lst[2])
+    tt = TruthTable(['var1', 'var2', 'var3'], maj)
+    print(tt.get_value([False, True, False]), end="\n\n")
+    print(tt)
