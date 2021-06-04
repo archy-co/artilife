@@ -305,7 +305,7 @@ class Variable(BasicElement):
 
 
 class Multiplexer(BasicElement):
-    """A class for multiplexor element.
+    """A class for multiplexer element.
     A multiplexer has n select lines and 2**n input lines. The select lines decide signal from
     which input line to send to the output.
     The interface of the multiplexer element is the following:
@@ -358,7 +358,7 @@ class Multiplexer(BasicElement):
 
 class Encoder(BasicElement):
     """A class for encoder element.
-    A decoder knows the number of the high input line, and outputs this number represented by n output lines.
+    An encoder knows the number of the high input line, and outputs this number represented by n output lines.
     If several input lines are high, this implementation of encoder takes into account the first one that is high.
     If none of input lines are high, then the all the output lines are low.
     The interface of the encoder element is the following:
@@ -414,7 +414,7 @@ class Encoder(BasicElement):
 
 class Decoder(BasicElement):
     """A class for decoder element.
-    A decoder reads a number represented by n input lines and based on that turns on
+    A decoder reads the number represented by n input lines and based on that turns on
     one of 2**n output lines.
     The interface of the encoder element is the following:
     - input:
