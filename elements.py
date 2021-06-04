@@ -104,6 +104,13 @@ class BasicElement:
         self._outs[output_label] = []
 
     def check_added_connection(self, compare_id: str, first_call: bool = False):
+        """Return True if connection doesn't create a cycle.
+        Otherwise, return False
+
+        Attributes
+        --------------
+            first_call: if element from the connection call this method
+        """
         if not first_call and self._id == compare_id:
             return False
         for in_label, connection in self._ins.items():
