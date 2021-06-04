@@ -3,7 +3,7 @@ from pprint import pprint
 from schemdraw import logic
 from schemdraw import elements as sd_elem
 import schemdraw
-from custom_elements import Constant, Variable
+from custom_elements import Constant, Variable, Not
 from scheme import Scheme
 from PIL import Image, ImageTk
 import io
@@ -26,7 +26,7 @@ class Visualizer:
                                 'XOR': logic.Xor,
                                 'NAND': logic.Nand,
                                 'NOR': logic.Nor,
-                                'NOT': logic.Not,
+                                'NOT': Not,
                                 'CONSTANT': Constant,
                                 'VARIABLE': Variable,
                                 'MULTIPLEXER': sd_elem.Multiplexer,

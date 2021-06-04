@@ -26,19 +26,6 @@ class SchemeGUI:
         self._visualizer = Visualizer(self.scheme)
         self._user_input_parser = InputParser(self.scheme)
 
-        # test scheme
-        # self.scheme.add_element('constant', 0, (1, 1),
-        #                         constant_value=1)
-        # self.scheme.add_element('constant', 1, (1, 2),
-        #                         constant_value=1)
-        # self.scheme.add_element('constant', 2, (1, 3),
-        #                         constant_value=1)
-        # self.scheme.add_element('shifter', 3, (3, 1), num_bits=4)
-        #
-        # self.scheme.add_connection(0, 'out', 3, 'in2')
-        # self.scheme.add_connection(1, 'out', 3, 'in3')
-        # self.scheme.add_connection(2, 'out', 3, 'shift_line1')
-
         # control variables
         self.interrupt_work = False
         self.update_interval = 100
@@ -166,6 +153,16 @@ class SchemeGUI:
         finally:
             self.write_to_log(f"-------------------------\n")
 
+    def execute_many_commands(self, commands: list):
+        cmd = commands[0]
+        self.execute_scheme_command(cmd)
+
+        if len(commands) > 1:
+            self._master.after(10, lambda: self.execute_many_commands(commands[1:]))
+        else:
+            self.write_to_log(f"-------------------------\n"
+                              f"Scheme added\n")
+
     def write_to_log(self, info: str):
         self.commands_log_entry.configure(state='normal')
         self.commands_log_entry.insert('1.0', info)
@@ -188,8 +185,8 @@ class SchemeGUI:
             self.write_to_log(f"-------------------------\n")
 
         commands = [line.strip() for line in lines]
-        for cmd in commands:
-            self.execute_scheme_command(cmd)
+
+        self.execute_many_commands(commands)
 
     def close_app(self):
         showinfo(':)', 'Thanks for using L4Logic today')
