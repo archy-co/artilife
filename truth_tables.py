@@ -41,7 +41,7 @@ class TruthTable:
         return binary_repr
 
     def get_value(self, vars):
-        idx = sum(vars[i] * 2**i for i in range(self._num_vars-1, -1, -1))
+        idx = sum(vars[i] * 2**(self._num_vars-i-1) for i in range(self._num_vars))
         return self._data[idx]
 
     def predict_value(self, incomplete_vars: Dict[str, bool]):
@@ -78,15 +78,16 @@ class TruthTable:
             str_repr += cur_row + "\n"
         return str_repr
 
-    # @classmethod
-    # def get_and_truth_table(cls, num_inputs=2):
-        
+    @classmethod
+    def get_multiplexer_truth_table(cls, num_select_lines):
+        def mux_func(lst_args):
+            idx = 0
+            for i in range(num_select_lines):
+                idx += 2**i * lst_args[i]
+            return bool(lst_args[num_select_lines+idx])
+        var_names = [f"sel{i+1}" for i in range(num_select_lines)] + [f"in{i+1}" for i in range(2**num_select_lines)]
+        return cls(var_names, mux_func)
 
 
 if __name__ == "__main__":
-    def maj(lst):
-        return (lst[0] and lst[1]) or (lst[1] and lst[2]) or (lst[0] and lst[2])
-    tt = TruthTable(['var1', 'var2', 'var3'], maj)
-    print(tt.get_value([False, True, False]), end="\n\n")
-    print(tt)
-    print(tt.predict_value({'var1': True, 'var2': True}))
+    print(TruthTable.get_multiplexer_truth_table(1))

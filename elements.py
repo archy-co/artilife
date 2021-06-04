@@ -126,6 +126,12 @@ class BasicElement:
             return None
         return connection.source.value[connection.output_label]
 
+    def _get_input_values(self):
+        input_values = {}
+        for label in self._ins:
+            input_values[label] = self._read_input_value(label)
+        return input_values
+
     @property
     def outs(self):
         return self._outs
@@ -241,7 +247,12 @@ class NotGate(BasicElement):
     @property
     def value(self):
         if self._value is None:
-            self._value = not self._read_input_value('in')
+            input_value = self._read_input_value('in')
+            if input_value is None:
+                self._value = None
+            else:
+                self._value = not input_value
+
         return {'out': self._value}
 
 
@@ -321,6 +332,7 @@ class Multiplexer(BasicElement):
             self._ins[f'in{i}'] = None
         self._outs['out'] = []
         self._element_type = "MULTIPLEXER"
+        self._truth_table = TruthTable.get_multiplexer_truth_table(num_select_lines=num_select_lines)
 
     def _get_number_of_selected_line(self):
         base = "sel"
@@ -337,8 +349,7 @@ class Multiplexer(BasicElement):
     @property
     def value(self):
         if self._value is None:
-            needed_input = 'in' + str(self._get_number_of_selected_line())
-            self._value = self._read_input_value(needed_input)
+            self._value = self._truth_table.predict_value(self._get_input_values())
         return {'out': self._value}
 
 

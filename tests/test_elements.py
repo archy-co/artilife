@@ -104,7 +104,7 @@ class TestElements(unittest.TestCase):
 
     def test_not(self):
         not_gate = NotGate("not_gate0")
-        self.assertEqual(not_gate.value, {'out': True})
+        self.assertEqual(not_gate.value, {'out': None})
 
         constant = Constant("c0", constant_value=True)
         connection = Connection(constant, "out", not_gate, "in")
@@ -133,15 +133,15 @@ class TestElements(unittest.TestCase):
     def test_multiplexer(self):
         multiplexer = Multiplexer('multiplexer1', num_select_lines=1)
 
-        self.assertEqual(multiplexer.value['out'], False)
+        self.assertEqual(multiplexer.value['out'], None)
 
-        constant = Constant('constant', constant_value=True)
+        constant = Constant('constant', constant_value=False)
         connection = Connection(constant, 'out', multiplexer, 'in1')
         multiplexer.set_input_connection(connection)
         constant.set_output_connection(connection)
 
         multiplexer.reset_value()
-        self.assertEqual(multiplexer.value['out'], True)
+        self.assertEqual(multiplexer.value['out'], None)
 
         constant = Constant('constant', constant_value=False)
         connection = Connection(constant, 'out', multiplexer, 'in2')
@@ -149,23 +149,7 @@ class TestElements(unittest.TestCase):
         constant.set_output_connection(connection)
 
         multiplexer.reset_value()
-        self.assertEqual(multiplexer.value['out'], True)
-
-        constant = Constant('constant', constant_value=True)
-        connection = Connection(constant, 'out', multiplexer, 'sel1')
-        multiplexer.set_input_connection(connection)
-        constant.set_output_connection(connection)
-
-        multiplexer.reset_value()
         self.assertEqual(multiplexer.value['out'], False)
-
-        constant = Constant('constant', constant_value=False)
-        connection = Connection(constant, 'out', multiplexer, 'sel1')
-        multiplexer.set_input_connection(connection)
-        constant.set_output_connection(connection)
-
-        multiplexer.reset_value()
-        self.assertEqual(multiplexer.value['out'], True)
         self.assertEqual(multiplexer.element_type, "MULTIPLEXER")
 
     def test_encoder(self):
