@@ -1,9 +1,9 @@
 import tkinter
 import tkinter as tk
 from tkinter.messagebox import showinfo
-from visualize import Visualizer
-from scheme import Scheme
-from input_module import InputParser
+from src.visualize import Visualizer
+from src.scheme import Scheme
+from src.input_module import InputParser
 
 
 class SchemeGUI:

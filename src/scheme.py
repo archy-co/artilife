@@ -5,7 +5,7 @@ Implements Scheme class and related exceptions
 '''
 
 from typing import Tuple
-import elements
+import src.elements as elements
 
 class CycleNotAccepted(Exception):
     '''

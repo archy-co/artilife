@@ -6,11 +6,11 @@ import sys
 
 sys.path.append("..")     # to run tests from tests directory directly
 
-from scheme import Scheme
-from scheme import IdIsAlreadyTakenError
-from scheme import NoSuchOutputLabelError
-from scheme import NoSuchInputLabelError
-from scheme import NoSuchIdError
+from src.scheme import Scheme
+from src.scheme import IdIsAlreadyTakenError
+from src.scheme import NoSuchOutputLabelError
+from src.scheme import NoSuchInputLabelError
+from src.scheme import NoSuchIdError
 
 
 class TestScheme(unittest.TestCase):

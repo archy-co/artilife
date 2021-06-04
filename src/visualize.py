@@ -3,13 +3,13 @@ from pprint import pprint
 from schemdraw import logic
 from schemdraw import elements as sd_elem
 import schemdraw
-from custom_elements import Constant, Variable, Not
-from scheme import Scheme
+from src.custom_elements import Constant, Variable, Not
+from src.scheme import Scheme
 from PIL import Image, ImageTk
 import io
 import matplotlib.pyplot as plt
 from typing import Dict, Union, List
-import elements
+import src.elements as elements
 
 
 class Visualizer:

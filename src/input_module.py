@@ -1,5 +1,5 @@
 """input module"""
-from scheme import Scheme
+from src.scheme import Scheme
 
 
 class InputParser:
