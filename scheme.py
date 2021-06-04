@@ -190,8 +190,6 @@ class Scheme:
                             results[element.id] = {out: element.value[out]}
                         except RecursionError:
                             continue
-
-
         return results
 
     def __iter__(self):
@@ -200,6 +198,12 @@ class Scheme:
     def _reset(self):
         for element in self._elements.values():
             element.reset_value()
+
+    def move(self, element_id, new_position):
+        '''
+        Moves element with element_id to new_position
+        '''
+        self._elements[element_id].position = new_position
 
     def __str__(self):
         return str(list(self._elements.items()))
