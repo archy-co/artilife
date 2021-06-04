@@ -292,14 +292,14 @@ class Multiplexer(BasicElement):
     which input line to send to the output.
     The interface of the multiplexer element is the following:
     - input:
-        select line 1
-        select line 2
+        sel1
+        sel2
         ...
-        select line {num_select_lines}
-        input line 1
-        input line 2
+        sel{num_select_lines}
+        in1
+        in2
         ...
-        input line {num_select_lines**2}
+        in{num_select_lines**2}
     - output:
         out
     """
@@ -312,14 +312,14 @@ class Multiplexer(BasicElement):
         super().__init__(id_, position)
         self._num_select_lines = num_select_lines
         for i in range(1, num_select_lines + 1):
-            self._ins[f'select line {i}'] = None
+            self._ins[f'sel{i}'] = None
         for i in range(1, 2 ** num_select_lines + 1):
-            self._ins[f'input line {i}'] = None
+            self._ins[f'in{i}'] = None
         self._outs['out'] = []
         self._element_type = "MULTIPLEXER"
 
     def _get_number_of_selected_line(self):
-        base = "select line "
+        base = "sel"
         selected_line = 0
         for i in range(self._num_select_lines):
             if self._read_input_value(base + str(i + 1)):
@@ -333,7 +333,7 @@ class Multiplexer(BasicElement):
     @property
     def value(self):
         if self._value is None:
-            needed_input = 'input line ' + str(self._get_number_of_selected_line())
+            needed_input = 'in' + str(self._get_number_of_selected_line())
             self._value = self._read_input_value(needed_input)
         return {'out': self._value}
 
