@@ -1,0 +1,4 @@
+add and 0 0 0
+add or 1 2 2
+0 out > 1 in1
+0 out > 1 in2
