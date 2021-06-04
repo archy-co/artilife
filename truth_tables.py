@@ -74,7 +74,7 @@ class TruthTable:
         for i in range(2**self._num_vars):
             vars_values = self._int_to_binary(i, self._num_vars)
             cur_row = f"{i:0{self._num_vars}b} "
-            cur_row += str(int(self.get_value(vars_values)))
+            cur_row += str(self.get_value(vars_values))
             str_repr += cur_row + "\n"
         return str_repr
 
@@ -88,6 +88,19 @@ class TruthTable:
         var_names = [f"sel{i+1}" for i in range(num_select_lines)] + [f"in{i+1}" for i in range(2**num_select_lines)]
         return cls(var_names, mux_func)
 
+    @classmethod
+    def get_encoder_truth_table(cls, num_output_lines):
+        def encoder_func(lst_args):
+            out = [False] * num_output_lines
+            for input_line in range(2**num_output_lines):
+                if lst_args[input_line] == True:
+                    binary = cls._int_to_binary(input_line, num_output_lines)
+                    for idx, val in enumerate(binary):
+                        out[idx] = out[idx] or val
+            return dict(zip([f"output line {i+1}" for i in range(num_output_lines)], out))
+        var_names = [f"input line {i+1}" for i in range(2**num_output_lines)]
+        return cls(var_names, encoder_func)
+
 
 if __name__ == "__main__":
-    print(TruthTable.get_multiplexer_truth_table(1))
+    print(TruthTable.get_encoder_truth_table(1).predict_value({}))

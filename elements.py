@@ -314,7 +314,7 @@ class Multiplexer(BasicElement):
         in1
         in2
         ...
-        in{num_select_lines**2}
+        in{2**num_select_lines}
     - output:
         out
     """
@@ -363,7 +363,7 @@ class Encoder(BasicElement):
         input line 1
         input line 2
         ...
-        input line {num_output_lines**2}
+        input line {2**num_output_lines}
     - output:
         output line 1
         output line 2
@@ -383,6 +383,7 @@ class Encoder(BasicElement):
         for i in range(1, num_output_lines + 1):
             self._outs[f'output line {i}'] = []
         self._element_type = "ENCODER"
+        self._truth_table = TruthTable.get_encoder_truth_table(num_output_lines)
 
     def _input_lines_to_number(self):
         base = "input line "
@@ -398,13 +399,8 @@ class Encoder(BasicElement):
     @property
     def value(self):
         if self._value is None:
-            self._value = {key: False for key in self._outs}
-            number = self._input_lines_to_number()
-            idx = 1
-            while number > 0:
-                number, remainder = divmod(number, 2)
-                self._value["output line " + str(idx)] = bool(remainder)
-                idx += 1
+            print(self._get_input_values())
+            self._value = self._truth_table.predict_value(self._get_input_values())
 
         return self._value
 
@@ -423,7 +419,7 @@ class Decoder(BasicElement):
         output line 1
         output line 2
         ...
-        output line {num_input_lines**2}
+        output line {2**num_input_lines}
     """
 
     def __init__(self, id_, position=None, num_input_lines: int = 2):
