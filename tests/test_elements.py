@@ -178,7 +178,7 @@ class TestElements(unittest.TestCase):
     def test_decoder(self):
         decoder = Decoder('decoder', num_input_lines=1)
 
-        self.assertEqual(decoder.value, {'output line 1': True, 'output line 2': False})
+        self.assertEqual(decoder.value, None)
 
         constant = Constant('constant', constant_value=True)
         connection = Connection(constant, 'out', decoder, 'input line 1')
@@ -201,7 +201,7 @@ class TestElements(unittest.TestCase):
     def test_fulladder(self):
         fullAdder = FullAdder('full adder 1')
 
-        self.assertEqual(fullAdder.value, {'Cout': False, 'S': False})
+        self.assertEqual(fullAdder.value, None)
 
         constant = Constant("c1", constant_value=True)
         connection = Connection(constant, 'out', fullAdder, 'A')
@@ -209,7 +209,7 @@ class TestElements(unittest.TestCase):
         fullAdder.set_input_connection(connection)
 
         fullAdder.reset_value()
-        self.assertEqual(fullAdder.value, {'Cout': False, 'S': True})
+        self.assertEqual(fullAdder.value, None)
 
         constant = Constant("c2", constant_value=True)
         connection = Connection(constant, 'out', fullAdder, 'Cin')
@@ -217,7 +217,7 @@ class TestElements(unittest.TestCase):
         fullAdder.set_input_connection(connection)
 
         fullAdder.reset_value()
-        self.assertEqual(fullAdder.value, {'Cout': True, 'S': False})
+        self.assertEqual(fullAdder.value, None)
 
         constant = Constant("c3", constant_value=True)
         connection = Connection(constant, 'out', fullAdder, 'B')

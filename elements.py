@@ -418,14 +418,7 @@ class Decoder(BasicElement):
         for i in range(1, 2 ** num_input_lines + 1):
             self._outs[f'output line {i}'] = []
         self._element_type = "DECODER"
-
-    def _input_lines_to_number(self):
-        base = "input line "
-        number = 0
-        for i in range(self._num_input_lines):
-            if self._read_input_value(base + str(i + 1)):
-                number += 2 ** i
-        return number + 1
+        self._truth_table = TruthTable.get_decoder_truth_table(num_input_lines=num_input_lines)
 
     @property
     def number_input_lines(self):
@@ -434,9 +427,7 @@ class Decoder(BasicElement):
     @property
     def value(self):
         if self._value is None:
-            self._value = {key: False for key in self._outs}
-            self._value[f"output line {self._input_lines_to_number()}"] = True
-
+            self._value = self._truth_table.predict_value(self._get_input_values())
         return self._value
 
 
@@ -464,17 +455,12 @@ class FullAdder(BasicElement):
         self._outs['S'] = []
         self._outs['Cout'] = []
         self._element_type = "FULLADDER"
+        self._truth_table = TruthTable.get_fulladder_truth_table()
 
     @property
     def value(self):
         if self._value is None:
-            bitA = self._read_input_value("A")
-            bitB = self._read_input_value("B")
-            carry_in = self._read_input_value('Cin')
-
-            self._value = {'S': (bitA != bitB) != carry_in,
-                           'Cout': (bitA and bitB) or (bitA and carry_in) or (bitB and carry_in)}
-
+            self._value = self._truth_table.predict_value(self._get_input_values())
         return self._value
 
 

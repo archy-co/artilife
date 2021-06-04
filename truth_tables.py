@@ -104,7 +104,30 @@ class TruthTable:
         var_names = [f"input line {i+1}" for i in range(2**num_output_lines)]
         return cls(var_names, encoder_func)
 
+    @classmethod
+    def get_decoder_truth_table(cls, num_input_lines):
+        def decoder_func(lst_args):
+            decoded = 0
+            for input_line in range(num_input_lines):
+                decoded += lst_args[input_line] * 2**input_line
+            out = {f"output line {i+1}": False for i in range(2**num_input_lines)}
+            out[f"output line {decoded+1}"] = True
+            return out
+        var_names = [f"input line {i+1}" for i in range(num_input_lines)]
+        return cls(var_names, decoder_func)
+
+    @classmethod
+    def get_fulladder_truth_table(cls):
+        def fulladder_func(lst_args):
+            bitA = lst_args[0]
+            bitB = lst_args[1]
+            carry_in = lst_args[2]
+            return {'S': (bitA != bitB) != carry_in,
+                    'Cout': (bitA and bitB) or (bitA and carry_in) or (bitB and carry_in)}
+
+        return cls(['A', 'B', 'Cin'], fulladder_func)
+
 
 if __name__ == "__main__":
-    print(TruthTable.get_encoder_truth_table(1))
-    print(TruthTable.get_encoder_truth_table(1).predict_value({'input line 1': True, 'input line 2': True}))
+    print(TruthTable.get_decoder_truth_table(2))
+    print(TruthTable.get_decoder_truth_table(2).predict_value({}))
