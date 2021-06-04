@@ -25,14 +25,30 @@ class InputParser:
         """
         The user have to use specific set of commands to be able
         to interact with program.
-        These commands includes 'add', 'del' for elements and '>', '!>' for connection.
+        These commands includes: 'add', 'del', 'switch' for elements
+        and '>', '!>' for connections.
 
         For adding a new element user should use command as follows:
-            add *element_type* *id(name)* *cor1* *cor2*, where 'cor1' and 'cor2'
-            are x and y coordinates accordingly.
+            add *element_type* *id(name)* *cor1* *cor2* -*option_parameter* *value*
+            , where 'cor1' and 'cor2' are x and y coordinates accordingly.
         Examples:
             add and 0 20 20
             add or 1 3 4
+            add constant const_1 -10 15 -v 0
+            add addersubtractor addsub_down 5 7 -b 2
+        Next elements have optional parameters:
+            constant
+            -v: its value (0 or 1)
+            multiplexer
+            -s: number of lines to select
+            encoder
+            -o: number of output lines
+            decoder
+            -i: number of input lines
+            addersubtractor
+            -b: number of bits
+            shifter
+            -b: number of bits
         For deleting existing element user should use command as follows:
             del *id(name)*
         Examples:
@@ -46,7 +62,7 @@ class InputParser:
             *id1(name)* *output_label1* !> *id2(name)* *input_label1*
         Example:
             0 out !> 1 in1
-        For switching the value of the variable source of signal user should use next command:
+        For switching the value of the variable source of signal:
             switch *id_of_variable_element*
         """
 
