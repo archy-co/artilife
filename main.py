@@ -12,7 +12,7 @@ class SchemeGUI:
     # TODO: 1. create log readonly entry +
     #  2. make entry wider +
     #  3. add updating clock
-    #  4.
+    #  4. write file to test GUI
 
     def __init__(self, master: tkinter.Tk):
         self._master = master
@@ -23,6 +23,7 @@ class SchemeGUI:
 
         # objects
         self.scheme = Scheme()
+        self._visualizer = Visualizer(self.scheme)
         self._user_input_parser = InputParser(self.scheme)
 
         # test scheme
@@ -41,6 +42,8 @@ class SchemeGUI:
         # control variables
         self.interrupt_work = False
         self.update_interval = 100
+
+        # size variables
         self.scheme_max_width = 800
         self.scheme_max_height = 800
 
@@ -142,10 +145,7 @@ class SchemeGUI:
             iterate_circuit: specifies if to calculate values
             for output on image and iterate circuit
         """
-        scheme_image = Visualizer.get_tkinter_image(self.scheme,
-                                                    self.scheme_max_width,
-                                                    self.scheme_max_height,
-                                                    iterate_circuit)
+        scheme_image = self._visualizer.get_tkinter_image(iterate_circuit)
 
         self.scheme_img_label.configure(image=scheme_image)
         self.scheme_img_label.image = scheme_image

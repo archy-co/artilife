@@ -15,24 +15,30 @@ import elements
 class Visualizer:
     """Visualize scheme elements with schemdraw library"""
 
-    elements_match = {'AND': logic.And,
-                      'OR': logic.Or,
-                      'XOR': logic.Xor,
-                      'NAND': logic.Nand,
-                      'NOR': logic.Nor,
-                      'NOT': logic.Not,
-                      'CONSTANT': Constant,
-                      'VARIABLE': Variable,
-                      'MULTIPLEXER': sd_elem.Multiplexer,
-                      'ENCODER': sd_elem.Ic,
-                      'DECODER': sd_elem.Ic,
-                      'FULLADDER': sd_elem.Ic,
-                      'ADDERSUBTRACTOR': sd_elem.Ic,
-                      'SHIFTER': sd_elem.Ic}
-    default_label_size = 8
+    def __init__(self, scheme: Scheme, default_label_size: float = 8,
+                 max_width: int = 800, max_height: int = 800):
+        self._scheme = scheme
+        self._default_label_size = default_label_size
+        self._max_width = max_width
+        self._max_height = max_height
+        self._elements_match = {'AND': logic.And,
+                                'OR': logic.Or,
+                                'XOR': logic.Xor,
+                                'NAND': logic.Nand,
+                                'NOR': logic.Nor,
+                                'NOT': logic.Not,
+                                'CONSTANT': Constant,
+                                'VARIABLE': Variable,
+                                'MULTIPLEXER': sd_elem.Multiplexer,
+                                'ENCODER': sd_elem.Ic,
+                                'DECODER': sd_elem.Ic,
+                                'FULLADDER': sd_elem.Ic,
+                                'ADDERSUBTRACTOR': sd_elem.Ic,
+                                'SHIFTER': sd_elem.Ic,
+                                'SR_FLIPFLOP': sd_elem.Ic,
+                                'D_FLIPFLOP': sd_elem.Ic}
 
-    @staticmethod
-    def _add_visual_elements(scheme: Scheme, drawing: schemdraw.Drawing,
+    def _add_visual_elements(self, drawing: schemdraw.Drawing,
                              iterate_circuit: bool = False) -> Dict[
         str, sd_elem.Element]:
         """Add visual elements to drawing and return dictionary
@@ -46,17 +52,17 @@ class Visualizer:
         visual_elements = {}
 
         if iterate_circuit:
-            scheme_elements_outs = scheme.run()
+            scheme_elements_outs = self._scheme.run()
 
-        for scheme_element in scheme:
+        for scheme_element in self._scheme:
             # create visual element
             start_coordinates = (
                 scheme_element.position[0],
                 scheme_element.position[1])
             # create integrated circuit visual element custom attributes
             # depending on element type
-            kwargs = Visualizer._create_elements_kwargs(scheme_element)
-            visual_element = Visualizer.elements_match[
+            kwargs = self._create_elements_kwargs(scheme_element)
+            visual_element = self._elements_match[
                 scheme_element.element_type](**kwargs)
             if 'center' not in visual_element.anchors:
                 visual_element.anchors['center'] = (0, 0)
@@ -69,8 +75,7 @@ class Visualizer:
             # you can't change their labels
             if iterate_circuit:
                 if scheme_element.id in scheme_elements_outs:
-                    for label, value in scheme_elements_outs[
-                        scheme_element.id].items():
+                    for label, value in scheme_elements_outs[scheme_element.id].items():
                         visual_element.label(label=str(int(value)), loc=label,
                                              color='green')
 
@@ -79,23 +84,22 @@ class Visualizer:
 
         return visual_elements
 
-    @staticmethod
-    def _create_elements_kwargs(scheme_element: elements.BasicElement) -> Dict[
+    def _create_elements_kwargs(self, scheme_element: elements.BasicElement) -> Dict[
         str, Union[bool, List[sd_elem.IcPin]]]:
         """Create custom attributes for integrated
         circuits elements"""
 
         kwargs = {}
 
-        if Visualizer.elements_match[scheme_element.element_type] == sd_elem.Ic:
-            kwargs['plblsize'] = Visualizer.default_label_size
+        if self._elements_match[scheme_element.element_type] in (sd_elem.Ic, sd_elem.Multiplexer):
+            kwargs['plblsize'] = self._default_label_size
 
         if scheme_element.element_type == "CONSTANT":
             kwargs['constant_value'] = scheme_element.value['out']
-            kwargs['lbl_size'] = Visualizer.default_label_size
+            kwargs['lbl_size'] = self._default_label_size
 
         if scheme_element.element_type == "VARIABLE":
-            kwargs['lbl_size'] = Visualizer.default_label_size
+            kwargs['lbl_size'] = self._default_label_size
 
         if scheme_element.element_type == "MULTIPLEXER":
             kwargs['pins'] = []
@@ -165,14 +169,24 @@ class Visualizer:
             for i in range(num_bits):
                 kwargs['pins'].append(sd_elem.IcPin(name=f'out{i}', side='right'))
 
+        elif scheme_element.element_type == "SR_FLIPFLOP":
+            kwargs['pins'] = [sd_elem.IcPin(name='S', side='left'),
+                              sd_elem.IcPin(name='>', side='left'),
+                              sd_elem.IcPin(name='R', side='left'),
+                              sd_elem.IcPin(name='Q', side='right')]
+
+        elif scheme_element.element_type == "D_FLIPFLOP":
+            kwargs['pins'] = [sd_elem.IcPin(name='D', side='left'),
+                              sd_elem.IcPin(name='>', side='left'),
+                              sd_elem.IcPin(name='Q', side='right')]
+
         return kwargs
 
-    @staticmethod
-    def _add_input_connections(scheme: Scheme,
+    def _add_input_connections(self,
                                visual_elements: Dict[str, sd_elem.Element],
                                drawing: schemdraw.Drawing):
         """Create visual input connections for elements"""
-        for element in scheme:
+        for element in self._scheme:
             for in_label, in_connection in filter(lambda x: x[1] is not None,
                                                   element.ins.items()):
                 source = visual_elements[in_connection.source.id]
@@ -183,24 +197,13 @@ class Visualizer:
                     destination.absanchors[in_connection.input_label])
                 drawing.add(line)
 
-    @staticmethod
-    def get_tkinter_image(scheme: Scheme, max_width: int,
-                          max_height: int,
-                          iterate_circuit: bool = False) -> ImageTk.PhotoImage:
-        """Return tkinter image for current scheme state
-
-        Arguments
-        ----------
-            iterate_circuit: specifies if to calculate output for image
-            and iterate circuit
-        """
-        drawing = schemdraw.Drawing(lw=1, fontsize=Visualizer.default_label_size)
+    def _create_drawing(self, iterate_circuit: bool):
+        drawing = schemdraw.Drawing(lw=1, fontsize=self._default_label_size)
 
         # configure and add visual elements
-        visual_elements = Visualizer._add_visual_elements(scheme, drawing,
-                                                          iterate_circuit)
+        visual_elements = self._add_visual_elements(drawing, iterate_circuit)
 
-        Visualizer._add_input_connections(scheme, visual_elements, drawing)
+        self._add_input_connections(visual_elements, drawing)
 
         # create custom axis
         fig, ax = plt.subplots()
@@ -208,14 +211,27 @@ class Visualizer:
         # ax.set_ylim(0, 25)
         pixels_inch = 96
         axis_multiplier = 1.15
-        inch_width, inch_height = int(max_width / pixels_inch * axis_multiplier), \
-                                  int(max_height / pixels_inch * axis_multiplier)
+        inch_width, inch_height = int(
+            self._max_width / pixels_inch * axis_multiplier), \
+                                  int(self._max_height / pixels_inch * axis_multiplier)
         fig.set_size_inches((inch_width, inch_height))
         plt.grid()
 
         # to create fig object inside drawing
         # with custom axis and frame
         drawing.draw(showframe=True, show=False, ax=ax)
+
+        return drawing
+
+    def get_tkinter_image(self, iterate_circuit: bool = False) -> ImageTk.PhotoImage:
+        """Return tkinter image for current scheme state
+
+        Arguments
+        ----------
+            iterate_circuit: specifies if to calculate output for image
+            and iterate circuit
+        """
+        drawing = self._create_drawing(iterate_circuit)
 
         image_bytes = drawing.get_imagedata('png')
 
@@ -226,25 +242,24 @@ class Visualizer:
         plt.close('all')
 
         image = Image.open(io.BytesIO(image_bytes))
-        image = Visualizer._resize_img(image, max_width, max_height)
+        image = self._resize_img(image)
         image = ImageTk.PhotoImage(image)
 
         return image
 
-    @staticmethod
-    def _resize_img(image: Image, max_width: int, max_height: int) -> Image:
+    def _resize_img(self, image: Image) -> Image:
         """Resize image so that it fits in (max_width x max_height)"""
-        if image.height <= max_height and image.width <= max_width:
+        if image.height <= self._max_height and image.width <= self._max_width:
             return image
 
-        width_ratio = image.size[0] / max_width
-        height_ratio = image.size[1] / max_height
+        width_ratio = image.size[0] / self._max_width
+        height_ratio = image.size[1] / self._max_height
 
         if width_ratio > height_ratio:
-            fit_width = max_width
+            fit_width = self._max_width
             fit_height = round(image.size[1] / width_ratio)
         else:
-            fit_height = max_height
+            fit_height = self._max_height
             fit_width = round(image.size[0] / height_ratio)
 
         fit_image = image.resize((fit_width, fit_height), Image.NEAREST)
@@ -308,4 +323,5 @@ if __name__ == "__main__":
     # s.add_connection(1, 'out', 3, 'in3')
     # s.add_connection(2, 'out', 3, 'shift_line1')
 
-    Visualizer.get_tkinter_image(s, 800, 800)
+    vis = Visualizer(s)
+    vis.get_tkinter_image()
