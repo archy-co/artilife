@@ -1,0 +1,8 @@
+add nor nor1 0 2
+add nor nor2 0 0
+add variable v1 -2 2
+add variable v2 -2 0
+v1 out > nor1 in1
+v2 out > nor2 in2
+nor1 out > nor2 in1
+nor2 out > nor1 in2

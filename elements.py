@@ -84,7 +84,7 @@ class BasicElement:
     def __init__(self, id_, position):
         self._ins = {}
         self._outs = {}
-        self.value = None
+        self.value = {}
         self._id = id_
         self._element_type = None
         self.position = position
@@ -104,6 +104,9 @@ class BasicElement:
 
     def delete_output_connection(self, output_label: str):
         self._outs[output_label] = []
+
+    def _init_value(self):
+        self.value = {out_: None for out_ in self._outs}
 
     def calc_value(self, update=True) -> dict:
         raise NotImplementedError
@@ -164,6 +167,7 @@ class BasicLogicGate(BasicElement):
             self._ins['in' + str(i)] = None
         self._outs['out'] = []
         self._truth_table = TruthTable(self._ins, lambda lst: self._logic_of_element(*lst))
+        self._init_value()
 
     def _logic_of_element(self, *inputs) -> bool:
         raise NotImplementedError
@@ -237,6 +241,7 @@ class NotGate(BasicElement):
         self._ins['in'] = None
         self._outs['out'] = []
         self._element_type = "NOT"
+        self._init_value()
 
     def calc_value(self, update=True):
         input_value = self._read_input_value('in')
@@ -332,6 +337,7 @@ class Multiplexer(BasicElement):
         self._outs['out'] = []
         self._element_type = "MULTIPLEXER"
         self._truth_table = TruthTable.get_multiplexer_truth_table(num_select_lines=num_select_lines)
+        self._init_value()
 
     @property
     def number_select_lines(self):
@@ -374,6 +380,7 @@ class Encoder(BasicElement):
             self._outs[f'output line {i}'] = []
         self._element_type = "ENCODER"
         self._truth_table = TruthTable.get_encoder_truth_table(num_output_lines)
+        self._init_value()
 
     @property
     def number_output_lines(self):
@@ -415,6 +422,7 @@ class Decoder(BasicElement):
             self._outs[f'output line {i}'] = []
         self._element_type = "DECODER"
         self._truth_table = TruthTable.get_decoder_truth_table(num_input_lines=num_input_lines)
+        self._init_value()
 
     @property
     def number_input_lines(self):
@@ -452,6 +460,7 @@ class FullAdder(BasicElement):
         self._outs['Cout'] = []
         self._element_type = "FULLADDER"
         self._truth_table = TruthTable.get_fulladder_truth_table()
+        self._init_value()
 
     def calc_value(self, update=True):
         value = self._truth_table.predict_value(self._get_input_values())
@@ -499,6 +508,7 @@ class AdderSubtractor(BasicElement):
         self._outs['Cout'] = []
         self._element_type = "ADDERSUBTRACTOR"
         self._truth_table = TruthTable.get_addersubtractor_truth_table(num_bits)
+        self._init_value()
 
     @property
     def number_bits(self):
@@ -547,6 +557,7 @@ class RightShifter(BasicElement):
             self._outs[f'out{i}'] = []
         self._element_type = "SHIFTER"
         self._truth_table = TruthTable.get_rightshifter_truth_table(num_bits=num_bits)
+        self._init_value()
 
     def _read_input(self, base: str):
         number = []

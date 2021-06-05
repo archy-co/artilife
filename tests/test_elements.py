@@ -72,6 +72,13 @@ class TestElements(unittest.TestCase):
         el = self._create_element_with_constants(OrGate, [False, False, False])
         self.assertEqual(el.calc_value(), {'out': False})
 
+        constant = Constant("c0", constant_value=True)
+        connection = Connection(constant, "out", self.or_gate, "in1")
+        constant.set_output_connection(connection)
+        self.or_gate.set_input_connection(connection)
+
+        self.assertEqual(self.or_gate.calc_value(), {'out': True})
+
     def test_xor(self):
         el = self._create_element_with_constants(XorGate, [False, False, False])
         self.assertEqual(el.calc_value(), {'out': False})
@@ -99,8 +106,15 @@ class TestElements(unittest.TestCase):
         self.assertEqual(el.calc_value(), {'out': True})
         el = self._create_element_with_constants(NorGate, [True, False, False])
         self.assertEqual(el.calc_value(), {'out': False})
-        el = self._create_element_with_constants(NorGate, [False] * 1000)
+        el = self._create_element_with_constants(NorGate, [False] * 10)
         self.assertEqual(el.calc_value(), {'out': True})
+
+        constant = Constant("c0", constant_value=True)
+        connection = Connection(constant, "out", self.nor_gate, "in1")
+        constant.set_output_connection(connection)
+        self.nor_gate.set_input_connection(connection)
+
+        self.assertEqual(self.nor_gate.calc_value(), {'out': False})
 
     def test_not(self):
         not_gate = NotGate("not_gate0")
@@ -414,6 +428,38 @@ class TestElements(unittest.TestCase):
 
         flip_flop1 = SRFlipFlop("id1")
         self.assertTrue(flip_flop1.calc_value()['Q'] in [True, False])
+
+    def test_sequential(self):
+        nor1 = NorGate("nor1")
+        nor2 = NorGate("nor1")
+        v1 = Variable('v1')
+        v2 = Variable('v2')
+
+
+        print(nor1._truth_table)
+
+        connection = Connection(v1, 'out', nor1, 'in1')
+        v1.set_output_connection(connection)
+        nor1.set_input_connection(connection)
+
+        connection = Connection(v2, 'out', nor2, 'in2')
+        v2.set_output_connection(connection)
+        nor2.set_input_connection(connection)
+
+        connection = Connection(nor1, 'out', nor2, 'in1')
+        nor1.set_output_connection(connection)
+        nor2.set_input_connection(connection)
+
+        connection = Connection(nor2, 'out', nor1, 'in2')
+        nor2.set_output_connection(connection)
+        nor1.set_input_connection(connection)
+        self.assertEqual(nor1.calc_value(), {'out': False})
+        self.assertEqual(nor2.calc_value(), {'out': False})
+
+        v1.switch()
+        v1.calc_value()
+        self.assertEqual(nor1.calc_value(), {'out': True})
+        self.assertEqual(nor2.calc_value(), {'out': False})
 
 
 if __name__ == "__main__":
