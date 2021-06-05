@@ -77,14 +77,14 @@ class BasicElement:
         Add passed in connection to the connections associated with the specified output
     delete_output_connection(output_label)
         Clear all the output connections
-    reset_value()
-        Forgets the previously calculated value
+    calc_value(update)
+        Calculate the output of the logic element
     """
 
     def __init__(self, id_, position):
         self._ins = {}
         self._outs = {}
-        self._value = None
+        self.value = None
         self._id = id_
         self._element_type = None
         self.position = position
@@ -105,16 +105,12 @@ class BasicElement:
     def delete_output_connection(self, output_label: str):
         self._outs[output_label] = []
 
-    @property
-    def value(self) -> dict:
+    def calc_value(self, update=True) -> dict:
         raise NotImplementedError
 
     @property
     def id(self):
         return self._id
-
-    def reset_value(self):
-        self._value = None
 
     @property
     def element_type(self):
@@ -176,13 +172,11 @@ class BasicLogicGate(BasicElement):
         for input_label in self._ins:
             yield input_label, self._read_input_value(input_label)
 
-    @property
-    def value(self):
-        if self._value is None:
-            # self._value = self._logic_of_element(*self._iterate_over_input_values())
-            self._value = self._truth_table.predict_value(dict(self._iterate_over_input_values()))
-        return {'out': self._value}
-
+    def calc_value(self, update=True):
+        value = {'out': self._truth_table.predict_value(dict(self._iterate_over_input_values()))}
+        if update:
+            self.value = value
+        return value
 
 class AndGate(BasicLogicGate):
     def __init__(self, id_, position=None, num_inputs=2):
@@ -244,16 +238,16 @@ class NotGate(BasicElement):
         self._outs['out'] = []
         self._element_type = "NOT"
 
-    @property
-    def value(self):
-        if self._value is None:
-            input_value = self._read_input_value('in')
-            if input_value is None:
-                self._value = None
-            else:
-                self._value = not input_value
-
-        return {'out': self._value}
+    def calc_value(self, update=True):
+        input_value = self._read_input_value('in')
+        if input_value is None:
+            value = None
+        else:
+            value = not input_value
+        value = {'out': value}
+        if update:
+            self.value = value
+        return value
 
 
 class Constant(BasicElement):
@@ -271,10 +265,13 @@ class Constant(BasicElement):
         self._constant_value = constant_value
         self._outs['out'] = []
         self._element_type = "CONSTANT"
+        self.value = {'out': self._constant_value}
 
-    @property
-    def value(self):
-        return {'out': self._constant_value}
+    def calc_value(self, update=True):
+        value = {'out': self._constant_value}
+        if update:
+            self.value = value
+        return value
 
 
 class Variable(BasicElement):
@@ -292,14 +289,16 @@ class Variable(BasicElement):
         self._variable_value = init_value
         self._outs['out'] = []
         self._element_type = "VARIABLE"
+        self.value = {'out': init_value}
 
     def switch(self):
         self._variable_value = not self._variable_value
 
-    @property
-    def value(self):
-        return {'out': self._variable_value}
-
+    def calc_value(self, update=True):
+        value = {'out': self._variable_value}
+        if update:
+            self.value = value
+        return value
 
 class Multiplexer(BasicElement):
     """A class for multiplexor element.
@@ -338,12 +337,11 @@ class Multiplexer(BasicElement):
     def number_select_lines(self):
         return self._num_select_lines
 
-    @property
-    def value(self):
-        if self._value is None:
-            self._value = self._truth_table.predict_value(self._get_input_values())
-        return {'out': self._value}
-
+    def calc_value(self, update=True):
+        value = {'out': self._truth_table.predict_value(self._get_input_values())}
+        if update:
+            self.value = value
+        return value
 
 class Encoder(BasicElement):
     """A class for encoder element.
@@ -381,13 +379,11 @@ class Encoder(BasicElement):
     def number_output_lines(self):
         return self._num_output_lines
 
-    @property
-    def value(self):
-        if self._value is None:
-            self._value = self._truth_table.predict_value(self._get_input_values())
-
-        return self._value
-
+    def calc_value(self, update=True):
+        value = self._truth_table.predict_value(self._get_input_values())
+        if update:
+            self.value = value
+        return value
 
 class Decoder(BasicElement):
     """A class for decoder element.
@@ -424,11 +420,11 @@ class Decoder(BasicElement):
     def number_input_lines(self):
         return self._num_input_lines
 
-    @property
-    def value(self):
-        if self._value is None:
-            self._value = self._truth_table.predict_value(self._get_input_values())
-        return self._value
+    def calc_value(self, update=True):
+        value = self._truth_table.predict_value(self._get_input_values())
+        if update:
+            self.value = value
+        return value
 
 
 class FullAdder(BasicElement):
@@ -457,11 +453,11 @@ class FullAdder(BasicElement):
         self._element_type = "FULLADDER"
         self._truth_table = TruthTable.get_fulladder_truth_table()
 
-    @property
-    def value(self):
-        if self._value is None:
-            self._value = self._truth_table.predict_value(self._get_input_values())
-        return self._value
+    def calc_value(self, update=True):
+        value = self._truth_table.predict_value(self._get_input_values())
+        if update:
+            self.value = value
+        return value
 
 
 class AdderSubtractor(BasicElement):
@@ -508,12 +504,11 @@ class AdderSubtractor(BasicElement):
     def number_bits(self):
         return self._num_bits
 
-    @property
-    def value(self):
-        if self._value is None:
-            self._value = self._truth_table.predict_value(self._get_input_values())
-
-        return self._value
+    def calc_value(self, update=True):
+        value = self._truth_table.predict_value(self._get_input_values())
+        if update:
+            self.value = value
+        return value
 
 
 class RightShifter(BasicElement):
@@ -563,11 +558,11 @@ class RightShifter(BasicElement):
     def number_bits(self):
         return self._num_bits
 
-    @property
-    def value(self):
-        if self._value is None:
-            self._value = self._truth_table.predict_value(self._get_input_values())
-        return self._value
+    def calc_value(self, update=True):
+        value = self._truth_table.predict_value(self._get_input_values())
+        if update:
+            self.value = value
+        return value
 
 
 class ForbiddenSrLatchStateError(Exception):

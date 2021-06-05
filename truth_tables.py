@@ -6,6 +6,7 @@ A module containing the implemetation of truth table and truth tables of the log
 
 import ctypes
 from typing import Dict, Callable
+import copy
 
 
 class TruthTable:
@@ -61,6 +62,8 @@ class TruthTable:
             if name not in incomplete_vars:
                 missed.append(2**self._names_to_nums[name])
 
+        return_when_failed = {name: None for name in self._data[0]} if isinstance(self._data[0], dict) else None
+
         value = None
         for i in range(2**num_missed_vars):
             is_included = self._int_to_binary(i, num_missed_vars)
@@ -69,7 +72,9 @@ class TruthTable:
             if value == None:
                 value = cur_value
             elif value != cur_value:
-                return
+                return return_when_failed
+        if value is None:
+            return return_when_failed
         return value
 
     def __str__(self):

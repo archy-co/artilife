@@ -5,6 +5,7 @@ Implements Scheme class and related exceptions
 '''
 
 from typing import Tuple
+import copy
 import elements
 
 class IdIsAlreadyTakenError(Exception):
@@ -179,21 +180,13 @@ class Scheme:
         destination.delete_input_connection(input_label)
 
     def run(self):
-        self._reset()
-        results = {}
-        for element in self._elements.values():
-            for out in element.outs:
-                if not element.outs[out]:
-                    if element.id in results:
-                        results[element.id][out] = element.value[out]
-                    else:
-                        try:
-                            results[element.id] = {out: element.value[out]}
-                        except RecursionError:
-                            continue
-
-
-        return results
+        values_to_update = {}
+        for _ in range(len(self._elements)):
+            for element in self._elements.values():
+                values_to_update[element.id] = element.calc_value(update=False)
+            for id_ in values_to_update:
+                self._elements[id_].value = values_to_update[id_]
+        return copy.deepcopy(values_to_update)
 
     def __iter__(self):
         return iter(self._elements.values())
