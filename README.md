@@ -1,7 +1,14 @@
 # L 4 Logic
 > Design circuits of logic elements!
 
-See **[wiki pages](https://github.com/archy-co/l4logic/wiki)** for description and documentation
+See **[wiki pages](https://github.com/archy-co/l4logic/wiki)** for complete description and documentation.
+
+<center>
+<img src="https://img.shields.io/github/contributors/archy-co/l4logic">
+<img src="https://img.shields.io/github/license/archy-co/l4logic">
+<img src="https://img.shields.io/github/languages/top/archy-co/l4logic">
+<img src="https://img.shields.io/github/issues-closed/archy-co/l4logic">
+</center>
 
 ## Table of content
 
@@ -18,6 +25,11 @@ You can install `l4logic` in two ways:
 * locally, in the project folder (this method uses `venv` under the hood)
 * system wide, installing all dependencies globally on your system and adding executable file
 to system path.
+
+This program is tested to work on Linux. As MacOS is also unix-based system, this program
+will probably run properly on Mac. Windows is not officially supported and you may have troubles
+installing the program on Windows. In any case, you can install dependencies manually 
+(they are listed in [`requirements.txt`](https://github.com/archy-co/l4logic/blob/main/requirements.txt)), and run l4logic with command `python main.py`.
 
 In any case, to run the application, you should have `python` installed. Official supported version for python: 3.8, but should work on earlier 3.x versions as well as with 3.8+ versions.
 
@@ -109,6 +121,11 @@ Example:
 For full documentation, project description and more information on usage see **[wiki pages](https://github.com/archy-co/l4logic/wiki)**
 
 ## Demo
+You can try load example files like [examples/4bit_ALU.txt](https://github.com/archy-co/l4logic/blob/master/images/demo.gif). To do so just insert path to example file in program's input field and click **Load**
+
+Here is a short gif that shows some basic commands and functionality
+
+![screen-gif](./images/demo.gif)
 
 ## License
 L 4 Logic is licensed under the MIT license. See **[LICENSE](https://github.com/archy-co/l4logic/blob/master/LICENSE)** for more information.
