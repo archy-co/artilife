@@ -3,12 +3,10 @@
 
 See **[wiki pages](https://github.com/archy-co/l4logic/wiki)** for complete description and documentation.
 
-<center>
-<img src="https://img.shields.io/github/contributors/archy-co/l4logic">
-<img src="https://img.shields.io/github/license/archy-co/l4logic">
-<img src="https://img.shields.io/github/languages/top/archy-co/l4logic">
-<img src="https://img.shields.io/github/issues-closed/archy-co/l4logic">
-</center>
+![Contributors](https://img.shields.io/github/contributors/archy-co/l4logic)
+![License](https://img.shields.io/github/license/archy-co/l4logic)
+![Languages](https://img.shields.io/github/languages/top/archy-co/l4logic)
+![Issues](https://img.shields.io/github/issues-closed/archy-co/l4logic)
 
 ## Table of content
 
