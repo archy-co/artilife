@@ -179,14 +179,33 @@ class Scheme:
         source.delete_output_connection(output_label)
         destination.delete_input_connection(input_label)
 
+    def _update_values(self, new_values):
+        for id_ in new_values:
+            self._elements[id_].value = new_values[id_]
+
     def run(self):
         values_to_update = {}
         for _ in range(len(self._elements)):
-            for element in self._elements.values():
-                values_to_update[element.id] = element.calc_value(update=False)
-            for id_ in values_to_update:
-                self._elements[id_].value = values_to_update[id_]
-        return copy.deepcopy(values_to_update)
+            for id_ in self._elements:
+                values_to_update[id_] = self._elements[id_].calc_value(update=False)
+            self._update_values(values_to_update)
+
+        records_of_out_values = []
+        final_out_values = copy.deepcopy(values_to_update)
+
+        while True:
+            cur_out_values = {}
+            for element_id in self._elements:
+                cur_out_values[element_id] = self._elements[element_id].calc_value()
+                for out_name in cur_out_values[element_id]:
+                    if cur_out_values[element_id][out_name] != final_out_values[element_id][out_name]:
+                        final_out_values[element_id][out_name] = None
+            if cur_out_values in records_of_out_values:
+                # current values was previously encountered, so we went through the whole period
+                break
+            records_of_out_values.append(cur_out_values)
+
+        return final_out_values
 
     def __iter__(self):
         return iter(self._elements.values())

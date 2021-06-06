@@ -166,7 +166,7 @@ class BasicLogicGate(BasicElement):
         for i in range(1, num_inputs + 1):
             self._ins['in' + str(i)] = None
         self._outs['out'] = []
-        self._truth_table = TruthTable(self._ins, lambda lst: self._logic_of_element(*lst))
+        self._truth_table = TruthTable(list(self._ins), ['out'], lambda lst: self._logic_of_element(*lst))
         self._init_value()
 
     def _logic_of_element(self, *inputs) -> bool:
@@ -177,7 +177,7 @@ class BasicLogicGate(BasicElement):
             yield input_label, self._read_input_value(input_label)
 
     def calc_value(self, update=True):
-        value = {'out': self._truth_table.predict_value(dict(self._iterate_over_input_values()))}
+        value = self._truth_table.predict_value(dict(self._iterate_over_input_values()))
         if update:
             self.value = value
         return value
@@ -344,7 +344,7 @@ class Multiplexer(BasicElement):
         return self._num_select_lines
 
     def calc_value(self, update=True):
-        value = {'out': self._truth_table.predict_value(self._get_input_values())}
+        value = self._truth_table.predict_value(self._get_input_values())
         if update:
             self.value = value
         return value

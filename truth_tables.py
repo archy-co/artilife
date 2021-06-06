@@ -5,8 +5,12 @@ A module containing the implemetation of truth table and truth tables of the log
 """
 
 import ctypes
-from typing import Dict, Callable
+from typing import List, Dict, Callable
 import copy
+import itertools
+
+import pandas as pd
+import numpy as np
 
 
 class TruthTable:
@@ -15,23 +19,35 @@ class TruthTable:
     -------
     get_value(vars)
         Given a list of boolean values, return the value that was calculated by the logical function.
-    predict_value(vars)
-        Given a dictionary that maps some names of the variables to their values,
+    predict_value(args)
+        Given a dictionary that maps some names of the arguments to their values,
         return the value of the function if possible.
     """
-    def __init__(self, var_names: list, function: Callable):
+    def __init__(self, arg_names: list, out_names: list, function: Callable[[List[bool]], list]):
         """Initialize a truth table with the names of variables and the logical function.
+        Parameters
+        ----------
+        arg_names: list of strings
+            names of arguments of the function
+        out_names: list of strings
+            names of outputs of the function (the function can have more than one output)
         """
-        self._num_vars = len(var_names)
-        self._data = (ctypes.py_object * 2**self._num_vars)() # stores data
-        self._names_to_nums = {name: num for num, name in enumerate(reversed(var_names))} # map from names of variables to some numbers
+        self._num_args = len(arg_names)
+
+        data = np.full(shape=(2**self._num_args, len(out_names)), dtype=bool, fill_value=False)
+
+        self._data = pd.DataFrame(columns=out_names, dtype=bool) # stores data
+
+        self._names_to_nums = {name: num for num, name in enumerate(reversed(arg_names))} # map from names of arguments to numbers
         self._nums_to_names = {num: name for name, num in self._names_to_nums.items()} # reverse map
 
-        for i in range(2**self._num_vars):
-            self._data[i] = function(self._int_to_binary(i, self._num_vars))
+        for idx, args in enumerate(itertools.product([False, True], repeat=self._num_args)):
+            self._data.loc[idx] = function(list(args))
 
     @staticmethod
-    def _int_to_binary(integer, num_bits):
+    def _int_to_binary(integer: int, num_bits) -> List[bool]:
+        """Convert to an integer to its binary representation.
+        """
         binary_repr = []
         while integer != 0:
             integer, remainder = divmod(integer, 2)
@@ -44,45 +60,41 @@ class TruthTable:
 
         return binary_repr
 
-    def get_value(self, vars):
-        idx = sum(vars[i] * 2**(self._num_vars-i-1) for i in range(self._num_vars))
+    def get_value(self, args):
+        idx = sum(2**(self._num_args-i-1) for i in range(self._num_args) if args[i])
         return self._data[idx]
 
-    def predict_value(self, incomplete_vars: Dict[str, bool]):
-        """Given a dictionary that maps names of some of the variables to their values, return:
-        1. True or False if all unspecified variables are nonessential.
-        2. None if some of missed values of variables are essential.
+    def predict_value(self, incomplete_args: Dict[str, bool]):
+        """Given a dictionary that maps names of some of the arguments to their values, return:
+        1. True or False if unspecified arguments are nonessential.
+        2. None if missed arguments are essential.
         """
-        incomplete_vars = {key: val for key, val in incomplete_vars.items() if val is not None}
-        first_index = sum(incomplete_vars[i] * 2**self._names_to_nums[i] for i in incomplete_vars)
+        incomplete_args = {key: val for key, val in incomplete_args.items() if val is not None}
 
-        num_missed_vars = self._num_vars - len(incomplete_vars)
+        num_missed_args = self._num_args - len(incomplete_args)
         missed = []
         for name in self._names_to_nums:
-            if name not in incomplete_vars:
+            if name not in incomplete_args:
                 missed.append(2**self._names_to_nums[name])
 
-        return_when_failed = {name: None for name in self._data[0]} if isinstance(self._data[0], dict) else None
+        return_if_cant_predict = {name: None for name in self._data.columns}
 
+        first_index = sum(2**self._names_to_nums[i] for i in incomplete_args if incomplete_args[i])
         value = None
-        for i in range(2**num_missed_vars):
-            is_included = self._int_to_binary(i, num_missed_vars)
-            cur_index = first_index + sum(missed[j] for j in range(num_missed_vars) if is_included[j])
-            cur_value = self._data[cur_index]
-            if value == None:
+        for is_included in itertools.product([False, True], repeat=num_missed_args):
+            cur_index = first_index + sum(missed[j] for j in range(num_missed_args) if is_included[j])
+            cur_value = self._data.loc[cur_index]
+            if value is None:
                 value = cur_value
-            elif value != cur_value:
-                return return_when_failed
-        if value is None:
-            return return_when_failed
-        return value
+            elif np.any(value != cur_value):
+                return return_if_cant_predict
+        return dict(value)
 
     def __str__(self):
         str_repr = ""
-        for i in range(2**self._num_vars):
-            vars_values = self._int_to_binary(i, self._num_vars)
-            cur_row = f"{i:0{self._num_vars}b} "
-            cur_row += str(self.get_value(vars_values))
+        for num_row in range(self._data.shape[0]):
+            cur_row = f"{num_row:0{self._num_args}b} "
+            cur_row += str(list(self._data.loc[num_row]))
             str_repr += cur_row + "\n"
         return str_repr
 
@@ -92,9 +104,10 @@ class TruthTable:
             idx = 0
             for i in range(num_select_lines):
                 idx += 2**i * lst_args[i]
-            return bool(lst_args[num_select_lines+idx])
-        var_names = [f"sel{i+1}" for i in range(num_select_lines)] + [f"in{i+1}" for i in range(2**num_select_lines)]
-        return cls(var_names, mux_func)
+            return [bool(lst_args[num_select_lines+idx])]
+        args_names = [f"sel{i+1}" for i in range(num_select_lines)] + [f"in{i+1}" for i in range(2**num_select_lines)]
+        outs_names = ['out']
+        return cls(args_names, outs_names, mux_func)
 
     @classmethod
     def get_encoder_truth_table(cls, num_output_lines):
@@ -105,9 +118,10 @@ class TruthTable:
                     binary = cls._int_to_binary(input_line, num_output_lines)
                     for idx, val in enumerate(binary[::-1]):
                         out[idx] = out[idx] or val
-            return dict(zip([f"output line {i+1}" for i in range(num_output_lines)], out))
-        var_names = [f"input line {i+1}" for i in range(2**num_output_lines)]
-        return cls(var_names, encoder_func)
+            return out
+        args_names = [f"input line {i+1}" for i in range(2**num_output_lines)]
+        outs_names = [f"output line {i+1}" for i in range(num_output_lines)]
+        return cls(args_names, outs_names, encoder_func)
 
     @classmethod
     def get_decoder_truth_table(cls, num_input_lines):
@@ -115,11 +129,12 @@ class TruthTable:
             decoded = 0
             for input_line in range(num_input_lines):
                 decoded += lst_args[input_line] * 2**input_line
-            out = {f"output line {i+1}": False for i in range(2**num_input_lines)}
-            out[f"output line {decoded+1}"] = True
+            out = [False] * 2**num_input_lines
+            out[decoded] = True
             return out
-        var_names = [f"input line {i+1}" for i in range(num_input_lines)]
-        return cls(var_names, decoder_func)
+        args_names = [f"input line {i+1}" for i in range(num_input_lines)]
+        outs_names = [f"output line {i+1}" for i in range(2**num_input_lines)]
+        return cls(args_names, outs_names, decoder_func)
 
     @classmethod
     def get_fulladder_truth_table(cls):
@@ -127,10 +142,10 @@ class TruthTable:
             bitA = lst_args[0]
             bitB = lst_args[1]
             carry_in = lst_args[2]
-            return {'S': (bitA != bitB) != carry_in,
-                    'Cout': (bitA and bitB) or (bitA and carry_in) or (bitB and carry_in)}
+            return [(bitA != bitB) != carry_in,
+                    (bitA and bitB) or (bitA and carry_in) or (bitB and carry_in)]
 
-        return cls(['A', 'B', 'Cin'], fulladder_func)
+        return cls(['A', 'B', 'Cin'], ['S', 'Cout'], fulladder_func)
 
     @classmethod
     def get_addersubtractor_truth_table(cls, num_bits):
@@ -143,37 +158,42 @@ class TruthTable:
                 for idx, val in enumerate(number_B):
                     number_B[idx] = not number_B[idx]
 
-            out = {}
+            out = []
             carry = sub
             for i in range(num_bits):
-                out["S" + str(i)] = (number_A[i] != number_B[i]) != carry
+                out.append((number_A[i] != number_B[i]) != carry)
                 carry = (number_A[i] and number_B[i]) or (number_A[i] and carry) or (number_B[i] and carry)
-            out['Cout'] = carry
+            out.append(carry)
             return out
 
-        var_names = [f'A{i}' for i in range(num_bits)]
-        var_names.extend([f'B{i}' for i in range(num_bits)])
-        var_names.append('sub')
+        args_names = [f'A{i}' for i in range(num_bits)]
+        args_names.extend([f'B{i}' for i in range(num_bits)])
+        args_names.append('sub')
 
-        return cls(var_names, addersubtractor_func)
+        outs_names = [f'S{i}' for i in range(num_bits)]
+        outs_names.append('Cout')
+
+        return cls(args_names, outs_names, addersubtractor_func)
 
     @classmethod
     def get_rightshifter_truth_table(cls, num_bits):
         def rightshifter_func(lst_args):
-            out = {}
+            out = [False] * num_bits
             to_shift = lst_args[:num_bits]
             shift_by = lst_args[num_bits:]
             for i in range(num_bits):
-                out[f"out{i}"] = False
+                out[i] = False
                 for j in range(i + 1):
-                    out[f"out{i}"] = out[f"out{i}"] or (to_shift[i - j] and shift_by[j])
+                    out[i] = out[i] or (to_shift[i - j] and shift_by[j])
             return out
-        var_names = [f'in{i}' for i in range(num_bits)]
-        var_names.extend([f'shift_line{i}' for i in range(num_bits)])
+        args_names = [f'in{i}' for i in range(num_bits)]
+        args_names.extend([f'shift_line{i}' for i in range(num_bits)])
 
-        return cls(var_names, rightshifter_func)
+        outs_names = [f'out{i}' for i in range(num_bits)]
+
+        return cls(args_names, outs_names, rightshifter_func)
 
 
 if __name__ == "__main__":
-    print(TruthTable.get_rightshifter_truth_table(2))
-    # print(TruthTable.get_rightshifter_truth_table(2).predict_value({}))
+    print(TruthTable.get_decoder_truth_table(2))
+    print(TruthTable.get_decoder_truth_table(2).predict_value({'input line 1': False, 'input line 2': False}))
