@@ -3,12 +3,12 @@ import sys
 
 sys.path.append("..")     # to run tests from tests directory directly
 
-from elements import Connection
-from elements import Constant, Variable
-from elements import BasicLogicGate
-from elements import AndGate, OrGate, NotGate, XorGate, NandGate, NorGate
-from elements import Multiplexer, Encoder, Decoder, FullAdder, AdderSubtractor, RightShifter
-from elements import GatedSRFlipFlop as SRFlipFlop
+from src.elements import Connection
+from src.elements import Constant, Variable
+from src.elements import BasicLogicGate
+from src.elements import AndGate, OrGate, NotGate, XorGate, NandGate, NorGate
+from src.elements import Multiplexer, Encoder, Decoder, FullAdder, AdderSubtractor, RightShifter
+from src.elements import GatedSRFlipFlop as SRFlipFlop
 
 
 class TestElements(unittest.TestCase):

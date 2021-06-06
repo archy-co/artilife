@@ -1,10 +1,9 @@
 import tkinter
 import tkinter as tk
-from tkinter import scrolledtext
 from tkinter.messagebox import showinfo
-from visualize import Visualizer
-from scheme import Scheme
-from input_module import raw_input
+from src.visualize import Visualizer
+from src.scheme import Scheme
+from src.input_module import InputParser
 
 
 class SchemeGUI:
@@ -13,7 +12,7 @@ class SchemeGUI:
     # TODO: 1. create log readonly entry +
     #  2. make entry wider +
     #  3. add updating clock
-    #  4.
+    #  4. write file to test GUI
 
     def __init__(self, master: tkinter.Tk):
         self._master = master
@@ -24,23 +23,14 @@ class SchemeGUI:
 
         # objects
         self.scheme = Scheme()
-
-        # test scheme
-        # self.scheme.add_element('constant', 0, (1, 1),
-        #                         constant_value=1)
-        # self.scheme.add_element('constant', 1, (1, 2),
-        #                         constant_value=1)
-        # self.scheme.add_element('constant', 2, (1, 3),
-        #                         constant_value=1)
-        # self.scheme.add_element('shifter', 3, (3, 1), num_bits=4)
-        #
-        # self.scheme.add_connection(0, 'out', 3, 'in2')
-        # self.scheme.add_connection(1, 'out', 3, 'in3')
-        # self.scheme.add_connection(2, 'out', 3, 'shift_line1')
+        self._visualizer = Visualizer(self.scheme)
+        self._user_input_parser = InputParser(self.scheme)
 
         # control variables
         self.interrupt_work = False
         self.update_interval = 100
+
+        # size variables
         self.scheme_max_width = 800
         self.scheme_max_height = 800
 
@@ -142,10 +132,7 @@ class SchemeGUI:
             iterate_circuit: specifies if to calculate values
             for output on image and iterate circuit
         """
-        scheme_image = Visualizer.get_tkinter_image(self.scheme,
-                                                    self.scheme_max_width,
-                                                    self.scheme_max_height,
-                                                    iterate_circuit)
+        scheme_image = self._visualizer.get_tkinter_image(iterate_circuit)
 
         self.scheme_img_label.configure(image=scheme_image)
         self.scheme_img_label.image = scheme_image
@@ -153,8 +140,9 @@ class SchemeGUI:
     def execute_scheme_command(self, command: str = None):
         if not command:
             command = self.user_entry_var.get()
+        # self._user_input_parser.parse_raw_input(command)
         try:
-            raw_input(self.scheme, command)
+            self._user_input_parser.parse_raw_input(command)
         except Exception as ex:
             self.write_to_log(f"Command: {command}\n"
                               f"Status: Error\n"
@@ -165,6 +153,16 @@ class SchemeGUI:
             self.redraw_scheme()
         finally:
             self.write_to_log(f"-------------------------\n")
+
+    def execute_many_commands(self, commands: list):
+        cmd = commands[0]
+        self.execute_scheme_command(cmd)
+
+        if len(commands) > 1:
+            self._master.after(10, lambda: self.execute_many_commands(commands[1:]))
+        else:
+            self.write_to_log(f"-------------------------\n"
+                              f"Scheme added\n")
 
     def write_to_log(self, info: str):
         self.commands_log_entry.configure(state='normal')
@@ -188,8 +186,8 @@ class SchemeGUI:
             self.write_to_log(f"-------------------------\n")
 
         commands = [line.strip() for line in lines]
-        for cmd in commands:
-            self.execute_scheme_command(cmd)
+
+        self.execute_many_commands(commands)
 
     def close_app(self):
         showinfo(':)', 'Thanks for using L4Logic today')

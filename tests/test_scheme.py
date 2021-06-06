@@ -6,11 +6,11 @@ import sys
 
 sys.path.append("..")     # to run tests from tests directory directly
 
-from scheme import Scheme
-from scheme import IdIsAlreadyTakenError
-from scheme import NoSuchOutputLabelError
-from scheme import NoSuchInputLabelError
-from scheme import NoSuchIdError
+from src.scheme import Scheme
+from src.scheme import IdIsAlreadyTakenError
+from src.scheme import NoSuchOutputLabelError
+from src.scheme import NoSuchInputLabelError
+from src.scheme import NoSuchIdError
 
 
 class TestScheme(unittest.TestCase):
@@ -101,6 +101,13 @@ class TestScheme(unittest.TestCase):
         self.assertTrue(self.scheme.run()[3]['out'])
         self.assertFalse(self.scheme.run()[4]['out'])
 
+    def test_move(self):
+        self.scheme.add_element('constant', 1, position=(1, 1))
+        self.scheme.add_element('not', 2, position=(1, 2))
+
+        self.scheme.move(1, (2, 2))
+
+        self.assertEqual(self.scheme._elements[1].position, (2, 2))
 
 
 if __name__ == "__main__":
