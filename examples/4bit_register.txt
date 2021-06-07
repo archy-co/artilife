@@ -1,0 +1,96 @@
+add nor nor11 1 100
+add nor nor12 0 99
+nor11 out > nor12 in1
+nor12 out > nor11 in2
+
+add and and11 -2 101
+and11 out > nor11 in1
+
+add and and12 -2 98
+and12 out > nor12 in2
+
+add not not1 -4 100
+not1 out > and11 in1
+
+add variable v1 -6 99
+v1 out > not1 in
+v1 out > and12 in2
+
+
+
+add nor nor21 1 95
+add nor nor22 0 94
+nor21 out > nor22 in1
+nor22 out > nor21 in2
+
+add and and21 -2 96
+and21 out > nor21 in1
+
+add and and22 -2 93
+and22 out > nor22 in2
+
+add not not2 -4 95
+not2 out > and21 in1
+
+add variable v2 -6 94
+v2 out > not2 in
+v2 out > and22 in2
+
+
+
+add nor nor31 1 90
+add nor nor32 0 89
+nor31 out > nor32 in1
+nor32 out > nor31 in2
+
+add and and31 -2 91
+and31 out > nor31 in1
+
+add and and32 -2 88
+and32 out > nor32 in2
+
+add not not3 -4 90
+not3 out > and31 in1
+
+add variable v3 -6 89
+v3 out > not3 in
+v3 out > and32 in2
+
+
+
+add nor nor41 1 85
+add nor nor42 0 84
+nor41 out > nor42 in1
+nor42 out > nor41 in2
+
+add and and41 -2 86
+and41 out > nor41 in1
+
+add and and42 -2 83
+and42 out > nor42 in2
+
+add not not4 -4 85
+not4 out > and41 in1
+
+add variable v4 -6 84
+v4 out > not4 in
+v4 out > and42 in2
+
+
+
+add variable clock -10 93
+clock out > and11 in2
+clock out > and12 in1
+clock out > and21 in2
+clock out > and22 in1
+clock out > and31 in2
+clock out > and32 in1
+clock out > and41 in2
+clock out > and42 in1
+
+
+switch clock
+switch v1
+switch v2
+switch v3
+switch v4

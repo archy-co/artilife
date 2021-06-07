@@ -14,12 +14,14 @@ class InputParser:
                                        'del': self._scheme.delete_element,
                                        'switch': None,
                                        '>': self._scheme.add_connection,
-                                       '!>': self._scheme.delete_connection}
+                                       '!>': self._scheme.delete_connection,
+                                       'clear': self._scheme.clear}
         self._match_num_main_params = {'add': 5,
                                        'del': 2,
                                        'switch': 2,
                                        '>': 5,
-                                       '!>': 5}
+                                       '!>': 5,
+                                       'clear': 1}
 
     def parse_raw_input(self, input_str):
         """
@@ -64,6 +66,8 @@ class InputParser:
             0 out !> 1 in1
         For switching the value of the variable source of signal:
             switch *id_of_variable_element*
+        For deleting all the existing elements and connections:
+            clear
         """
 
         parts = input_str.strip().split()
@@ -95,3 +99,5 @@ class InputParser:
             self._scheme.add_connection(parts[0], parts[1], parts[3], parts[4])
         elif command == '!>':
             self._scheme.delete_connection(parts[0], parts[1], parts[3], parts[4])
+        elif command == 'clear':
+            self._scheme.clear()
