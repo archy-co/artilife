@@ -23,6 +23,9 @@ You can use the following classes from this module:
 import functools
 import random
 from typing import Dict
+
+import pandas as pd
+
 from src.truth_tables import TruthTable
 
 
@@ -643,7 +646,7 @@ class GatedSRFlipFlop(BasicElement):
         in_vals['prev_state'] = self._q
         # output = self._logic(self._read_input_value('S'), self._read_input_value('R'), self._read_input_value('E'))
         value = self._truth_table.predict_value(in_vals)
-        self._q = value['next_state']
+        self._q = None if value['next_state'] == -1 else value['next_state']
         del value['next_state']
         if update:
             self.value = value

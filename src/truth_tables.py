@@ -32,7 +32,7 @@ class TruthTable:
         """
         self._num_args = len(arg_names)
 
-        data = np.full(shape=(2**self._num_args, len(out_names)), dtype=bool, fill_value=False)
+        data = np.full(shape=(2**self._num_args, len(out_names)), dtype=np.int8, fill_value=False)
 
         self._data = pd.DataFrame(columns=out_names, dtype=bool) # stores data
 
@@ -201,7 +201,7 @@ class TruthTable:
             if set_ and not reset:
                 return [True, True]
             if set_ and reset:
-                return [False, None]
+                return [False, -1]
 
         def gated_sr_flipflop_func(lst_args):
             set_ = lst_args[0]

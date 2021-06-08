@@ -1,0 +1,7 @@
+add srflipflop sr 0 0
+add variable v1 -3 1
+add variable v2 -3 -1
+add variable v3 -5 0
+v1 out > sr R
+v2 out > sr S
+v3 out > sr E
