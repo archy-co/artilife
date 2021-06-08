@@ -77,7 +77,8 @@ class Visualizer:
             if iterate_circuit:
                 if scheme_element.id in scheme_elements_outs:
                     for label, value in scheme_elements_outs[scheme_element.id].items():
-                        visual_element.label(label=str(int(value)), loc=label,
+                        value = int(value) if value is not None else 'U'
+                        visual_element.label(label=str(value), loc=label,
                                              color='red', fontsize=self._default_out_lbl_sz)
 
             # add element to drawing
