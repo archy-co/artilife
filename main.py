@@ -153,7 +153,7 @@ class SchemeGUI:
             command = self.user_entry_var.get()
         # self._user_input_parser.parse_raw_input(command)
         try:
-            self._user_input_parser.parse_raw_input(command)
+            to_print = self._user_input_parser.parse_raw_input(command)
         except Exception as ex:
             self.write_to_log(f"Command: {command}\n"
                               f"Status: Error\n"
@@ -161,6 +161,8 @@ class SchemeGUI:
         else:
             self.write_to_log(f"Command: {command}\n"
                               f"Status: Completed\n")
+            if to_print:
+                self.write_to_log(to_print)
             self.redraw_scheme()
         finally:
             self.write_to_log(f"-------------------------\n")
@@ -196,7 +198,7 @@ class SchemeGUI:
         finally:
             self.write_to_log(f"-------------------------\n")
 
-        commands = [line.strip() for line in lines]
+        commands = [line.strip() for line in lines if line.strip()]
 
         self.execute_many_commands(commands)
 

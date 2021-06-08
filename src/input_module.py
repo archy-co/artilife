@@ -15,13 +15,15 @@ class InputParser:
                                        'switch': None,
                                        '>': self._scheme.add_connection,
                                        '!>': self._scheme.delete_connection,
-                                       'clear': self._scheme.clear}
+                                       'clear': self._scheme.clear,
+                                       'assert': None}
         self._match_num_main_params = {'add': 5,
                                        'del': 2,
                                        'switch': 2,
                                        '>': 5,
                                        '!>': 5,
-                                       'clear': 1}
+                                       'clear': 1,
+                                       'assert': 3}
 
     def parse_raw_input(self, input_str):
         """
@@ -101,3 +103,10 @@ class InputParser:
             self._scheme.delete_connection(parts[0], parts[1], parts[3], parts[4])
         elif command == 'clear':
             self._scheme.clear()
+        elif command == 'assert':
+            if parts[3] == "U":
+                parts[3] = None
+            else:
+                parts[3] = int(parts[3])
+            self._scheme.run()
+            return str(self._scheme[parts[1]].value[parts[2]] == parts[3]) + "\n"
