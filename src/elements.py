@@ -614,34 +614,40 @@ class GatedSRFlipFlop(BasicElement):
         super().__init__(id_, position)
         self._ins[f'S'] = None
         self._ins[f'R'] = None
+        self._ins['E'] = None
         self._outs[f'Q'] = []
         self._element_type = "SR_FLIPFLOP"
-        self._q = 1
-        self.enable_state = enable_state
+        self._q = None
+        self._truth_table = TruthTable.get_gated_sr_flipflop_truth_table()
+        self._init_value()
 
-    def _logic(self, s, r):
-        if self.enable_state:
-            if not s and not r:
-                return self._q
-            if not s and r:
-                self._q = False
-                return False
-            if s and not r:
-                self._q = True
-                return True
-            if s and r:
-                raise ForbiddenSrLatchStateError()
-        return self._q
+    def _logic(self, s, r, enabled):
+        if enabled is None:
+            return None
+        if enabled == False:
+            return self._q
+        if not s and not r:
+            return self._q
+        if s == False and r == True:
+            self._q = False
+            return False
+        if s == True and r == False:
+            self._q = True
+            return True
+        if s == True and r == True:
+            self._q = None
+            return False
 
-    def switch_enable_state(self):
-        self.enable_state = not self.enable_state
-
-    @property
-    def value(self):
-        if self._value is None:
-            output = self._logic(self._read_input_value('S'), self._read_input_value('R'))
-            self._value = {'Q': output}
-        return self._value
+    def calc_value(self, update=True):
+        in_vals = self._get_input_values()
+        in_vals['prev_state'] = self._q
+        # output = self._logic(self._read_input_value('S'), self._read_input_value('R'), self._read_input_value('E'))
+        value = self._truth_table.predict_value(in_vals)
+        self._q = value['next_state']
+        del value['next_state']
+        if update:
+            self.value = value
+        return value
 
 
 class GatedDFlipFlop(BasicElement):
@@ -669,6 +675,7 @@ class GatedDFlipFlop(BasicElement):
         self._element_type = "D_FLIPFLOP"
         self._q = False
         self.enable_state = enable_state
+        self._init_value()
 
     def _logic(self, d):
         if self.enable_state:
@@ -679,12 +686,12 @@ class GatedDFlipFlop(BasicElement):
     def switch_enable_state(self):
         self.enable_state = not self.enable_state
 
-    @property
-    def value(self):
-        if self._value is None:
-            output = self._logic(self._read_input_value('D'))
-            self._value = {'Q': output}
-        return self._value
+    def calc_value(self, update=True):
+        output = self._logic(self._read_input_value('D'))
+        self.value = {'Q': output}
+        if update:
+            self.value = value
+        return value
 
 
 if __name__ == "__main__":

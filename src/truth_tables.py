@@ -191,6 +191,27 @@ class TruthTable:
 
         return cls(args_names, outs_names, rightshifter_func)
 
+    @classmethod
+    def get_gated_sr_flipflop_truth_table(cls):
+        def sr_flipflop_func(set_, reset, prev_state):
+            if not set_ and not reset:
+                return [prev_state, prev_state]
+            if not set_ and reset:
+                return [False, False]
+            if set_ and not reset:
+                return [True, True]
+            if set_ and reset:
+                return [False, None]
+
+        def gated_sr_flipflop_func(lst_args):
+            set_ = lst_args[0]
+            reset = lst_args[1]
+            enabled = lst_args[2]
+            prev_state = lst_args[3]
+
+            return sr_flipflop_func(set_ and enabled, reset and enabled, prev_state)
+
+        return cls(['S', 'R', 'E', 'prev_state'], ['Q', 'next_state'], gated_sr_flipflop_func)
 
 if __name__ == "__main__":
     print(TruthTable.get_decoder_truth_table(2))

@@ -171,13 +171,13 @@ class Visualizer:
 
         elif scheme_element.element_type == "SR_FLIPFLOP":
             kwargs['pins'] = [sd_elem.IcPin(name='S', side='left'),
-                              sd_elem.IcPin(name='>', side='left'),
+                              sd_elem.IcPin(name='E', side='left'),
                               sd_elem.IcPin(name='R', side='left'),
                               sd_elem.IcPin(name='Q', side='right')]
 
         elif scheme_element.element_type == "D_FLIPFLOP":
             kwargs['pins'] = [sd_elem.IcPin(name='D', side='left'),
-                              sd_elem.IcPin(name='>', side='left'),
+                              sd_elem.IcPin(name='E', side='left'),
                               sd_elem.IcPin(name='Q', side='right')]
 
         return kwargs
