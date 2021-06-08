@@ -27,6 +27,7 @@ class SchemeGUI:
         self._user_input_parser = InputParser(self.scheme)
 
         # control variables
+        self._scheme_run = False
         self.interrupt_work = False
         self.update_interval = 100
 
@@ -108,14 +109,24 @@ class SchemeGUI:
 
     def start_scheme(self):
         """Start infinite scheme update"""
-        self.status_lbl.configure(text='Working')
-        self.interrupt_work = False
-        self._master.after(self.update_interval, self.update_scheme)
+        if not self._scheme_run:
+            self.status_lbl.configure(text='Working')
+            self._scheme_run = True
+            self.interrupt_work = False
+            self._master.after(self.update_interval, self.update_scheme)
+        else:
+            self.write_to_log(f"-------------------------\n"
+                              f"Stop scheme firstly\n")
 
     def stop_scheme(self):
         """Stop infinite scheme update"""
-        self.status_lbl.configure(text='Idle..')
-        self.interrupt_work = True
+        if self._scheme_run:
+            self.status_lbl.configure(text='Idle..')
+            self._scheme_run = False
+            self.interrupt_work = True
+        else:
+            self.write_to_log(f"-------------------------\n"
+                              f"Start scheme firstly\n")
 
     def update_scheme(self):
         """Update scheme every specified update interval"""

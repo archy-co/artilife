@@ -19,6 +19,7 @@ class Visualizer:
                  max_width: int = 800, max_height: int = 800):
         self._scheme = scheme
         self._default_label_size = default_label_size
+        self._default_out_lbl_sz = default_label_size * 2
         self._max_width = max_width
         self._max_height = max_height
         self._elements_match = {'AND': logic.And,
@@ -76,8 +77,9 @@ class Visualizer:
             if iterate_circuit:
                 if scheme_element.id in scheme_elements_outs:
                     for label, value in scheme_elements_outs[scheme_element.id].items():
-                        visual_element.label(label=str(int(value)), loc=label,
-                                             color='green')
+                        value = int(value) if value is not None else 'U'
+                        visual_element.label(label=str(value), loc=label,
+                                             color='red', fontsize=self._default_out_lbl_sz)
 
             # add element to drawing
             visual_elements[scheme_element.id] = drawing.add(visual_element)
