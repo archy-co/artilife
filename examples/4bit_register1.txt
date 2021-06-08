@@ -1,0 +1,22 @@
+add dflipflop dff1 10 0
+add dflipflop dff2 10 5
+add dflipflop dff3 10 10
+add dflipflop dff4 10 15
+
+add variable v1 5 0
+add variable v2 5 5
+add variable v3 5 10
+add variable v4 5 15
+
+v1 out > dff1 D
+v2 out > dff2 D
+v3 out > dff3 D
+v4 out > dff4 D
+
+add variable clock 7 7
+
+
+clock out > dff1 E
+clock out > dff2 E
+clock out > dff3 E
+clock out > dff4 E

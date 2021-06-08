@@ -304,6 +304,7 @@ class Variable(BasicElement):
             self._variable_value = not self._variable_value
         else:
             self._variable_value = value
+        self.calc_value()
 
     def calc_value(self, update=True):
         value = {'out': self._variable_value}
@@ -662,7 +663,7 @@ class GatedDFlipFlop(BasicElement):
         self._ins[f'E'] = None
         self._outs[f'Q'] = []
         self._element_type = "D_FLIPFLOP"
-        self._state = False
+        self._state = None
         self._truth_table = TruthTable.get_gated_d_flipflop_truth_table()
         self._init_value()
 
