@@ -130,13 +130,13 @@ class Visualizer:
         elif scheme_element.element_type == "DECODER":
             kwargs['pins'] = []
             num_input_lines = scheme_element.number_input_lines
-            for i in range(1, num_input_lines + 1):
+            for i in range(num_input_lines):
                 kwargs['pins'].append(
-                    sd_elem.IcPin(name=f'in{i}', anchorname=f'input line {i}',
+                    sd_elem.IcPin(name=f'in{i}', anchorname=f'in{i}',
                                   side='left'))
-            for i in range(1, 2 ** num_input_lines + 1):
+            for i in range(2 ** num_input_lines):
                 kwargs['pins'].append(
-                    sd_elem.IcPin(name=f'out{i}', anchorname=f'output line {i}',
+                    sd_elem.IcPin(name=f'out{i}', anchorname=f'out{i}',
                                   side='right'))
 
         elif scheme_element.element_type == "FULLADDER":
@@ -165,7 +165,7 @@ class Visualizer:
                 kwargs['pins'].append(sd_elem.IcPin(name=f'in{i}', side='left'))
             for i in range(num_bits):
                 kwargs['pins'].append(
-                    sd_elem.IcPin(name=f'sh{i}', anchorname=f'shift_line{i}',
+                    sd_elem.IcPin(name=f'shift_line{i}', anchorname=f'shift_line{i}',
                                   side='left'))
             for i in range(num_bits):
                 kwargs['pins'].append(sd_elem.IcPin(name=f'out{i}', side='right'))

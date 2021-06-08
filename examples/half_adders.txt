@@ -1,0 +1,22 @@
+add and and1 10 5
+add xor xor1 10 3
+add constant x 8 5 -v 1
+add constant y 8 3 -v 0
+x out > and1 in1
+y out > and1 in2
+x out > xor1 in1
+y out > xor1 in2
+
+add and and2 13 0
+add or or2 10 -2
+add constant x2 8 0 -v 1
+add constant y2 8 -2 -v 0
+x2 out > and2 in1
+y2 out > and2 in2
+x2 out > or2 in1
+y2 out > or2 in2
+add not not1 12 -1
+add and and3 13 -2
+and2 out > not1 in
+not1 out > and3 in1
+or2 out > and3 in2

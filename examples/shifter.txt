@@ -1,0 +1,21 @@
+add shifter SHIFTER 0 0
+
+add decoder DECODER -4 2
+
+add constant DATA0 -3 -4 -v 0
+add constant DATA1 -3 -3 -v 1
+add constant DATA2 -3 -2 -v 0
+add constant DATA3 -3 -1 -v 1
+add constant SHIFT1 -7 1 -v 0
+add constant SHIFT2 -7 3 -v 1
+
+DATA0 out > SHIFTER in0
+DATA1 out > SHIFTER in1
+DATA2 out > SHIFTER in2
+DATA3 out > SHIFTER in3
+SHIFT1 out > DECODER in0
+SHIFT2 out > DECODER in1
+DECODER out0 > SHIFTER shift_line0
+DECODER out1 > SHIFTER shift_line1
+DECODER out2 > SHIFTER shift_line2
+DECODER out3 > SHIFTER shift_line3

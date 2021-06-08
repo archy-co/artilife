@@ -418,15 +418,15 @@ class Decoder(BasicElement):
     one of 2**n output lines.
     The interface of the encoder element is the following:
     - input:
-        input line 1
-        input line 2
+        in0
+        in1
         ...
-        input line {num_input_lines}
+        in{num_input_lines-1}
     - output:
-        output line 1
-        output line 2
+        out0
+        out1
         ...
-        output line {2**num_input_lines}
+        out{2**num_input_lines-1}
     """
 
     def __init__(self, id_, position=None, num_input_lines: int = 2):
@@ -436,19 +436,19 @@ class Decoder(BasicElement):
             raise ValueError("Number of input lines must be >= 1")
         super().__init__(id_, position)
         self._num_input_lines = num_input_lines
-        for i in range(1, num_input_lines + 1):
-            self._ins[f'input line {i}'] = None
-        for i in range(1, 2 ** num_input_lines + 1):
-            self._outs[f'output line {i}'] = []
+        for i in range(num_input_lines):
+            self._ins[f'in{i}'] = None
+        for i in range(2 ** num_input_lines):
+            self._outs[f'out{i}'] = []
         self._element_type = "DECODER"
 
     def _input_lines_to_number(self):
-        base = "input line "
+        base = "in"
         number = 0
         for i in range(self._num_input_lines):
-            if self._read_input_value(base + str(i + 1)):
+            if self._read_input_value(base + str(i)):
                 number += 2 ** i
-        return number + 1
+        return number
 
     @property
     def number_input_lines(self):
@@ -458,7 +458,7 @@ class Decoder(BasicElement):
     def value(self):
         if self._value is None:
             self._value = {key: False for key in self._outs}
-            self._value[f"output line {self._input_lines_to_number()}"] = True
+            self._value[f"out{self._input_lines_to_number()}"] = True
 
         return self._value
 
