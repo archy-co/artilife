@@ -22,7 +22,7 @@ You can use the following classes from this module:
 
 import functools
 import random
-from typing import Dict
+from typing import Dict, Optional
 
 import pandas as pd
 
@@ -299,8 +299,11 @@ class Variable(BasicElement):
         self._element_type = "VARIABLE"
         self.value = {'out': init_value}
 
-    def switch(self):
-        self._variable_value = not self._variable_value
+    def switch(self, value: Optional[bool] = None):
+        if value is None:
+            self._variable_value = not self._variable_value
+        else:
+            self._variable_value = value
 
     def calc_value(self, update=True):
         value = {'out': self._variable_value}

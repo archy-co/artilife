@@ -1,0 +1,1536 @@
+switch op1 0
+switch op2 0
+switch v11 0
+switch v21 0
+switch v12 0
+switch v22 0
+switch v13 0
+switch v23 0
+switch v14 0
+switch v24 0
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+switch v14
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+switch v14
+switch v21
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+switch v14
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+switch v14
+switch v21
+switch v22
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+switch v14
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+switch v14
+switch v21
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+switch v14
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+switch v14
+switch v21
+switch v22
+switch v23
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+switch v14
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+switch v14
+switch v21
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+switch v14
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+switch v14
+switch v21
+switch v22
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+switch v14
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+switch v14
+switch v21
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+switch v14
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+switch v14
+switch v21
+switch v22
+switch v23
+switch v24
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+switch v14
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+switch v14
+switch v21
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+switch v14
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+switch v14
+switch v21
+switch v22
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+switch v14
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+switch v14
+switch v21
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+switch v14
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+switch v14
+switch v21
+switch v22
+switch v23
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+switch v14
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+switch v14
+switch v21
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+switch v14
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+switch v14
+switch v21
+switch v22
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+switch v14
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+switch v12
+switch v13
+switch v14
+switch v21
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+assert m4 out 0
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 0
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+switch v14
+assert m4 out 0
+assert m3 out 1
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 0
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 0
+switch v11
+switch v12
+switch v13
+assert m4 out 1
+assert m3 out 0
+assert m2 out 1
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 0
+switch v11
+switch v12
+assert m4 out 1
+assert m3 out 1
+assert m2 out 0
+assert m1 out 1
+switch v11
+assert m4 out 1
+assert m3 out 1
+assert m2 out 1
+assert m1 out 0

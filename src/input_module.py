@@ -96,7 +96,7 @@ class InputParser:
         elif command == 'del':
             self._scheme.delete_element(parts[1])
         elif command == 'switch':
-            self._scheme[parts[1]].switch()
+            self._scheme[parts[1]].switch(int(parts[2]) if len(parts) > 2 else None)
         elif command == '>':
             self._scheme.add_connection(parts[0], parts[1], parts[3], parts[4])
         elif command == '!>':
