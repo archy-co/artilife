@@ -1,0 +1,5 @@
+add and and1 0 0
+add or or1 -2 -2
+and1 out > or1 in1
+add multiplexer mul1 2 -2 -s 1
+or1 out > mul1 in2

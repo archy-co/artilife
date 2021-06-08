@@ -1,0 +1,5 @@
+add not 0 0 0
+add constant 1 -2 -2
+1 out > 0 in
+add and 3 3 3
+0 out > 3 in1
