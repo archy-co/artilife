@@ -611,7 +611,7 @@ class GatedSRFlipFlop(BasicElement):
         Q
     """
 
-    def __init__(self, id_, position=None, enable_state: bool = 1):
+    def __init__(self, id_, position=None):
         """Initialize a gated SR flipflop element with id and, optionally,
         its position and initial enable state"""
         super().__init__(id_, position)
@@ -620,33 +620,15 @@ class GatedSRFlipFlop(BasicElement):
         self._ins['E'] = None
         self._outs[f'Q'] = []
         self._element_type = "SR_FLIPFLOP"
-        self._q = None
+        self._state = None
         self._truth_table = TruthTable.get_gated_sr_flipflop_truth_table()
         self._init_value()
 
-    def _logic(self, s, r, enabled):
-        if enabled is None:
-            return None
-        if enabled == False:
-            return self._q
-        if not s and not r:
-            return self._q
-        if s == False and r == True:
-            self._q = False
-            return False
-        if s == True and r == False:
-            self._q = True
-            return True
-        if s == True and r == True:
-            self._q = None
-            return False
-
     def calc_value(self, update=True):
         in_vals = self._get_input_values()
-        in_vals['prev_state'] = self._q
-        # output = self._logic(self._read_input_value('S'), self._read_input_value('R'), self._read_input_value('E'))
+        in_vals['prev_state'] = self._state
         value = self._truth_table.predict_value(in_vals)
-        self._q = None if value['next_state'] == -1 else value['next_state']
+        self._state = None if value['next_state'] == -1 else value['next_state']
         del value['next_state']
         if update:
             self.value = value
@@ -669,29 +651,24 @@ class GatedDFlipFlop(BasicElement):
         Q
     """
 
-    def __init__(self, id_, position=None, enable_state: bool = 1):
+    def __init__(self, id_, position=None):
         """Initialize a gated D flipflop element with id and, optionally,
         its position and initial enable state"""
         super().__init__(id_, position)
         self._ins[f'D'] = None
+        self._ins[f'E'] = None
         self._outs[f'Q'] = []
         self._element_type = "D_FLIPFLOP"
-        self._q = False
-        self.enable_state = enable_state
+        self._state = False
+        self._truth_table = TruthTable.get_gated_d_flipflop_truth_table()
         self._init_value()
 
-    def _logic(self, d):
-        if self.enable_state:
-            self._q = d
-            return self._q
-        return self._q
-
-    def switch_enable_state(self):
-        self.enable_state = not self.enable_state
-
     def calc_value(self, update=True):
-        output = self._logic(self._read_input_value('D'))
-        self.value = {'Q': output}
+        in_vals = self._get_input_values()
+        in_vals['prev_state'] = self._state
+        value = self._truth_table.predict_value(in_vals)
+        self._state = None if value['next_state'] == -1 else value['next_state']
+        del value['next_state']
         if update:
             self.value = value
         return value

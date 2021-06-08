@@ -1,0 +1,5 @@
+add dflipflop dff 0 0
+add variable v1 -3 1
+add variable v2 -3 -1
+v1 out > dff D
+v2 out > dff E
