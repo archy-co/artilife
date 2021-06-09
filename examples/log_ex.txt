@@ -1,0 +1,11 @@
+﻿add and 0 0 -1
+add or 1 0 1
+add xor 2 2 0
+add constant 3 -2 -1 -v 1
+add constant 4 -2 1 -v 0
+3 out > 0 in1
+4 out > 0 in2
+3 out > 1 in1
+4 out > 1 in2
+0 out > 2 in2
+1 out > 2 in1
