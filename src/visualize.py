@@ -101,6 +101,7 @@ class Visualizer:
             kwargs['lbl_size'] = self._default_label_size
 
         if scheme_element.element_type == "VARIABLE":
+            kwargs['constant_value'] = scheme_element.value['out']
             kwargs['lbl_size'] = self._default_label_size
 
         if scheme_element.element_type == "MULTIPLEXER":

@@ -187,7 +187,7 @@ class SchemeGUI:
         self.write_to_log(f"Command: read commands from {path}\n")
 
         try:
-            with open(path, 'r', encoding='utf-8') as f:
+            with open(path, 'r', encoding='utf-8-sig') as f:
                 lines = f.readlines()
         except Exception as ex:
             self.write_to_log(f"Status: Error\n"
