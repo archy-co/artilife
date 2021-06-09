@@ -1,0 +1,21 @@
+add shifter SHIFTER 0 0
+
+add decoder DECODER -4 2
+
+add variable DATA0 -3 -4
+add variable DATA1 -3 -3
+add variable DATA2 -3 -2
+add variable DATA3 -3 -1
+add variable SHIFT0 -7 1
+add variable SHIFT1 -7 3
+
+DATA0 out > SHIFTER in0
+DATA1 out > SHIFTER in1
+DATA2 out > SHIFTER in2
+DATA3 out > SHIFTER in3
+SHIFT0 out > DECODER in0
+SHIFT1 out > DECODER in1
+DECODER out0 > SHIFTER shift_line0
+DECODER out1 > SHIFTER shift_line1
+DECODER out2 > SHIFTER shift_line2
+DECODER out3 > SHIFTER shift_line3

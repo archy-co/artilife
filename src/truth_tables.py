@@ -117,8 +117,8 @@ class TruthTable:
                     for idx, val in enumerate(binary[::-1]):
                         out[idx] = out[idx] or val
             return out
-        args_names = [f"input line {i+1}" for i in range(2**num_output_lines)]
-        outs_names = [f"output line {i+1}" for i in range(num_output_lines)]
+        args_names = [f"input_line_{i+1}" for i in range(2**num_output_lines)]
+        outs_names = [f"output_line_{i+1}" for i in range(num_output_lines)]
         return cls(args_names, outs_names, encoder_func)
 
     @classmethod
@@ -130,8 +130,8 @@ class TruthTable:
             out = [False] * 2**num_input_lines
             out[decoded] = True
             return out
-        args_names = [f"input line {i+1}" for i in range(num_input_lines)]
-        outs_names = [f"output line {i+1}" for i in range(2**num_input_lines)]
+        args_names = [f"in{i}" for i in range(num_input_lines)]
+        outs_names = [f"out{i}" for i in range(2**num_input_lines)]
         return cls(args_names, outs_names, decoder_func)
 
     @classmethod

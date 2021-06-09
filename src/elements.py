@@ -22,7 +22,7 @@ You can use the following classes from this module:
 
 import functools
 import random
-from typing import Dict
+from typing import Dict, Optional
 
 import pandas as pd
 
@@ -299,8 +299,12 @@ class Variable(BasicElement):
         self._element_type = "VARIABLE"
         self.value = {'out': init_value}
 
-    def switch(self):
-        self._variable_value = not self._variable_value
+    def switch(self, value: Optional[bool] = None):
+        if value is None:
+            self._variable_value = not self._variable_value
+        else:
+            self._variable_value = value
+        self.calc_value()
 
     def calc_value(self, update=True):
         value = {'out': self._variable_value}
@@ -359,15 +363,15 @@ class Encoder(BasicElement):
     If none of input lines are high, then the all the output lines are low.
     The interface of the encoder element is the following:
     - input:
-        input line 1
-        input line 2
+        input_line_1
+        input_line_2
         ...
         input line {2**num_output_lines}
     - output:
-        output line 1
-        output line 2
+        output_line_1
+        output_line_2
         ...
-        output line {num_output_lines}
+        output_line_{num_output_lines}
     """
 
     def __init__(self, id_, position=None, num_output_lines: int = 2):
@@ -378,9 +382,9 @@ class Encoder(BasicElement):
         super().__init__(id_, position)
         self._num_output_lines = num_output_lines
         for i in range(1, 2 ** num_output_lines + 1):
-            self._ins[f'input line {i}'] = None
+            self._ins[f'input_line_{i}'] = None
         for i in range(1, num_output_lines + 1):
-            self._outs[f'output line {i}'] = []
+            self._outs[f'output_line_{i}'] = []
         self._element_type = "ENCODER"
         self._truth_table = TruthTable.get_encoder_truth_table(num_output_lines)
         self._init_value()
@@ -401,15 +405,15 @@ class Decoder(BasicElement):
     one of 2**n output lines.
     The interface of the encoder element is the following:
     - input:
-        input line 1
-        input line 2
+        in0
+        in1
         ...
-        input line {num_input_lines}
+        in{num_input_lines-1}
     - output:
-        output line 1
-        output line 2
+        out0
+        out1
         ...
-        output line {2**num_input_lines}
+        out{2**num_input_lines-1}
     """
 
     def __init__(self, id_, position=None, num_input_lines: int = 2):
@@ -419,10 +423,10 @@ class Decoder(BasicElement):
             raise ValueError("Number of input lines must be >= 1")
         super().__init__(id_, position)
         self._num_input_lines = num_input_lines
-        for i in range(1, num_input_lines + 1):
-            self._ins[f'input line {i}'] = None
-        for i in range(1, 2 ** num_input_lines + 1):
-            self._outs[f'output line {i}'] = []
+        for i in range(num_input_lines):
+            self._ins[f'in{i}'] = None
+        for i in range(2 ** num_input_lines):
+            self._outs[f'out{i}'] = []
         self._element_type = "DECODER"
         self._truth_table = TruthTable.get_decoder_truth_table(num_input_lines=num_input_lines)
         self._init_value()
@@ -659,7 +663,7 @@ class GatedDFlipFlop(BasicElement):
         self._ins[f'E'] = None
         self._outs[f'Q'] = []
         self._element_type = "D_FLIPFLOP"
-        self._state = False
+        self._state = None
         self._truth_table = TruthTable.get_gated_d_flipflop_truth_table()
         self._init_value()
 
