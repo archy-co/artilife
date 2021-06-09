@@ -363,15 +363,15 @@ class Encoder(BasicElement):
     If none of input lines are high, then the all the output lines are low.
     The interface of the encoder element is the following:
     - input:
-        input line 1
-        input line 2
+        input_line_1
+        input_line_2
         ...
         input line {2**num_output_lines}
     - output:
-        output line 1
-        output line 2
+        output_line_1
+        output_line_2
         ...
-        output line {num_output_lines}
+        output_line_{num_output_lines}
     """
 
     def __init__(self, id_, position=None, num_output_lines: int = 2):
@@ -382,9 +382,9 @@ class Encoder(BasicElement):
         super().__init__(id_, position)
         self._num_output_lines = num_output_lines
         for i in range(1, 2 ** num_output_lines + 1):
-            self._ins[f'input line {i}'] = None
+            self._ins[f'input_line_{i}'] = None
         for i in range(1, num_output_lines + 1):
-            self._outs[f'output line {i}'] = []
+            self._outs[f'output_line_{i}'] = []
         self._element_type = "ENCODER"
         self._truth_table = TruthTable.get_encoder_truth_table(num_output_lines)
         self._init_value()

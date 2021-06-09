@@ -121,11 +121,11 @@ class Visualizer:
             num_output_lines = scheme_element.number_output_lines
             for i in range(1, num_output_lines + 1):
                 kwargs['pins'].append(
-                    sd_elem.IcPin(name=f'out{i}', anchorname=f'output line {i}',
+                    sd_elem.IcPin(name=f'output_line_{i}', anchorname=f'output_line_{i}',
                                   side='right'))
             for i in range(1, 2 ** num_output_lines + 1):
                 kwargs['pins'].append(
-                    sd_elem.IcPin(name=f'in{i}', anchorname=f'input line {i}',
+                    sd_elem.IcPin(name=f'input_line_{i}', anchorname=f'input_line_{i}',
                                   side='left'))
 
         elif scheme_element.element_type == "DECODER":
