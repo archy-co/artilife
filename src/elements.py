@@ -405,15 +405,15 @@ class Decoder(BasicElement):
     one of 2**n output lines.
     The interface of the encoder element is the following:
     - input:
-        input line 1
-        input line 2
+        in0
+        in1
         ...
-        input line {num_input_lines}
+        in{num_input_lines-1}
     - output:
-        output line 1
-        output line 2
+        out0
+        out1
         ...
-        output line {2**num_input_lines}
+        out{2**num_input_lines-1}
     """
 
     def __init__(self, id_, position=None, num_input_lines: int = 2):
@@ -423,10 +423,10 @@ class Decoder(BasicElement):
             raise ValueError("Number of input lines must be >= 1")
         super().__init__(id_, position)
         self._num_input_lines = num_input_lines
-        for i in range(1, num_input_lines + 1):
-            self._ins[f'input line {i}'] = None
-        for i in range(1, 2 ** num_input_lines + 1):
-            self._outs[f'output line {i}'] = []
+        for i in range(num_input_lines):
+            self._ins[f'in{i}'] = None
+        for i in range(2 ** num_input_lines):
+            self._outs[f'out{i}'] = []
         self._element_type = "DECODER"
         self._truth_table = TruthTable.get_decoder_truth_table(num_input_lines=num_input_lines)
         self._init_value()
