@@ -134,5 +134,5 @@ L 4 Logic is licensed under the MIT license. See **[LICENSE](https://github.com/
 * Viktor Povazhuk
 * Maksym Tsapiv
 * Bohdan Ivashko
-* Yaroslav Moskalyk
+* Yaroslav Revera
 
